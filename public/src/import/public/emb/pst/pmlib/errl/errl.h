@@ -140,7 +140,6 @@ typedef struct ElogOrginSumm    ElogOrginSumm_t;
 /// Section summary
 typedef enum   ElogSectnSumm ElogSectnSumm_t;
 
-
 /// @addtogroup pm_hcode_errl
 /// @{
 
@@ -244,18 +243,6 @@ void get_ppe_regs_usr_dtls ( const uint8_t i_source,
 ///        can cause HCode commited errors not converting to PELs/SELs
 uint32_t commit_errl ( errlHndl_t io_err );
 
-
-/// @brief Delete the Error Log being processed on this PPE
-///
-/// @param [inout] io_errl Input: Pointer to a valid error log handle
-///                        Output: NULL if deleted without errors
-///
-/// @return uint32_t status of the operation. See errlStatusCodes
-/// @note: To be used to free up this error slot for reuse by a new error.
-///        Typically used to abort an error log being processed on the PPE due
-///        to errors adding callouts or user detail sections, etc.
-uint32_t delete_errl ( errlHndl_t io_errl );
-
 /// @brief Adds a callout to the Error Log
 ///
 /// @param [inout] io_err A valid error log handle returned via by createErrl
@@ -288,7 +275,6 @@ uint32_t  add_callout_to_errl (
 /// @param[in]  i_elogSectn user data section to be populated for the log
 /// @return     SUCCESS if function succeeds, error code otherwise.
 ///
-///
 uint32_t ppe_log_error ( ElogOrginSumm_t i_elogOrig,
                          const ERRL_SEVERITY i_sev,
                          errlUDWords_t*      i_pDWords,
@@ -296,7 +282,6 @@ uint32_t ppe_log_error ( ElogOrginSumm_t i_elogOrig,
                          errlDataCallout_t*  i_pcallOuts,
                          uint32_t  i_elogSectn ) ;
 /// @}  end addtogroup
-
 
 #ifdef __cplusplus
 }

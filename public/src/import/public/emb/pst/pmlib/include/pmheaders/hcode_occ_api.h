@@ -78,9 +78,9 @@ typedef enum
 //
 // @brief Pstate Control Actions
 //
-#define PGPE_ACTION_PSTATE_START   0                ///< Pstate Start
-#define PGPE_ACTION_PSTATE_STOP    1                ///< Pstate Stop
-
+#define PGPE_ACTION_PSTATE_START    0                ///< Pstate Start
+#define PGPE_ACTION_PSTATE_STOP     1                ///< Pstate Stop
+#define PGPE_ACTION_STOP_BEACON     2                ///< Stop PGPE Beacon
 ///
 /// @brief Pstate Control IPC
 ///

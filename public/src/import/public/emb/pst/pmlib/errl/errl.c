@@ -39,7 +39,7 @@
 #include "ocb_register_addresses.h"
 #include "occ_hcode_errldefs.h"
 #include "hcode_occ_api.h"
-
+#include "ppehw_common.h"
 //------------------------------------------------------------------------------------------------
 
 /**
@@ -58,13 +58,13 @@ const uint32_t  SUCCESS                 =   0;
 const uint32_t  ELOG_SLOTS_FULL         =   0x01;
 const uint32_t  ERRL_USR_DATA_SZ_MIN    =   128;
 const uint32_t  REG_BIT0_MASK           =   0x80000000;
+const uint32_t  TRACE_SIZE              =   2048;
 
 //------------------------------------------------------------------------------------------------
 
 /**
  * @brief   local function declarations
  */
-uint32_t delete_errl ( errlHndl_t io_err );
 uint32_t report_error_log ( errlHndl_t io_err );
 uint32_t get_elog_broadcast_reg();
 void get_ppe_regs ( const uint8_t  i_errl_source, const uint8_t  i_ppe_instance,
@@ -83,14 +83,13 @@ uint32_t G_elog_slots;
 
 hcodeErrlConfigData_t G_errlConfigData = {0};
 
-uint32_t G_elog_add_map[9][2] =
+uint32_t G_elog_add_map[8][2] =
 {
-    { 0x00000000, 0x00000000 },                       // OCC
     { 0x00000000, 0x00000000 },                       // PGPE
     { XGPE_CRITICAL_LOG_BASE, XGPE_INFO_LOG_BASE },   // XGPE
     { 0x00000000, 0x00000000 },                       // QME
     { 0x00000000, 0x00000000 },                       // PCE
-    { 0x00000000, 0x00000000 },                       // XCE
+    { XCE_CRITICAL_LOG_BASE, XCE_INFO_LOG_BASE },     // XCE
     { 0x00000000, 0x00000000 },                       // DCE
     { 0x00000000, 0x00000000 },                       // OCE
     { 0x00000000, 0x00000000 }                        // NGPE
@@ -120,12 +119,12 @@ errlHndl_t get_error_log_slot( const ERRL_SEVERITY i_sev, uint32_t* o_status )
             if( l_reg_data & CRITICAL_LOG_PENDING )
             {
                 //Info log slot is free. Let us use it
-                l_errl = (errlHndl_t )( G_elog_add_map[G_errlConfigData.source][INFO_LOG_SLOT] );
+                l_errl = (errlHndl_t )( G_elog_add_map[ G_elog_slots ][INFO_LOG_SLOT] );
             }
             else
             {
                 //Critical log slot is free. Let us use it.
-                l_errl = (errlHndl_t )( G_elog_add_map[G_errlConfigData.source][CRITICAL_LOG_SLOT] );
+                l_errl = (errlHndl_t )( G_elog_add_map[ G_elog_slots ][CRITICAL_LOG_SLOT] );
             }
         }
         else
@@ -142,7 +141,7 @@ errlHndl_t get_error_log_slot( const ERRL_SEVERITY i_sev, uint32_t* o_status )
         else
         {
             //Info log slot is free. Let us use it
-            l_errl = (errlHndl_t )( G_elog_add_map[G_errlConfigData.source][INFO_LOG_SLOT] );
+            l_errl = (errlHndl_t )( G_elog_add_map[ G_elog_slots ][INFO_LOG_SLOT] );
         }
     }
 
@@ -158,18 +157,40 @@ void init_err_logging ( const uint8_t              i_errl_source,
     G_errlConfigData.errId = 0;
     G_errlConfigData.procVersion = mfspr (SPRN_PVR);
     G_errlConfigData.ppeId = (uint16_t) ( mfspr(SPRN_PIR) & 0x0000001F );
+    G_errlConfigData.traceSz = TRACE_SIZE;
 
     switch( i_errl_source )
     {
         case ERRL_SOURCE_QME:
+            G_elog_slots = 2;
+            break;
+
         case ERRL_SOURCE_XCE:
+            G_elog_slots = 4;
+            break;
+
         case ERRL_SOURCE_OCE:
+            G_elog_slots = 6;
+            break;
+
         case ERRL_SOURCE_DCE:
+            G_elog_slots = 5;
+            break;
+
         case ERRL_SOURCE_PCE:
+            G_elog_slots = 3;
+            break;
+
         case ERRL_SOURCE_XGPE:
+            G_elog_slots = 1;
+            break;
+
         case ERRL_SOURCE_PGPE:
+            G_elog_slots = 0;
+            break;
+
         case ERRL_SOURCE_NGPE:
-            G_errlConfigData.traceSz = ERRL_TRACE_DATA_SZ_XGPE;
+            G_elog_slots = 7;
             break;
 
         default:
@@ -193,73 +214,82 @@ uint32_t report_error_log ( errlHndl_t io_err )
     uint32_t l_elog_bcast_reg = 0;
     uint32_t l_elog_bit_pos = 0;
     uint32_t l_eng_elog_pos = 0;
-    HcodeOCCSharedData_t* l_pocc_shared_data = (HcodeOCCSharedData_t*)OCC_SHARED_SRAM_BASE_ADDR;
-    hcode_error_table_t* l_perr_table  = (hcode_error_table_t* )( OCC_SHARED_SRAM_BASE_ADDR +
-                                         l_pocc_shared_data->header.errlog_table_offset );
+    HcodeOCCSharedData_t* l_pocc_shared_data = NULL;
+    HcodeTCCSharedData_t* l_ptcc_shared_data = NULL;
+    hcode_error_table_t* l_perr_table = NULL;
+
+    PK_TRACE(  "report_error_log  : G_errlConfigData.source 0x%08x", G_errlConfigData.source );
 
     switch( G_errlConfigData.source )
     {
         case ERRL_SOURCE_QME:
+            //FIXME EWM 145591
             break;
 
         case ERRL_SOURCE_XCE:
+            {
+                if( ERRL_SEV_UNRECOVERABLE == io_err->iv_severity )
+                {
+                    l_eng_elog_pos = 2;
+                    l_elog_bit_pos = 25;
+                }
+                else if ( ERRL_SEV_INFORMATIONAL == io_err->iv_severity )
+                {
+                    l_eng_elog_pos = 3;
+                    l_elog_bit_pos = 26;
+                }
+
+                l_elog_bcast_reg = OCB_OCCFLG3;
+            }
             break;
 
         case ERRL_SOURCE_OCE:
+            //FIXME EWM 61247
             break;
 
         case ERRL_SOURCE_DCE:
+            //FIXME EWM 61246
             break;
 
         case ERRL_SOURCE_PCE:
+            //FIXME EWM 61243
             break;
 
         case ERRL_SOURCE_XGPE:
             {
-                XgpeHeader_t* l_pxgpe_Hdr =
-                    ( XgpeHeader_t*)( XGPE_SRAM_BASE_ADDR + PPE_INT_VECTOR_SIZE );
-
                 if( ERRL_SEV_UNRECOVERABLE == io_err->iv_severity )
                 {
                     l_elog_bit_pos = 25;
                     l_eng_elog_pos = 2;
-                    l_pxgpe_Hdr->g_sramElogAddress =  (uint32_t)((uint32_t*)( io_err ));
-                    l_pxgpe_Hdr->g_criticalElogSize = io_err->iv_userDetails.iv_entrySize;
                 }
                 else if ( ERRL_SEV_INFORMATIONAL == io_err->iv_severity )
                 {
                     l_elog_bit_pos = 26;
                     l_eng_elog_pos = 3;
-                    l_pxgpe_Hdr->g_infoElogSize = io_err->iv_userDetails.iv_entrySize;
                 }
 
                 l_elog_bcast_reg = OCB_OCCFLG3;
-                break;
             }
+            break;
 
         case ERRL_SOURCE_PGPE:
+            //FIXME EWM 61242
             {
-                PgpeHeader_t* l_ppgpe_Hdr =
-                    ( PgpeHeader_t*)( PGPE_SRAM_BASE_ADDR + PPE_INT_VECTOR_SIZE );
 
                 if( ERRL_SEV_UNRECOVERABLE == io_err->iv_severity )
                 {
                     l_eng_elog_pos = 0;
                     l_elog_bit_pos = 25;
-                    l_ppgpe_Hdr->g_sramElogAddr = (uint32_t)((uint32_t*)( io_err ));
-                    l_ppgpe_Hdr->g_criticalElogSize = io_err->iv_userDetails.iv_entrySize;
                 }
                 else if ( ERRL_SEV_INFORMATIONAL == io_err->iv_severity )
                 {
                     l_eng_elog_pos = 1;
                     l_elog_bit_pos = 26;
-                    l_ppgpe_Hdr->g_infoElogSize = io_err->iv_userDetails.iv_entrySize;
                 }
 
                 l_elog_bcast_reg = OCB_OCCFLG2;
-
-                break;
             }
+            break;
 
         case ERRL_SOURCE_NGPE:
             G_errlConfigData.traceSz = ERRL_TRACE_DATA_SZ_XGPE;
@@ -270,12 +300,34 @@ uint32_t report_error_log ( errlHndl_t io_err )
             break;
     }
 
+    switch( G_errlConfigData.source )
+    {
+        case ERRL_SOURCE_QME:
+            break;
+
+        case ERRL_SOURCE_XCE:
+        case ERRL_SOURCE_DCE:
+        case ERRL_SOURCE_PCE:
+        case ERRL_SOURCE_OCE:
+            l_ptcc_shared_data = (HcodeTCCSharedData_t*)TCC_SHARED_SRAM_BASE_ADDR;
+            l_perr_table  = (hcode_error_table_t* )( TCC_SHARED_SRAM_BASE_ADDR + l_ptcc_shared_data->header.errlog_table_offset );
+            l_ptcc_shared_data->errlog_idx.dw0.fields.log_address_valid |=  G_errlConfigData.source;
+            break;
+
+        case ERRL_SOURCE_XGPE:
+        case ERRL_SOURCE_PGPE:
+        case ERRL_SOURCE_NGPE:
+            l_pocc_shared_data = (HcodeOCCSharedData_t*)OCC_SHARED_SRAM_BASE_ADDR;
+            l_perr_table  = (hcode_error_table_t* )( OCC_SHARED_SRAM_BASE_ADDR + l_pocc_shared_data->header.errlog_table_offset );
+            l_pocc_shared_data->errlog_idx.dw0.fields.log_address_valid |=  G_errlConfigData.source;
+            break;
+    }
+
     //Updating Error Log table
     l_perr_table->elog[l_eng_elog_pos].dw0.fields.errlog_id   = io_err->iv_entryId;
     l_perr_table->elog[l_eng_elog_pos].dw0.fields.errlog_src  = G_errlConfigData.source;
     l_perr_table->elog[l_eng_elog_pos].dw0.fields.errlog_len  = io_err->iv_userDetails.iv_entrySize;
     l_perr_table->elog[l_eng_elog_pos].dw0.fields.errlog_addr =  (uint32_t)( (uint32_t*) ( io_err ) );
-    l_pocc_shared_data->errlog_idx.dw0.fields.log_address_valid |=  G_errlConfigData.source;
     out32( l_elog_bcast_reg, ( REG_BIT0_MASK >> l_elog_bit_pos ) );
 
     return l_status;
@@ -392,19 +444,6 @@ uint32_t commit_errl ( errlHndl_t io_err )
     }
 
     return l_status;
-}
-
-//------------------------------------------------------------------------------------------------
-
-/**
- * @brief   deletes an error log which has been created but not committed
- * @param[in]   io_err   points to error log instance
- * @return      SUCCESS if commit succeeds, error code otherwise.
- */
-uint32_t delete_errl ( errlHndl_t io_err )
-{
-    PK_TRACE_INF ("delete_errl");
-    return (report_error_log ( io_err ));
 }
 
 //------------------------------------------------------------------------------------------------
@@ -540,8 +579,16 @@ uint32_t ppe_log_error ( ElogOrginSumm_t i_elog_orig,
         while ( (( ERRL_STATUS_SUCCESS == l_status)   ||
                  (ERRL_STATUS_LOG_FULL == l_status)) && i_pusr_dtls )
         {
-            // 2. Add user details sections passed by user.
+            // 2. Add user details sections passed by user
             //    Try fitting as many user data sections as possible
+
+            if( !( i_elogSectn & i_pusr_dtls->iv_type ) )
+            {
+                //Skip if error log section is marked irrelvant
+                i_pusr_dtls = i_pusr_dtls->iv_pNext;
+                continue;
+            }
+
             l_status = add_usr_dtls_to_errl(
                            l_errl,
                            i_pusr_dtls->iv_pData,
@@ -558,11 +605,13 @@ uint32_t ppe_log_error ( ElogOrginSumm_t i_elog_orig,
             l_status = ERRL_STATUS_SUCCESS;
         }
 
-        if ( ERRL_STATUS_SUCCESS == l_status )
+        if ( ( ERRL_STATUS_SUCCESS == l_status ) && ( i_elogSectn & TRACE_SECTN ) )
         {
             // 3. Add traces to the error log, as default
             //    If no space, traces are dropped from the log favouring
             //    user details added before
+
+            // skip if section is marked irrelevant
             add_trace_to_errl( l_errl );
         }
 
@@ -588,15 +637,6 @@ uint32_t ppe_log_error ( ElogOrginSumm_t i_elog_orig,
         PK_TRACE( "Critical eLOG After Commit" );
     }
 
-    if ( l_errl )
-    {
-        // 6. If something failed in steps 2-5, delete the error to allow for
-        //    for subsequent retries or new logs from the caller
-        PK_TRACE_ERR ( "ppeLogError: Failed l_status: %d. delete l_status: %d",
-                       l_status, ( delete_errl ( l_errl )) );
-    }
-
-    // 7. Return first failed status to caller
     return l_status;
 }
 
@@ -679,6 +719,13 @@ void get_ppe_regs ( const uint8_t  i_errl_source,
     {
         { 0x64010, 0x64013, 0x64014, 0x64015, 0x6401F }, // PGPE
         { 0x66010, 0x66013, 0x66014, 0x66015, 0x6601F }, // XGPE
+        {
+            PPE_SCOM_ADDR_UC_Q( 0x200e0200, i_ppe_instance ),
+            PPE_SCOM_ADDR_UC_Q( 0x200e020c, i_ppe_instance ),
+            PPE_SCOM_ADDR_UC_Q( 0x200e0210, i_ppe_instance ),
+            PPE_SCOM_ADDR_UC_Q( 0x200e0214, i_ppe_instance ),
+            PPE_SCOM_ADDR_UC_Q( 0x200e023c, i_ppe_instance )
+        } //QME
     };
 
     switch ( i_errl_source )
