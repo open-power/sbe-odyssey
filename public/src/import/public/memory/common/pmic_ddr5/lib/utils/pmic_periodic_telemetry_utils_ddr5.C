@@ -40,6 +40,7 @@
 #include <lib/utils/pmic_consts.H>
 #include <pmic_regs.H>
 #include <pmic_regs_fld.H>
+#include <generic/memory/lib/utils/shared/mss_generic_consts.H>
 
 ///
 /// @brief Read and store serial number and CCIN number
