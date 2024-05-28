@@ -329,7 +329,7 @@ typedef struct
 typedef struct
 {
     XgvHdr_t xgv_header;                            ///< Region header
-    uint16_t vdd_avg_mv;                            ///< VDD voltage averaged over 500u
+    uint16_t vdd_ext_avg_mv;                        ///< VDD voltage averaged over 500u
     uint16_t idd_avg_10ma;                          ///< Idd current averaged over 500us
     uint16_t ics_avg_10mma;                         ///< Ics current averaged over 500us
     uint8_t  reserve;                               ///< Reserved
