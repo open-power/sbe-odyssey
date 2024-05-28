@@ -136,7 +136,7 @@ ReturnCode rcs_sw_switch(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
 
     l_sns2lth.getScom(i_target);
     l_expect_clka = l_sns2lth.get_MUXSEL_CLK_A() == 1;
-    FAPI_INF("Expect CLK A %d", l_expect_clka);
+    FAPI_INF("Expect CLK A = %d", l_expect_clka);
 
     l_root_ctrl5.getScom(i_target);
 
@@ -163,10 +163,6 @@ ReturnCode rcs_sw_switch(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
 
     l_sns1lth.getScom(i_target);
     l_sns2lth.getScom(i_target);
-    FAPI_INF("SWITCHED %d", l_sns1lth.get_SWITCHED());
-    FAPI_ASSERT(l_sns1lth.get_SWITCHED() == 1,
-                fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                "RCS Verify SW Switch: Switched Error after force low.");
 
     if (l_expect_clka)
     {
@@ -273,8 +269,6 @@ ReturnCode rcs_check_errors(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_H
         goto fapi_try_exit;
     }
 
-    // Validate side
-    FAPI_TRY(rcs_verify_clean_state(i_target, i_refclock_select));
 fapi_try_exit:
     return current_err;
 }

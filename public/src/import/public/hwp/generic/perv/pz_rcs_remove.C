@@ -153,6 +153,15 @@ ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
     l_root_ctrl5.putScom(i_target);
 
     FAPI_TRY(rcs_check_errors(i_target, l_refclock_select));
+    // Validate side
+    l_sns1lth.getScom(i_target);
+    FAPI_INF("SWITCHED %d", l_sns1lth.get_SWITCHED());
+
+    if(l_sns1lth.get_SWITCHED() == 1)
+    {
+        FAPI_INF("Verifing switch");
+        FAPI_TRY(rcs_verify_clean_state(i_target, l_refclock_select));
+    }
 
 fapi_try_exit:
     FAPI_INF("End RCS Remove");
