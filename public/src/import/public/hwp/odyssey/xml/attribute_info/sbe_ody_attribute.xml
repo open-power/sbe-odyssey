@@ -1690,6 +1690,9 @@
     <value>0</value>
     <value>0</value>
   </entry>
+  <entry name="ATTR_ODY_DQS_TRACKING_FAILED">
+    <value>0</value>
+  </entry>
   <entry name="ATTR_ODY_THERMAL_SENSOR_DIFF_PREVIOUS_VALUE">
     <value>0</value>
   </entry>
