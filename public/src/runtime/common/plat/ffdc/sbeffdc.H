@@ -31,7 +31,6 @@
 #include "target.H"
 #include "error_info_defs.H"
 #include "fapi2.H"
-#include "sbe_build_info.H"
 #include "sbeglobals.H"
 
 /**
@@ -189,5 +188,14 @@ void ffdcFreeUnwantedError(uint8_t i_threadId);
  * @brief FFDC init to creating persistent space for last Error
  */
 void plat_FfdcInit(void);
+
+/**
+ * @brief API used to get commitId
+ *
+ * @param[out] o_commitID : we will get commitId as a output
+ *
+ * @return  void
+ */
+void getCommitIdWrap(uint32_t &o_commitID);
 
 #endif //__SBE_FFDC_H

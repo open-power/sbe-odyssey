@@ -33,7 +33,6 @@
 #include "pk_kernel.h"
 #include "sbeglobals.H"
 
-
 extern fapi2::pozFfdcData_t g_FfdcData;
 
 namespace fapi2
@@ -490,7 +489,11 @@ static uint32_t ffdcPlatCreateAndSendWithFullTrace (
 
     do
     {
+        uint32_t l_commitId = 0;
         pozPlatFfdcPackageFormat_t platFfdc;
+
+        // Calling function to get commit id
+        getCommitIdWrap(l_commitId);
 
         /* Calculating the PLAT FFDC len */
         uint32_t ffdcLen = sizeof(pozPlatFfdcPackageFormat_t) +
@@ -510,7 +513,7 @@ static uint32_t ffdcPlatCreateAndSendWithFullTrace (
         platFfdc.header.setRc        ( fapi2::FAPI2_RC_PLAT_ERR_SEE_DATA );
 
         platFfdc.platHeader.setRc         ( SBE_GLOBAL->failedPrimStatus, SBE_GLOBAL->failedSecStatus );
-        platFfdc.platHeader.setfwCommitId ( SBE_COMMIT_ID );
+        platFfdc.platHeader.setfwCommitId ( l_commitId );
         platFfdc.platHeader.setDdlevel    ( 0, 0 );
         platFfdc.platHeader.setThreadId   ( pk_current()->priority );
 
@@ -1036,7 +1039,13 @@ static void ffdcInitPlatData( const pozPlatFfdcPackageFormat_t * i_platAddr,
                               uint16_t i_secRc,
                               fapi2::errlSeverity_t i_sev )
 {
+    uint32_t l_commitId = 0;
+
     pozPlatFfdcPackageFormat_t * platAddr = (pozPlatFfdcPackageFormat_t *) i_platAddr;
+
+    // Calling function to get commit id
+    getCommitIdWrap(l_commitId);
+
     if (platAddr)
     {
         // Assigning the PLAT ffdc response header
@@ -1051,7 +1060,7 @@ static void ffdcInitPlatData( const pozPlatFfdcPackageFormat_t * i_platAddr,
         platAddr->header.setRc        ( fapi2::FAPI2_RC_PLAT_ERR_SEE_DATA );
 
         platAddr->platHeader.setRc         ( i_primRc, i_secRc );
-        platAddr->platHeader.setfwCommitId ( SBE_COMMIT_ID );
+        platAddr->platHeader.setfwCommitId ( l_commitId );
         platAddr->platHeader.setDdlevel    ( 0, 0 );
         platAddr->platHeader.setThreadId   ( pk_current()->priority );
         platAddr->dumpFields = 0;

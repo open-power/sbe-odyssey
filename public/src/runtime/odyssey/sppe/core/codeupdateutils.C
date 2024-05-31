@@ -29,6 +29,7 @@
 #include "codeupdateutils.H"
 #include "pakwrapper.H"
 #include "filenames.H"
+#include "sbeCmdGetCapabilities.H"
 
 #define NOR_BASE_ADDRESS_MASK           0xFF000000
 #define NOR_FLASH_SECTOR_BOUNDARY_ALIGN 0xFFFFF000
@@ -834,4 +835,11 @@ uint32_t setSpiEccDiscardMode()
 uint32_t setSpiEccEnabledMode()
 {
     return readModifyWriteSpiClkRegisterEccMode(0b00);
+}
+
+void getCommitIdWrap(uint32_t &o_commitId)
+{
+    getCommitId((uint8_t*)(SRAM_ORIGIN +
+                           VECTOR_SIZE),
+                           o_commitId);
 }

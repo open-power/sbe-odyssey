@@ -6,6 +6,7 @@
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -30,7 +31,6 @@
 #include "metadata.H"
 #include "pakwrapper.H"
 #include "imagemap.H"
-#include "sbe_build_info.H"
 #include <algorithm>
 
 

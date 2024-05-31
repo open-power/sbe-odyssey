@@ -30,7 +30,6 @@
 #include "metadata.H"
 #include "pakwrapper.H"
 #include "imagemap.H"
-#include "sbe_build_info.H"
 #include <algorithm>
 #include "sbestreampaktohwp.H"
 #include "filenames.H"
