@@ -111,7 +111,7 @@ inline fapi2::ReturnCode reg_write_helper(const fapi2::Target<T>& i_target,
 /// @param[in] i_data_buffer data buffer
 /// @param[in] i_length size of the data
 /// @return FAPI2_RC_SUCCESS iff okay
-/// @note This file differens in the P repo. The #ifndef required for ATTR_MEM_EFF_DRAM_GEN in P is not required
+/// @note This file differs in the P repo. The #ifndef required for ATTR_MEM_EFF_DRAM_GEN in P is not required
 ///     in the ekb-src repo as ekb-src has this attribute
 ///
 template<>
@@ -256,44 +256,38 @@ inline fapi2::ReturnCode reg_write_helper(const fapi2::Target<fapi2::TARGET_TYPE
 {
     static const uint8_t RETRIES = 11;
     fapi2::ReturnCode l_rc = fapi2::FAPI2_RC_SUCCESS;
-    std::vector<uint8_t> l_command;
+    auto l_addr = i_addr;
 
-    l_command.push_back(i_addr);
+    for(auto l_count = 0; l_count < i_length; l_count++, l_addr++)
+    {
+        l_rc = fapi2::FAPI2_RC_SUCCESS;
+        std::vector<uint8_t> l_command;
+        l_command.push_back(l_addr);
+        l_command.push_back(i_data_buffer[l_count]);
 
-    if(i_length == mss::pmic::i2c::sizes::DATA_LENGTH)
-    {
-        l_command.push_back(i_data_buffer[0]);
-    }
-    else
-    {
-        for(uint32_t l_count = 0; l_count < i_length; l_count++)
+        // Retry for 10 times before returning error
+        for(auto l_retries = 0; l_retries < RETRIES; l_retries++)
         {
-            l_command.push_back(i_data_buffer[l_count]);
+            l_rc = fapi2::putI2c(i_target, l_command);
+
+            if (l_rc != fapi2::FAPI2_RC_SUCCESS)
+            {
+                // Delay for 1 ms
+                fapi2::delay(1 * mss::common_timings::DELAY_1MS, mss::common_timings::DELAY_1MS);
+            }
+            else
+            {
+                break;
+            }
         }
-    }
 
-    // Retry for 10 times before returning error
-    for(auto l_retries = 0; l_retries < RETRIES; l_retries++)
-    {
-        l_rc = fapi2::putI2c(i_target, l_command);
-
-        if (l_rc != fapi2::FAPI2_RC_SUCCESS)
+        // In case we have not found success after 10 retires, return the error
+        if(l_rc != fapi2::FAPI2_RC_SUCCESS)
         {
-            // Delay for 1 ms
-            fapi2::delay(1 * mss::common_timings::DELAY_1MS, mss::common_timings::DELAY_1MS);
+            FAPI_ERR("putI2C returned error for WRITE operation to 0x%02X on " TARGTIDFORMAT,
+                     l_addr, MSSTARGID(i_target));
+            return l_rc;
         }
-        else
-        {
-            break;
-        }
-    }
-
-    // In case we have not found success after 10 retires, return the error
-    if(l_rc != fapi2::FAPI2_RC_SUCCESS)
-    {
-        FAPI_ERR("putI2C returned error for WRITE operation to 0x%02X on " TARGTIDFORMAT,
-                 i_addr, MSSTARGID(i_target));
-        return l_rc;
     }
 
     return fapi2::FAPI2_RC_SUCCESS;
@@ -513,34 +507,52 @@ inline fapi2::ReturnCode reg_read_helper(const fapi2::Target<fapi2::TARGET_TYPE_
 {
     static const uint8_t RETRIES = 11;
     fapi2::ReturnCode l_rc = fapi2::FAPI2_RC_SUCCESS;
-    std::vector<uint8_t> l_command;
+    auto l_addr = i_addr;
 
-    l_command.push_back(i_addr);
-
-    // Retry for 10 times for putI2C before returning error
-    for(auto l_retries = 0; l_retries < RETRIES; l_retries++)
+    for(auto l_count = 0; l_count < i_length; l_count++, l_addr++)
     {
-        l_rc = fapi2::getI2c(i_target, i_length, l_command, io_data);
+        std::vector<uint8_t> l_data;
+        std::vector<uint8_t> l_command;
+        l_command.push_back(l_addr);
 
-        if (l_rc != fapi2::FAPI2_RC_SUCCESS)
+        // Retry for 10 times for putI2C before returning error
+        for(auto l_retries = 0; l_retries < RETRIES; l_retries++)
         {
-            // Delay for 1 ms
-            fapi2::delay(1 * mss::common_timings::DELAY_1MS, mss::common_timings::DELAY_1MS);
+            l_rc = fapi2::putI2c(i_target, l_command);
+
+            if (l_rc != fapi2::FAPI2_RC_SUCCESS)
+            {
+                // Delay for 1 ms
+                fapi2::delay(1 * mss::common_timings::DELAY_1MS, mss::common_timings::DELAY_1MS);
+            }
+            else
+            {
+                l_rc = fapi2::FAPI2_RC_SUCCESS;
+                break;
+            }
+        }
+
+        if (l_rc == fapi2::FAPI2_RC_SUCCESS)
+        {
+            l_command.clear();
+
+            // Read 1 byte at a time
+            FAPI_TRY(fapi2::getI2c(i_target, mss::pmic::i2c::sizes::DATA_LENGTH, l_command, l_data),
+                     "I2C read failed on " TARGTIDFORMAT " for address 0x%02x", MSSTARGID(i_target), l_addr);
+            io_data.push_back(l_data[0]);
         }
         else
         {
-            break;
+            FAPI_ERR("putI2C returned error for WRITE operation to 0x%02X on " TARGTIDFORMAT,
+                     l_addr, MSSTARGID(i_target));
+            return l_rc;
         }
     }
 
-    // In case we have not found success after 10 retires, return the error
-    if(l_rc != fapi2::FAPI2_RC_SUCCESS)
-    {
-        FAPI_ERR("I2C read failed on " TARGTIDFORMAT " for address 0x%02x", MSSTARGID(i_target), i_addr);
-        return l_rc;
-    }
-
     return fapi2::FAPI2_RC_SUCCESS;
+
+fapi_try_exit:
+    return fapi2::current_err;
 }
 
 ///
