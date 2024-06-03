@@ -68,16 +68,19 @@ for proj in ["ody", "zme", "pst"]:
         f.close()
         sys.exit(1)
 
-print("#pragma once\n")
-print("//Define SBE Commit ID")
-print("#define SBE_COMMIT_ID " + hex(commitInt))
-print("//Define SBE BUILD_DATE")
-print("#define SBE_BUILD_DATE " + hex(hexDate))
+if (not((os.getenv("SBE_PLATFORM") == "odyssey" or os.getenv("SBE_PLATFORM") == "odysseylab") and
+   (os.getenv("SBE_IMAGE") == "pnor"))):
+    print("#pragma once\n")
+    print("//Define SBE Commit ID")
+    print("#define SBE_COMMIT_ID " + hex(commitInt))
+    print("//Define SBE BUILD_DATE")
+    print("#define SBE_BUILD_DATE " + hex(hexDate))
+    for proj, tag in tags:
+        print('#define SBE_BUILD_TAG_%s "%s"' % (proj.upper(), tag))
+
 for proj, tag in tags:
-    print('#define SBE_BUILD_TAG_%s "%s"' % (proj.upper(), tag))
     if proj == "ody":
         int_tag = bytes(tag.encode())
         bin_tag = struct.pack("!20s", int_tag)
         f.write(bin_tag)
-
 f.close()
