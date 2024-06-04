@@ -52,6 +52,7 @@
 #include "poz_perv_mod_misc.H"
 #include "stackutils.H"
 #include "imgcustomize.H"
+#include "irqutils.H"
 
 const uint64_t PERIODIC_TIMER_INTERVAL_SECONDS = 24*60*60; // 24 hours
 extern uint32_t g_metadata_ptr SECTION(".g_metadata_ptr");
@@ -260,6 +261,15 @@ void sbeSyncCommandProcessor_routine(void *i_pArg)
     else
     {
         setSBEBootState(SbeRegAccess::theSbeRegAccess().getBootMode());
+    }
+
+    // Setup SBE PPE IRQs
+    SBE_INFO("Enabling INTRs");
+    uint32_t rc = sbeIrqSetup( );
+    if (rc)
+    {
+        SBE_INFO("Failed in sbeIrqSetup. Halting ppe...");
+        pk_halt();
     }
 
     chipOpParam_t configStr = { SBE_FIFO, 0x00, (uint8_t*)i_pArg };

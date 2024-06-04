@@ -183,13 +183,6 @@ int  main(int argc, char **argv)
             break;
         }
 
-        // Setup SBE PPE IRQs
-        rc = sbeIrqSetup( );
-        if (rc)
-        {
-            break;
-        }
-
         // Initialize heap space after bootloader has loaded paks to pibmem
         Heap::get_instance().initialize();
 
