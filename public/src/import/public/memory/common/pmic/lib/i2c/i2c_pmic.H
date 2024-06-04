@@ -45,6 +45,7 @@
     #define TARGTIDFORMAT "0x%08X"
     #define MSSTARGID(T) T.get()
     #include "index.H"
+    #include <generic/memory/lib/utils/find.H>
 #else
     #include <generic/memory/lib/utils/pos.H>
     #include <generic/memory/lib/utils/c_str.H>
