@@ -573,13 +573,18 @@ ReturnCode mod_setup_clockstop_on_xstop(
 {
     XSTOP1_t XSTOP1;
     CLKSTOP_ON_XSTOP_MASK1_t EPS_CLKSTOP_ON_XSTOP_MASK1;
+    XSTOP_INTERRUPT_REG_t XSTOP_INTERRUPT_REG;
+
     fapi2::buffer<uint8_t>  l_clkstop_on_xstop;
 
     FAPI_INF("Entering mod_setup_clockstop_on_xstop...");
 
     Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST > l_chiplets_mc;
+    Target < TARGET_TYPE_PERV | TARGET_TYPE_MULTICAST, MULTICAST_BITX > l_chiplets_bitx;
+
     std::vector<Target<TARGET_TYPE_PERV>> l_chiplets_uc;
     FAPI_TRY(get_hotplug_targets(i_target, l_chiplets_mc, &l_chiplets_uc));
+    l_chiplets_bitx = l_chiplets_mc;
 
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CLOCKSTOP_ON_XSTOP, i_target, l_clkstop_on_xstop));
 
@@ -592,6 +597,9 @@ ReturnCode mod_setup_clockstop_on_xstop(
 
         EPS_CLKSTOP_ON_XSTOP_MASK1.flush<1>();
         EPS_CLKSTOP_ON_XSTOP_MASK1.insert<0, 8>(l_clkstop_on_xstop);
+
+        FAPI_DBG("Enable clockstop on checkstop");
+        FAPI_TRY(EPS_CLKSTOP_ON_XSTOP_MASK1.putScom(l_chiplets_mc));
 
         if (EPS_CLKSTOP_ON_XSTOP_MASK1.get_SYS_XSTOP_STAGED_ERR())
         {
@@ -609,8 +617,10 @@ ReturnCode mod_setup_clockstop_on_xstop(
             }
         }
 
-        FAPI_DBG("Enable clockstop on checkstop");
-        FAPI_TRY(EPS_CLKSTOP_ON_XSTOP_MASK1.putScom(l_chiplets_mc));
+        FAPI_TRY(XSTOP_INTERRUPT_REG.getScom(l_chiplets_bitx));
+        FAPI_ASSERT(!XSTOP_INTERRUPT_REG, fapi2::POZ_IMMEDIATE_CLOCKSTOP_ON_XSTOP(),
+                    "Clockstop on xstop immediately after configuring it in chiplets %08X%08X", (uint64_t(XSTOP_INTERRUPT_REG) >> 32),
+                    static_cast<uint32_t>(uint64_t(XSTOP_INTERRUPT_REG) & 0xFFFFFFFF));
     }
 
 fapi_try_exit:

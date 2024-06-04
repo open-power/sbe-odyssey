@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -54,6 +54,7 @@ SCOMT_PERV_USE_CPLT_CTRL0;
 SCOMT_PERV_USE_CPLT_CTRL2;
 SCOMT_PERV_USE_XSTOP1;
 SCOMT_PERV_USE_EPS_CLKSTOP_ON_XSTOP_MASK1;
+SCOMT_PERV_USE_XSTOP_INTERRUPT_REG;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_GPWRP;
 
 typedef FSXCOMP_FSXLOG_GPWRP_t GPWRP_t;
