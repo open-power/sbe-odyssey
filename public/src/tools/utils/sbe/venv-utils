@@ -89,7 +89,7 @@ venvActivate()
 installRequiredPackages()
 {
     echo "Installing Required packages..."
-    CMD="pip install"
+    CMD="python3 -m pip install --no-cache-dir"
     CMD="$CMD -r $SBEROOT_PUB/src/tools/install/buildtoolrequirements.txt      \
               -r $SBEROOT_PUB/src/tools/install/debugtoolrequirements.txt      \
               -r $SBEROOT_PUB/src/tools/install/regressiontoolrequirements.txt \
@@ -106,7 +106,7 @@ installRequiredPackages()
 # Function to get the python site package path
 getPythonUserSitePackage()
 {
-    local SITE_PACKAGE=$(python -c 'import site; print(site.getsitepackages()[0])') ||
+    local SITE_PACKAGE=$(python3 -c 'import site; print(site.getsitepackages()[0])') ||
     {
         if (($? != 0)); then
             echo "Error: venv-utils | get PYTHON_USER_PACKAGE_PATH failed. Failure: $?"
