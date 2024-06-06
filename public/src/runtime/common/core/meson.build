@@ -52,3 +52,11 @@ abs_runtime_cmn_core_c_path = []
 foreach infile : infile_c
   abs_runtime_cmn_core_c_path += runtime_cmn_core_dir_path + infile
 endforeach
+
+# Tap specifc common files.
+abs_runtime_cmn_core_infra_c_path = files('initthreads.C',
+                                            'sbeglobals.C',
+                                            'sbeSpMsg.C',
+                                            'sberegaccess.C',
+                                            'irqutils.C',
+                                            'sbeirqhandler.C')
