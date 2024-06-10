@@ -93,6 +93,7 @@ pst_sppe_cmn_abs_inc_paths = []
 pst_tsbe_cmn_abs_inc_paths = []
 pst_hsbe_cmn_abs_inc_paths = []
 pst_hwp_abs_inc_paths = []
+pst_tsbe_abs_inc_paths = []
 
 foreach inc_path : meson.get_external_property('cmn_inc_paths')
 
@@ -237,6 +238,13 @@ if platform == 'pst' or platform == 'all'
 
     abs_inc_path = '-I' + meson.global_source_root() + inc_path
     pst_hsbe_cmn_abs_inc_paths += abs_inc_path
+
+  endforeach
+
+  foreach inc_path : meson.get_external_property('pst_tsbe_inc_paths')
+
+    abs_inc_path = '-I' + meson.global_source_root() + inc_path
+    pst_tsbe_abs_inc_paths += abs_inc_path
 
   endforeach
 

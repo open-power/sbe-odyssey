@@ -60,4 +60,6 @@ abs_runtime_cmn_core_infra_c_path = files('initthreads.C',
                                             'sberegaccess.C',
                                             'irqutils.C',
                                             'sbestatesutils.C',
-                                            'sbeirqhandler.C')
+                                            'sbeirqhandler.C',
+                                            'chipophandlerutils.C'
+                                          )

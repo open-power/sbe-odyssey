@@ -42,8 +42,8 @@ import templateUtil
 
 #####TEMPLATES#####
 chipop_default_cmd_class_init ="""
-#ifndef __CMD_DEFAULT_INIT_H__
-#define __CMD_DEFAULT_INIT_H__
+#pragma once
+
 #include "chipop_handler.H"
 
 #define HASH_KEY(key)\\
@@ -64,13 +64,13 @@ CMD_CLASS_LIST \\
 CMD_CLASS_COMMON \\
 
 
-#endif
 """
 
 chipop_table_template = """
 #include "fences.H"
 #include "cmd_class_init.H"
 #include "chipop_handler.H"
+#include "chipophandlerutils.H"
 #include <stdint.h>
 #include <stddef.h>$$$@@@ for hdrFile in headers @@@$$$
 #include "$@ hdrFile @$"$$$@@@endfor@@@$$$
