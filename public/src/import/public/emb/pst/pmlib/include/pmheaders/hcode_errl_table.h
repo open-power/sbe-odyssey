@@ -30,8 +30,7 @@
 /// @note  Refer section 3.2 of the 'OCC Firmware Interface Specifictaion for
 ///        POWER10' for details on the OCC assisted error logging mechanism.
 
-#ifndef _HCODE_ERRL_TABLE_H
-#define _HCODE_ERRL_TABLE_H
+#pragma once
 
 #include <stdint.h>
 
@@ -81,7 +80,7 @@ typedef struct
 } hcode_elog_entry_t;
 
 /// Full Error Log Table
-typedef struct hcode_error_table
+typedef struct
 {
     union
     {
@@ -105,5 +104,3 @@ typedef struct hcode_error_table
     /// Array of error log entries
     hcode_elog_entry_t  elog[MAX_ELOG_ENTRIES];
 } hcode_error_table_t;
-
-#endif // _HCODE_ERRL_TABLE_H

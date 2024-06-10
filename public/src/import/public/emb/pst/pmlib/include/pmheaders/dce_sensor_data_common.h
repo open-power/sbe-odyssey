@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __DCE_SENSOR_DATA_COMMON_H__
-#define __DCE_SENSOR_DATA_COMMON_H__
+
+#pragma once
 
 /// @file dce_sensor_data_common.h
 /// @brief Common DCE Sensor structures
@@ -296,5 +296,3 @@ enum DCE_DATA_USAGE_STATUS
 };
 
 /// @} end addtogroup
-
-#endif /* __DCE_SENSOR_DATA_COMMON_H__ */

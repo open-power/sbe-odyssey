@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __PMTIMING_COMMON_H__
-#define __PMTIMING_COMMON_H__
+
+#pragma once
 
 /// @file pmtiming_common.h
 /// @brief Common structs and functions for various timer functions
@@ -46,7 +46,6 @@
 #define TSEL_FIT_SEL_66US   0x0c000000  ///< Corresponds to a ~66us @ 2.0G or 55us @ 2.4G
 #define TSEL_FIT_SEL_262US  0x0a000000  ///< Corresponds to a ~262us @ 2.0G or 218us @ 2.4G
 #define TSEL_FIT_SEL_524US  0x09000000  ///< Corresponds to a ~524us @ 2.0G or 437us @ 2.4G
-
 
 /// TBR maximum value (eg rollover)
 #define TBR_VAL_MAX       (uint32_t)0xffffffff
@@ -187,9 +186,8 @@ static inline uint32_t calc_tbr_diff( uint32_t i_begin, uint32_t i_end)
 /// |:-----:|:-------:|:----:|:------:|
 /// |E > B  |   5(4)  | 6(6) |  7(6)  |
 /// |E < B  |   7(5)  | 7(6) |  8(6)  |
-
 ///
-/// |Conclusion:
+/// Conclusion:
 /// In summary SHIFT is slightly faster than the other algorithms while also
 /// being more "fair", though it's unpredictable in whether it returns a result
 /// that has been rounded up or down. This "fairness" aspect results in that the
@@ -271,5 +269,3 @@ static inline void fit_init(void* i_fit_handler, uint32_t i_instance_id, uint32_
 }
 
 /// @} end addtogroup
-
-#endif  /* __PMTIMING_COMMON_H__ */

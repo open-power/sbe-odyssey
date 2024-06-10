@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __PMHW_COMMON_H__
-#define __PMHW_COMMON_H__
+
+#pragma once
 
 /// @file pmhw_common.h
 /// @brief Common PPE hardware functions.
@@ -635,4 +635,3 @@
     #define PMHW_PANIC_TEST7           0x0062fff7
 #endif
 /// @endcond
-#endif  /* __OCCHW_COMMON_H__ */

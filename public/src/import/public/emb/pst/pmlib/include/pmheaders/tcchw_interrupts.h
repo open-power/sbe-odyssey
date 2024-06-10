@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __TCCHW_INTERRUPTS_H__
-#define __TCCHW_INTERRUPTS_H__
+
+#pragma once
 
 /// @file tcchw_interrupts.h
 /// @brief Interrupt assignments and macros for the TCC
@@ -219,4 +219,3 @@
 
 #endif  /* __ASSEMBLER__ */
 /// @endcond
-#endif  /* __TCCHW_INTERRUPTS_H__ */

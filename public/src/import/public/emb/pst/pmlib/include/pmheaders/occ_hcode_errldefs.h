@@ -29,8 +29,7 @@
 /// @note  Refer section 3.3 of the 'OCC Firmware Interface Specification for
 ///        POWER10' for definition of the error log format in SRAM
 
-#ifndef _OCC_HCODE_ERRLDEFS_H
-#define _OCC_HCODE_ERRLDEFS_H
+#pragma once
 
 #include <stdint.h>
 
@@ -276,5 +275,3 @@ typedef struct ErrlEntry ErrlEntry_t;
 
 /// Error Log Handle
 typedef ErrlEntry_t* errlHndl_t;
-
-#endif ///_OCC_HCODE_ERRLDEFS_H

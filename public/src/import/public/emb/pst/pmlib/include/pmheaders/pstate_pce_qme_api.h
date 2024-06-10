@@ -26,8 +26,7 @@
 /// @file  pstate_pce_qme_api.h
 /// @brief Elements between the QME and PCE
 
-#ifndef __PSTATE_PGPE_QME_API_H__
-#define __PSTATE_PGPE_QME_API_H__
+#pragma once
 
 ///
 /// @brief PCE to QME Doorbell 2 message IDs
@@ -65,5 +64,3 @@ typedef union
 #endif
     } fields;       ///< Sub fields
 }   qme_pce_pcb0_t;
-
-#endif //__PSTATE_PGPE_QME_API_H__

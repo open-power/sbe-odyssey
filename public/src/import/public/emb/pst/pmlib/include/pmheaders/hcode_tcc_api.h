@@ -31,9 +31,7 @@
 // *HWP Level           : 3
 // *HWP Consumed by     : DCE:OCE:PCE:XCE
 
-
-#ifndef __HCODE_TCC_API_H__
-#define __HCODE_TCC_API_H__
+#pragma once
 
 #include <pst_ppb_global.H>
 #include <pst_hcode_image_defines.H>
@@ -411,5 +409,3 @@ typedef struct
 #ifdef __cplusplus
 } // end extern C
 #endif
-
-#endif    /* __HCODE_TCC_API_H__ */

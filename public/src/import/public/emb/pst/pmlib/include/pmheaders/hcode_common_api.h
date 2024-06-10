@@ -31,17 +31,14 @@
 // *HWP Level           : 3
 // *HWP Consumed by     : DCE:OCE:PCE:XCE:PGPE:XGPE:OCC
 
-
-#ifndef __HCODE_COMMON_API_H__
-#define __HCODE_COMMON_API_H__
-
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /// @addtogroup pm_hcode_lib
-/// @}
+/// @{
 
 ///
 /// Hcode IPC Return Codes
@@ -95,5 +92,3 @@ typedef struct
 #endif
 
 /// @} end addtogroup
-
-#endif    /* __HCODE_COMMON_API_H__ */

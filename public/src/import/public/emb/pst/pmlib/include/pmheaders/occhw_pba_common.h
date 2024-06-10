@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __OCCHW_PBA_COMMON_H__
-#define __OCCHW_PBA_COMMON_H__
+
+#pragma once
 
 #include "pba_register_addresses.h"
 #include "pba_firmware_registers.h"
@@ -130,5 +130,3 @@
 
 /// PBA read prefetch don't care assignment - see gpe_pba_parms_create()
 #define PBA_READ_PREFETCH_DC -1
-
-#endif

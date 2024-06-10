@@ -22,6 +22,9 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
+
+#pragma once
+
 #include <stdint.h>
 
 /// @cond

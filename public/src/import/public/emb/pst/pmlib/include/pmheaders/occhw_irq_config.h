@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __OCCHW_IRQ_CONFIG_H__
-#define __OCCHW_IRQ_CONFIG_H__
+
+#pragma once
 
 /// @file occhw_irq_config.h
 /// @brief Contains data and macros pertaining to external interrupt routing
@@ -334,5 +334,3 @@
 
 // *INDENT-ON*
 #endif /*__ASSEMBLER__*/
-
-#endif /*__OCCHW_IRQ_CONFIG_H__*/

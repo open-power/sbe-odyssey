@@ -22,9 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __QMEHW_INTERRUPTS_H__
-#define __QMEHW_INTERRUPTS_H__
 
+#pragma once
 
 ////////////////////////////////////////////////////////////////////////////
 // IRQ Definition
@@ -189,5 +188,3 @@
    STD_IRQ_MASK64(QMEHW_IRQ_SPARE_12) |  \
    STD_IRQ_MASK64(QMEHW_IRQ_SPARE_13))
 */
-
-#endif  /* __QMEHW_INTERRUPTS_H__ */

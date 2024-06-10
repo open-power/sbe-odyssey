@@ -22,9 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __GPEHW_COMMON_H__
-#define __GPEHW_COMMON_H__
 
+#pragma once
 
 #if !defined(GPE_BUFFER)
 #if defined(__PPC405__)
@@ -36,5 +35,3 @@
     declaration __attribute__ ((__aligned__(8))) __attribute__ ((section (".sdata")))
 #endif
 #endif
-
-#endif  /* __GPEHW_COMMON_H__ */

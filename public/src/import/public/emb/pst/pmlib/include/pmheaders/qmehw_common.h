@@ -22,9 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __QMEHW_COMMON_H__
-#define __QMEHW_COMMON_H__
 
+#pragma once
 
 enum QME_CORE_MASKS
 {
@@ -81,5 +80,3 @@ enum QME_MULTICAST_TYPES
 #define QME_LCL_CORE_ADDR_OR(addr, core)         QME_LCL_CORE_ADDR_MC(QME_MC_RD_OR,  core, addr)
 #define QME_LCL_CORE_ADDR_AND(addr, core)        QME_LCL_CORE_ADDR_MC(QME_MC_RD_AND, core, addr)
 #define QME_LCL_CORE_ADDR_EQ(addr, core)         QME_LCL_CORE_ADDR_MC(QME_MC_RD_EQU, core, addr)
-
-#endif  /* __QMEHW_COMMON_H__ */

@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __OCCHW_INTERRUPTS_H__
-#define __OCCHW_INTERRUPTS_H__
+
+#pragma once
 
 /// @file occhw_interrupts.h
 /// @brief Interrupt assignments and macros for the OCC
@@ -231,4 +231,3 @@
 
 #endif  /* __ASSEMBLER__ */
 /// @endcond
-#endif  /* __OCCHW_INTERRUPTS_H__ */

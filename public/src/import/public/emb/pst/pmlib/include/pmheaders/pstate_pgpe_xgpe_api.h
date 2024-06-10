@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __PSTATES_PGPE_XGPE_API_H__
-#define __PSTATES_PGPE_XGPE_API_H__
+
+#pragma once
 
 /// @file pstate_pgpe_xgpe_api.h
 /// @brief Common structs and functions shared between Pgpe and Xgpe.
@@ -70,5 +70,3 @@ typedef union
         uint64_t  return_code       : 8;    ///< Return code
     } fields;       ///< Sub fields
 } ipcmsg_req_beacon_stop_t;
-
-#endif

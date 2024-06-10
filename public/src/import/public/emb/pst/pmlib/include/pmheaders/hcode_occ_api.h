@@ -31,9 +31,7 @@
 // *HWP Level           : 3
 // *HWP Consumed by     : PGPE:OCC
 
-
-#ifndef __HCODE_OCC_API_H__
-#define __HCODE_OCC_API_H__
+#pragma once
 
 #include <pst_ppb_global.H>
 #include <hcode_common_api.h>
@@ -437,5 +435,3 @@ typedef struct
 #ifdef __cplusplus
 } // end extern C
 #endif
-
-#endif    /* __HCODE_OCC_API_H__ */

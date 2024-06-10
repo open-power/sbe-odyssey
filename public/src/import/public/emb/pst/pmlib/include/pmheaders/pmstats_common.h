@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __PMSTATS_COMMON_H__
-#define __PMSTATS_COMMON_H__
+
+#pragma once
 
 /// @file pmstats_common.h
 /// @brief Common structs and functions for capturing time duration statistics
@@ -283,5 +283,3 @@ static inline void meas_stats_update( uint32_t i_tbr_begin, uint32_t i_tbr_end, 
 }
 
 /// @} end addtogroup
-
-#endif  /* __PMSTATS_COMMON_H__ */

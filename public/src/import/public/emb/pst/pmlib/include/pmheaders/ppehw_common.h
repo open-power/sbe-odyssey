@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __PPEHW_COMMON_H__
-#define __PPEHW_COMMON_H__
+
+#pragma once
 
 #include "ppe42_math.h"
 
@@ -207,6 +207,3 @@ enum PPE_MULTICAST_TYPES
 
 #define PPE_PUTSCOM_MC_Q(addr, data)                              \
     putscom_norc(PPE_SCOM_ADDR_MC_Q_WR(PPE_QUEUED_SCOM(addr)), data)
-
-
-#endif  /* __PPEHW_COMMON_H__ */

@@ -22,8 +22,8 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __OCE_IDDQ_DATA_COMMON_H__
-#define __OCE_IDDQ_DATA_COMMON_H__
+
+#pragma once
 
 /// @file oce_iddq_data_common.h
 /// @brief OCE generated IDDQ structures
@@ -60,6 +60,3 @@ enum OCE_STATUS_FLAGS
     OCE_STATUS_IDDQ_RESULT_STALE   = 0b0000000000000100, ///<Previous time slot's Iddq result used
     OCE_STATUS_IDDQ_GOING_NEGATIVE = 0b0000000000001000, ///<Iddq calc going negative
 };
-
-
-#endif /* __OCE_IDDQ_DATA_COMMON_H__ */
