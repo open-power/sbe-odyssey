@@ -1788,7 +1788,6 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::auto_recal_sync(const fapi2::Target<K,
     FAPI_INF("Setting RX_AUTO_RECAL")
     FAPI_TRY(MEM_REG_RX_RECAL_ABORT_0_31_PUT(iv_regs, i_target, i_thread, c_recal_abort_mask));
     FAPI_TRY(set_auto_recal(i_target, i_thread, c_recal_lane_mask));
-    FAPI_TRY(iv_regs->flushCache(i_target));
 
     if (i_auto_recal)
     {
@@ -1820,7 +1819,7 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::auto_recal_sync(const fapi2::Target<K,
     else
     {
         // Poll rx_lane_busy == 0
-        FAPI_INF("Polling for RX_LANE_BUSY == 0")
+        FAPI_INF("Polling for RX_LANE_BUSY == 0");
 
         for(uint32_t l_lane = 0; l_lane < 32; l_lane++)
         {
@@ -1833,13 +1832,14 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::auto_recal_sync(const fapi2::Target<K,
 
             do
             {
-
                 FAPI_TRY(MEM_REG_RX_LANE_BUSY_PL_GET(iv_regs, i_target, i_thread, l_lane, l_data));
                 FAPI_TRY(iv_regs->flushCache(i_target));
                 l_tries++;
                 fapi2::delay(IO_PPE_DELAY_1MS, IO_PPE_DELAY_SIM_CYCLES);
             }
             while (l_data && (l_tries < c_max_tries));
+
+            FAPI_INF("Lane %d polling done after %d/%d tries)", l_lane, l_tries, c_max_tries);
 
             if (l_tries >= c_max_tries)
             {
