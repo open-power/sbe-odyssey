@@ -97,4 +97,9 @@ pk_deque_element_create(PkDeque* element)
     return 0;
 }
 
+void __cxa_pure_virtual()
+{
+    pk_halt();
+}
+
 #undef __PK_CORE_C__
