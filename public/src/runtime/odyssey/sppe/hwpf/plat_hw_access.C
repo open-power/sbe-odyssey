@@ -177,20 +177,88 @@ static fapi2::ReturnCode handle_scom_error(
 
     if(i_ffdcAllowed)
     {
-        PLAT_FAPI_ASSERT( false,
+        switch(i_pibRc)
+        {
+            case PIB_NO_ERROR:
+                break;
+
+            case PIB_XSCOM_ERROR:
+                PLAT_FAPI_ASSERT( false,
+                        POZ_PIB_XSCOM_ERROR().
+                        set_address(i_addr).
+                        set_pcb_pib_rc(i_pibRc),
+                        "SCOM: PIB_XSCOM_ERROR, pibRc[0x%08X] Translated_ScomAddr[0x%08X]",
+                        i_pibRc, i_addr);
+                break;
+
+            case PIB_OFFLINE_ERROR:
+                PLAT_FAPI_ASSERT( false,
+                        POZ_PIB_OFFLINE_ERROR().
+                        set_address(i_addr).
+                        set_pcb_pib_rc(i_pibRc),
+                        "SCOM: PIB_OFFLINE_ERROR, pibRc[0x%08X] Translated_ScomAddr[0x%08X]",
+                        i_pibRc, i_addr);
+                break;
+
+            case PIB_PARTIAL_ERROR:
+                PLAT_FAPI_ASSERT( false,
+                        POZ_PIB_PARTIAL_ERROR().
+                        set_address(i_addr).
+                        set_pcb_pib_rc(i_pibRc),
+                        "SCOM: PIB_PARTIAL_ERROR, pibRc[0x%08X] Translated_ScomAddr[0x%08X]",
+                        i_pibRc, i_addr);
+                break;
+
+            case PIB_ADDRESS_ERROR:
+                PLAT_FAPI_ASSERT( false,
+                        POZ_PIB_ADDRESS_ERROR().
+                        set_address(i_addr).
+                        set_pcb_pib_rc(i_pibRc),
+                        "SCOM: PIB_ADDRESS_ERROR, pibRc[0x%08X] Translated_ScomAddr[0x%08X]",
+                        i_pibRc, i_addr);
+                break;
+
+            case PIB_CLOCK_ERROR:
+                PLAT_FAPI_ASSERT( false,
+                        POZ_PIB_CLOCK_ERROR().
+                        set_address(i_addr).
+                        set_pcb_pib_rc(i_pibRc),
+                        "SCOM: PIB_CLOCK_ERROR, pibRc[0x%08X] Translated_ScomAddr[0x%08X]",
+                        i_pibRc, i_addr);
+                break;
+
+            case PIB_PARITY_ERROR:
+                PLAT_FAPI_ASSERT( false,
+                        POZ_PIB_PARITY_ERROR().
+                        set_address(i_addr).
+                        set_pcb_pib_rc(i_pibRc),
+                        "SCOM: PIB_PARITY_ERROR, pibRc[0x%08X] Translated_ScomAddr[0x%08X]",
+                        i_pibRc, i_addr);
+                break;
+
+            case PIB_TIMEOUT_ERROR:
+                PLAT_FAPI_ASSERT( false,
+                        POZ_PIB_TIMEOUT_ERROR().
+                        set_address(i_addr).
+                        set_pcb_pib_rc(i_pibRc),
+                        "SCOM: PIB_TIMEOUT_ERROR, pibRc[0x%08X] Translated_ScomAddr[0x%08X]",
+                        i_pibRc, i_addr);
+                break;
+
+            default:
+                PLAT_FAPI_ASSERT( false,
                         POZ_SCOM_FAILURE().
                         set_address(i_addr).
                         set_pcb_pib_rc(i_pibRc),
                         "SCOM : pcb pib error, pibRc[0x%08X] Translated_ScomAddr[0x%08X]",
                         i_pibRc, i_addr);
+                break;
+        }
     }
 
 fapi_try_exit:
     if(i_ffdcAllowed)
     {
-        // Override FAPI RC based on PIB RC
-        fapi2::current_err = pibRcToFapiRc(i_pibRc);
-        fapi2::g_FfdcData.fapiRc = fapi2::current_err;
         return fapi2::current_err;
     }
     else

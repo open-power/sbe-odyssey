@@ -141,6 +141,9 @@ void checkIndirectAndDoScom( const bool i_isRead,
                          SBE_SEC_PCB_PIB_ERR);
         if(o_ffdc) o_ffdc->setRc(fapiRc);
         SBE_ERROR(SBE_FUNC "Fapi failure, fapiRc:0x%08X, RC:0x%08X", fapiRc, rc);
+        // Logging FFDC
+        logFatalError( fapiRc );
+        fapi2::current_err = NULL;
     }
     if (rc != SBE_SEC_OPERATION_SUCCESSFUL)
     {
