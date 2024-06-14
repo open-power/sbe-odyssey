@@ -158,6 +158,9 @@ fapi2::ReturnCode ody_omi_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
     FAPI_DBG("Start - OMI TDR Isolation");
 
     constexpr uint8_t c_thread = 0;
+    constexpr uint8_t OMI_LINK_STATUS_BIT = 49;
+    constexpr uint8_t OMI_LINK_STATUS_LEN = 3;
+    constexpr uint8_t OMI_TRAINED_STATE = 7;
 
     io_ppe_regs<fapi2::TARGET_TYPE_OCMB_CHIP> l_ppe_regs(PHY_ODY_OMI_BASE);
 
@@ -172,17 +175,13 @@ fapi2::ReturnCode ody_omi_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
     uint32_t l_fail = 0;
     uint8_t l_done = 0;
     uint8_t l_pos = 0;
+    uint8_t l_link_state = 0;
 
-    fapi2::ATTR_MFG_FLAGS_Type l_mfg_flags = {0};
     TdrResult l_status = TdrResult::None;
     uint32_t l_length_ps = 0;
 
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_BUS_POS, i_target, l_pos));
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_FREQ_OMI_MHZ, i_target, l_freq));
-    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_MFG_FLAGS, fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>(), l_mfg_flags));
-
-    FAPI_TRY(l_dl0_status.getScom(i_target));
-    l_disabled_lanes = l_dl0_status.get_LANES_DISABLED();
 
     FAPI_TRY(l_ppe_common.ext_cmd_start(i_target, c_thread, PHY_ODY_NUM_LANES, 0, ody_io::CLEAR))
     FAPI_TRY(l_ppe_common.ext_cmd_poll(i_target, c_thread, ody_io::CLEAR, l_done, l_fail));
@@ -196,6 +195,23 @@ fapi2::ReturnCode ody_omi_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
         [32:63]: Delay Location
         It writes this information to a file in /tmp.
     */
+
+    o_ostream.put32(PHY_ODY_NUM_LANES);
+    o_ostream.put32(0);
+
+    FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_OMI_TX_LANES, i_target, l_disabled_lanes));
+    FAPI_TRY(l_dl0_status.getScom(i_target));
+
+    l_dl0_status.extractToRight<OMI_LINK_STATUS_BIT, OMI_LINK_STATUS_LEN>(l_link_state);
+
+    if (l_link_state == OMI_TRAINED_STATE)
+    {
+        l_dl0_status.extractToRight<16, 8>(l_data);
+        l_disabled_lanes = (l_data << 24) ^ 0xFF000000; // Invert to get disabled lanes
+        l_disabled_lanes &= 0xFF000000; // Only look at active lanes
+    }
+
+    FAPI_DBG("Disabled lanes 0x%08X", l_disabled_lanes);
 
     for (uint8_t l_lane = 0; l_lane < PHY_ODY_NUM_LANES; l_lane++)
     {
