@@ -40,6 +40,7 @@
 #include <fapi2.H>
 #include <i2c_access.H>
 #include <lib/utils/pmic_consts.H>
+#include <generic/memory/lib/mss_generic_attribute_getters.H>
 
 #ifdef __PPE__
     #define TARGTIDFORMAT "0x%08X"
@@ -125,13 +126,10 @@ inline fapi2::ReturnCode reg_write_helper(const fapi2::Target<fapi2::TARGET_TYPE
     uint8_t l_dram_gen = 0;
     const auto& l_ocmb = mss::find_target<fapi2::TARGET_TYPE_OCMB_CHIP>(i_target);
 
-    // TODO: ZEN-MST:2632 Replace indexed DRAM gen reading with DRAM gen accessor
     // Get the dram generation
-    for (const auto& l_port : mss::find_targets<fapi2::TARGET_TYPE_MEM_PORT>(l_ocmb))
+    for (const auto& l_dimm : mss::find_targets<fapi2::TARGET_TYPE_DIMM>(l_ocmb))
     {
-        uint8_t l_value[2] = {};
-        FAPI_TRY( FAPI_ATTR_GET(fapi2::ATTR_MEM_EFF_DRAM_GEN, l_port, l_value) );
-        l_dram_gen = l_value[0];
+        FAPI_TRY(mss::attr::get_dram_gen(l_dimm, l_dram_gen));
         break;
     }
 
