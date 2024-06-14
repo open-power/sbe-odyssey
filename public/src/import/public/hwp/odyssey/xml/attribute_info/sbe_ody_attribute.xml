@@ -1462,6 +1462,9 @@
   <entry name="ATTR_MEM_EFF_THERM_SENSOR_3_USAGE">
     <value>0</value>
   </entry>
+  <entry name="ATTR_MSS_ODY_PASSED_SWIZZLE_DETECT">
+    <value>0</value>
+  </entry>
   <entry name="ATTR_MSS_ODY_PHY_IMAGE_SELECT">
     <value>0</value>
   </entry>
