@@ -125,10 +125,6 @@ ReturnCode sbeRuntimePopulateMetadataWrap(uint32_t i_metadata_ptr)
                            "Failed to read, Expected size[%d] actual size[%d]",
                             l_fileSize, l_size);
 
-        // checking the image hash and validate
-        // checking the image hash and validate
-        SBE_FAPI_TRY(current_err, check_file_hash_and_validate(sbe_build_info_fname, l_digest),
-                        SBE_FUNC " File hash valiadtion failed RC: [0x%08X]", current_err);
         // Get commit-Id
         memcpy((uint8_t *)(i_metadata_ptr + OFFSET_COMMIT_ID_IN_METADATA),
                 (uint8_t *)l_filePtr, BUILD_DATE_N_COMMIT_ID_MAX_LEN_BYTE);

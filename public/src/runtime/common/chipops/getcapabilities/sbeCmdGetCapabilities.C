@@ -809,20 +809,6 @@ uint32_t loadAndParseInfoTxt(const char *i_fileName,
                                     i_fileName, l_fileSize, l_size);
                 break;
             }
-            if(i_fileName == ekb_info_file_name)
-            {
-                ReturnCode l_fapiRc = FAPI2_RC_SUCCESS;
-                // checking the image hash and validate
-                l_fapiRc = check_file_hash_and_validate(i_fileName, l_digest);
-                if(l_fapiRc != FAPI2_RC_SUCCESS)
-                {
-                    l_rc = SBE_SEC_FILE_HASH_VALIDATION_FAILED;
-                    SBE_ERROR(SBE_FUNC " File hash valiadtion failed RC[0x%08x] ", l_fapiRc);
-                    fapi2::logError(l_fapiRc,fapi2::FAPI2_ERRL_SEV_RECOVERED);
-                    break;
-                }
-            }
-
 
             // Get metadata for the image
             l_rc = getMetadataFromInfoTxt(i_capImg,

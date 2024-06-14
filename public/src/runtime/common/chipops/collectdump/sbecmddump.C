@@ -31,6 +31,7 @@
 #include "filenames.H"
 #include "sbeffdc.H"
 #include "sbeglobals.H"
+#include "sberegaccess.H"
 
 
 /**
@@ -96,21 +97,24 @@ uint32_t sbeGetDump( uint8_t *i_pArg )
         }
         SBE_DEBUG(SBE_FUNC "Validated dump params create DumpObj");
 
-        // Get EKB commit-Id from Info.txt file
         uint64_t commitId = 0;
-        uint32_t rc = getInfoTxtEkbCommitId(commitId);
-        if (rc != SBE_SEC_OPERATION_SUCCESSFUL)
+        bool isImprintMode = SbeRegAccess::theSbeRegAccess().getIsImprintMode();
+        if (isImprintMode)
         {
-            SBE_ERROR(SBE_FUNC "loadAndParseInfoTxt failed for image [%d] from [%s]. "\
-                            "RC[0x%08x]", CU_IMAGES::EKB, ekb_info_file_name, rc);
+            uint32_t rc = getInfoTxtEkbCommitId(commitId);
+            if (rc != SBE_SEC_OPERATION_SUCCESSFUL)
+            {
+                SBE_ERROR(SBE_FUNC "loadAndParseInfoTxt failed for image [%d] from [%s]. "\
+                        "RC[0x%08x]", CU_IMAGES::EKB, ekb_info_file_name, rc);
 
-            respHdr.setStatus(SBE_PRI_GENERIC_EXECUTION_FAILURE, rc);
-            break;
+                respHdr.setStatus(SBE_PRI_GENERIC_EXECUTION_FAILURE, rc);
+                break;
+            }
         }
 
         // Load the HDCT bin file
         uint32_t hdctSize = 0;
-        rc = SBE_GLOBAL->embeddedArchive.load_file(hdct_binary_fname, hdctLoadFile, hdctSize);
+        uint32_t rc = SBE_GLOBAL->embeddedArchive.load_file(hdct_binary_fname, hdctLoadFile, hdctSize);
         if (rc != SBE_SEC_OPERATION_SUCCESSFUL)
         {
             SBE_ERROR(SBE_FUNC "embeddedArchive load_file failed for hdct.bin. "\
