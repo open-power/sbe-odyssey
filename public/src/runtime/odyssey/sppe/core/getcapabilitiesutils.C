@@ -32,6 +32,7 @@
 #include "heap.H"
 #include "imagemap.H"
 #include "getcapabilitiesutils.H"
+#include "sberegaccess.H"
 
 uint32_t fillImagesDetails(
     uint8_t (&sbeFwReleaseTag)[BUILD_TAG_CHAR_MAX_LENGTH],
@@ -44,6 +45,8 @@ uint32_t fillImagesDetails(
 
     do
     {
+        bool isImprintMode = SbeRegAccess::theSbeRegAccess().getIsImprintMode();
+
         // Iterating the loop to get all the images properties.
         for (uint8_t l_img = 0;
              l_img < (sizeof(g_getCapabilitiesImages) /
@@ -194,24 +197,33 @@ uint32_t fillImagesDetails(
                     break;
 
                 case CU_IMAGES::BMC_OVRD:
-                    GET_IMAGE_DETAILS_FROM_INFO_TXT(bmc_info_file_name, CU_IMAGES::BMC_OVRD,\
-                                                    imageInfo[l_img], l_identifier,\
-                                                    l_timeStamp, l_tag, l_rc);
+                    if (isImprintMode)
+                    {
+                        GET_IMAGE_DETAILS_FROM_INFO_TXT(bmc_info_file_name, CU_IMAGES::BMC_OVRD,\
+                                                        imageInfo[l_img], l_identifier,\
+                                                        l_timeStamp, l_tag, l_rc);
+                    }
                     break;
 
                 case CU_IMAGES::HOST_OVRD:
-                    GET_IMAGE_DETAILS_FROM_INFO_TXT(host_info_file_name, CU_IMAGES::HOST_OVRD,\
-                                                    imageInfo[l_img], l_identifier,\
-                                                    l_timeStamp, l_tag, l_rc);
+                    if (isImprintMode)
+                    {
+                        GET_IMAGE_DETAILS_FROM_INFO_TXT(host_info_file_name, CU_IMAGES::HOST_OVRD,\
+                                                        imageInfo[l_img], l_identifier,\
+                                                        l_timeStamp, l_tag, l_rc);
+                    }
                     break;
 
                 case CU_IMAGES::EKB:
-                    GET_IMAGE_DETAILS_FROM_INFO_TXT(ekb_info_file_name, CU_IMAGES::EKB,\
-                                                    imageInfo[l_img], l_identifier,\
-                                                    l_timeStamp, l_tag, l_rc);
-                    if (strlen(l_tag))
+                    if (isImprintMode)
                     {
-                        memcpy(ekbFwReleaseTag, (uint8_t *)l_tag, strlen(l_tag));
+                        GET_IMAGE_DETAILS_FROM_INFO_TXT(ekb_info_file_name, CU_IMAGES::EKB,\
+                                                        imageInfo[l_img], l_identifier,\
+                                                        l_timeStamp, l_tag, l_rc);
+                        if (strlen(l_tag))
+                        {
+                            memcpy(ekbFwReleaseTag, (uint8_t *)l_tag, strlen(l_tag));
+                        }
                     }
                     break;
 
