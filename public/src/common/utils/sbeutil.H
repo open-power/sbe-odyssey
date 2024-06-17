@@ -45,12 +45,12 @@ extern "C" {
 #define SHIFT_RIGHT(x, bits)        ((x) >> bits)
 #define SHIFT_LEFT(x, bits)         ((x) << bits)
 
-#define BUILD_TAG_CHAR_MAX_LENGTH           20
-#define BUILD_DATE_N_COMMIT_ID_MAX_LEN_BYTE 4
-#define BUILD_TAG_MAX_LENGTH_BYTE           20
 #define WORD_TO_BYTES(x)               ((x)*4)
 #define BYTES_TO_WORDS(x)              ((x)/4)
 
+#define PACKED __attribute__((packed))
+
+#define BUILD_TAG_CHAR_MAX_LENGTH       20
 #define OFFSET_COMMIT_ID_IN_METADATA  0x20
 #define OFFSET_BUILD_DATE_IN_METADATA 0x28
 #define OFFSET_BUILD_TAG_IN_METADATA  0x30
@@ -116,6 +116,16 @@ typedef enum caller_id
 
 // To handle unused variables compilation error
 static inline void UNUSED(int dummy, ...) {}
+
+/**
+ * @brief Struct for sbebuildinfo.bin
+ *
+ */
+struct PACKED sbeBuildInfo_t{
+    uint32_t commitID;
+    uint32_t buildDate;
+    uint8_t  buildTag[BUILD_TAG_CHAR_MAX_LENGTH];
+};
 
 // Magic instruction
 

@@ -23,6 +23,7 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 #include "metadata_base.H"
+#include "sbetrace.H"
 
 const void *_get_metadata(const void *start, uint32_t tag)
 {
@@ -39,4 +40,36 @@ const void *_get_metadata(const void *start, uint32_t tag)
         ptr += hdr->len;
     }
     return nullptr;
+}
+
+void populateMetaData(uint32_t i_metadata_ptr, uint32_t i_metaDataTag,
+                      const void *i_metaData, size_t i_metaDataSizeInBytes)
+{
+    #define SBE_FUNC " populateMetaData "
+    SBE_ENTER(SBE_FUNC)
+
+    // Find if the meta data tag is present
+    uint8_t *l_metaDataPtr = (uint8_t*)_get_metadata((const void*)i_metadata_ptr,i_metaDataTag);
+    if(l_metaDataPtr == NULL)
+    {
+        SBE_ERROR("Meta Data Tag 0x%08x not found", i_metaDataTag);
+        SBE_ERROR("Halting PPE...");
+        pk_halt();
+    }
+
+    // Check for the meta data size
+    uint8_t *l_metaDataSize = l_metaDataPtr-1;
+    if(WORD_TO_BYTES(*l_metaDataSize) != i_metaDataSizeInBytes)
+    {
+        SBE_ERROR("Expected meta data tag 0x%08x len : [%d], Actual len : [%d]",
+                    i_metaDataTag,i_metaDataSizeInBytes, WORD_TO_BYTES(*l_metaDataSize));
+        SBE_ERROR("Halting PPE...");
+        pk_halt();
+    }
+
+    // Populate the meta data
+    memcpy(l_metaDataPtr, i_metaData, i_metaDataSizeInBytes);
+
+    SBE_EXIT(SBE_FUNC)
+    #undef SBE_FUNC
 }

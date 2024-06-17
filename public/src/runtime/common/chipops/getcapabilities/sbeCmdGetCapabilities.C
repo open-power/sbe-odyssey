@@ -203,7 +203,7 @@ uint32_t getSBEFwRelTag(const uint8_t *i_meta_start,
             break;
         }
 
-        memcpy(sbeFwReleaseTag, (uint8_t *)ptrTAGStruct, sizeof(BUILD_TAG_CHAR_MAX_LENGTH));
+        memcpy(sbeFwReleaseTag, (uint8_t *)ptrTAGStruct, BUILD_TAG_CHAR_MAX_LENGTH);
 
     } while(false);
 

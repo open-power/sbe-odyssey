@@ -41,8 +41,7 @@
  */
 
 #include <stdint.h>
-
-#define PACKED __attribute__((packed))
+#include "sbeutil.H"
 
 /**
  * @brief Header of a TLV field
@@ -59,6 +58,20 @@ struct PACKED ImageMetadataHeader {
  * @return Pointer to metdatada value, or NULL if the tag was not found
  */
 const void *_get_metadata(const void *start, uint32_t tag);
+
+/**
+ * @brief Populate meta data fields at runtime.
+ *        Incase of meta data tag not found or mismatch
+ *        in size of meta data would halt ppe as it could either be
+ *        a code bug or incorrect image.
+ *
+ * @param i_metadata_ptr Start of meta data
+ * @param i_metaDataTag Meta Data Tag to look for
+ * @param i_metaData Data to be populated in the meta data field
+ * @param i_metaDataSizeInBytes Size of the meta data (Expected)
+ */
+void populateMetaData(uint32_t i_metadata_ptr, uint32_t i_metaDataTag,
+                      const void *i_metaData, size_t i_metaDataSizeInBytes);
 
 /**
  * @brief Helper class to detect duplicate use of tag values
