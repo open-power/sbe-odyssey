@@ -57,6 +57,14 @@ enum SbeChipType_t : uint8_t
     CHIP_TYPE_ODYSSEY_13,   ///< Odyssey chip 13
     CHIP_TYPE_ODYSSEY_14,   ///< Odyssey chip 14
     CHIP_TYPE_ODYSSEY_15,   ///< Odyssey chip 15
+    CHIP_TYPE_COMPUTE_00,   ///< Compute chip 0
+    CHIP_TYPE_COMPUTE_01,   ///< Compute chip 1
+    CHIP_TYPE_COMPUTE_02,   ///< Compute chip 2
+    CHIP_TYPE_COMPUTE_03,   ///< Compute chip 3
+    CHIP_TYPE_COMPUTE_04,   ///< Compute chip 4
+    CHIP_TYPE_COMPUTE_05,   ///< Compute chip 5
+    CHIP_TYPE_COMPUTE_06,   ///< Compute chip 6
+    CHIP_TYPE_COMPUTE_07,   ///< Compute chip 7
 };
 
 /**

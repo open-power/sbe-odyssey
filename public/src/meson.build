@@ -211,6 +211,13 @@ if platform == 'pst' or platform == 'all'
 
   endforeach
 
+  foreach inc_path : meson.get_external_property('pst_tsbe_inc_paths')
+
+    abs_inc_path = '-I' + meson.global_source_root() + inc_path
+    pst_tsbe_abs_inc_paths += abs_inc_path
+
+  endforeach
+
   #PST genfiles dir path
   pst_cmn_genfiles_dir_path  = onetime_genfiles_dir_path + '/pst/common/'
   pst_bldr_genfiles_dir_path = onetime_genfiles_dir_path + '/pst/bldr/'
