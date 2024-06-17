@@ -55,6 +55,8 @@
 #define HEA_ASCII 0x484541
 #define BLD_ASCII 0x424c44
 #define TPE_ASCII 0x545045
+#define IID_ASCII 0x494944
+#define ATR_ASCII 0x415452
 
 // Image type information
 DECLARE_METADATA(IMG, IMG_ASCII) {
@@ -63,7 +65,7 @@ DECLARE_METADATA(IMG, IMG_ASCII) {
 
 // Image ID - a string uniquely identifying the image, such as pst/tsbe or odyssey/bldr
 // Can be used by tools in conjunction with the GIT field to locate string files, debug data, ...
-DECLARE_METADATA_STR(IID, 0x494944);
+DECLARE_METADATA_STR(IID, IID_ASCII);
 
 // Trace buffer information
 DECLARE_METADATA(TRA, TRA_ASCII) {
@@ -72,7 +74,7 @@ DECLARE_METADATA(TRA, TRA_ASCII) {
 };
 
 // Attribute tank information
-DECLARE_METADATA(ATR, 0x415452) {
+DECLARE_METADATA(ATR, ATR_ASCII) {
     uint32_t addr; // Address of the attribute tank
     uint32_t size; // Size of the attribute tank
 };

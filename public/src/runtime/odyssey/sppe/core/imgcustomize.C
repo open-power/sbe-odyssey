@@ -37,6 +37,7 @@
 #include "filenames.H"
 #include "fapi2.H"
 #include "sbestreampaktohwp.H"
+#include "metadata.H"
 
 using namespace fapi2;
 
@@ -101,42 +102,45 @@ ReturnCode sbeRuntimePopulateMetadataWrap(uint32_t i_metadata_ptr)
         uint32_t l_rc = (uint32_t) pak.get_image_start_ptr_and_size(sbe_build_info_fname,
                                                                     &l_filePtr, &l_fileSize);
 
-        PLAT_FAPI_ASSERT( (l_rc == SBE_SEC_OPERATION_SUCCESSFUL) && (l_fileSize != 0),
+        PLAT_FAPI_ASSERT( (l_rc == SBE_SEC_OPERATION_SUCCESSFUL),
                            POZ_PAK_OPERATION_FAILED().set_PAK_RC(l_rc),
-                           "get_image_start_ptr_and_size failed [%s], size: %d, RC[0x%08x]",
-                           sbe_build_info_fname, l_fileSize, l_rc);
+                           "get_image_start_ptr_and_size failed [%s], RC[0x%08x]",
+                           sbe_build_info_fname,l_rc);
 
-        l_scratchArea = (uint8_t *)Heap::get_instance().scratch_alloc(l_fileSize);
-        PLAT_FAPI_ASSERT( (l_scratchArea != nullptr),
-                           POZ_SCRATCH_ALLOC_FAILED().set_REQUIRED_SPACE(l_fileSize).
-                           set_AVAILABLE_SPACE(Heap::get_instance().getFreeHeapSize()),
-                           "scratch allocation request for [%d] bytes failed ", l_fileSize);
+        PLAT_FAPI_ASSERT( l_fileSize == sizeof(sbeBuildInfo_t),
+                        POZ_PAK_OPERATION_FAILED().set_PAK_RC(SBE_SEC_IMAGE_SIZE_MISMATCH),
+                        "Unexpected File Size, Expected size[%d] actual size[%d]",
+                            sizeof(sbeBuildInfo_t), l_fileSize);
 
         uint32_t l_size = 0;
-        sha3_t l_digest = {0};
-        l_rc = (uint32_t) pak.read_file(sbe_build_info_fname, l_scratchArea, l_fileSize, &l_digest, &l_size);
+        sbeBuildInfo_t l_sbeBuildInfo = {0};
+        l_rc = (uint32_t) pak.read_file(sbe_build_info_fname, &l_sbeBuildInfo, l_fileSize, NULL, &l_size);
         PLAT_FAPI_ASSERT( (l_rc == SBE_SEC_OPERATION_SUCCESSFUL),
                            POZ_PAK_OPERATION_FAILED().set_PAK_RC(l_rc),
                            "Failed to read image file [%s]. RC=0x%08X",
                             sbe_build_info_fname, l_rc);
 
-         PLAT_FAPI_ASSERT( (l_fileSize == l_size),
-                           POZ_PAK_OPERATION_FAILED().set_PAK_RC(SBE_SEC_IMAGE_SIZE_MISMATCH),
-                           "Failed to read, Expected size[%d] actual size[%d]",
-                            l_fileSize, l_size);
+        PLAT_FAPI_ASSERT( l_size == sizeof(sbeBuildInfo_t),
+                    POZ_PAK_OPERATION_FAILED().set_PAK_RC(SBE_SEC_IMAGE_SIZE_MISMATCH),
+                    "Unexpected File Size after read, Expected size[%d] actual size[%d]",
+                    sizeof(sbeBuildInfo_t), l_size);
 
-        // Get commit-Id
-        memcpy((uint8_t *)(i_metadata_ptr + OFFSET_COMMIT_ID_IN_METADATA),
-                (uint8_t *)l_filePtr, BUILD_DATE_N_COMMIT_ID_MAX_LEN_BYTE);
 
-        // Get build-date
-        memcpy((uint8_t *)(i_metadata_ptr + OFFSET_BUILD_DATE_IN_METADATA),
-            (uint8_t *)(l_filePtr+1), BUILD_DATE_N_COMMIT_ID_MAX_LEN_BYTE);
+        // Populate Commit ID into meta data
+        populateMetaData(i_metadata_ptr, GIT_ASCII,
+                         &l_sbeBuildInfo.commitID,
+                         sizeof(l_sbeBuildInfo.commitID));
 
-        // Get build-tag
-        memcpy((uint8_t *)(i_metadata_ptr + OFFSET_BUILD_TAG_IN_METADATA),
-            (uint8_t *)(l_filePtr+2), BUILD_TAG_MAX_LENGTH_BYTE);
+        // Populate Build Date into meta data
+        populateMetaData(i_metadata_ptr, DAT_ASCII,
+                        &l_sbeBuildInfo.buildDate,
+                        sizeof(l_sbeBuildInfo.buildDate));
 
+        // Populate Build Tag into meta data
+        populateMetaData(i_metadata_ptr, BLD_ASCII,
+                         &l_sbeBuildInfo.buildTag,
+                         //Adding 1 byte for NULL char in string.
+                         (((BUILD_TAG_CHAR_MAX_LENGTH + 1) + 3) & ~3));
 
     }while (false);
 
