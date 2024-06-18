@@ -1,11 +1,11 @@
 # IBM_PROLOG_BEGIN_TAG
 # This is an automatically generated prolog.
 #
-# $Source: public/src/runtime/common/chipops/stopclock/meson.build $
+# $Source: public/src/runtime/common/chipops/stopclocks/meson.build $
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2023
+# Contributors Listed Below - COPYRIGHT 2023,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -22,9 +22,6 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-# IBM_PROLOG_BEGIN_TAG
-# This is an automatically generated prolog.
-
 
 CMN_STOP_CLOCK_CHIPOPS_JSON = files('chipop_table.json')
 
