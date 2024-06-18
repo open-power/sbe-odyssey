@@ -22,9 +22,6 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
-# IBM_PROLOG_BEGIN_TAG
-# This is an automatically generated prolog.
-
 
 CMN_STOP_CLOCK_CHIPOPS_JSON = files('chipop_table.json')
 
