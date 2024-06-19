@@ -67,12 +67,10 @@ class fields<DDR5, BASE_CNFG>
             //////////////////////////////////////
 
             // Byte 3
-#ifndef __PPE__
             HYBRID_START = 0,
             HYBRID_LEN = 1,
             HYBRID_MEDIA_START = 1,
             HYBRID_MEDIA_LEN = 3,
-#endif
             BASE_MODULE_START = 4,
             BASE_MODULE_LEN = 4,
 
@@ -85,10 +83,8 @@ class fields<DDR5, BASE_CNFG>
             HEIGHT_3DS_LEN = 3,
 
             // Byte 5
-#ifndef __PPE__
             COL_ADDRESS_START = 0,
             COL_ADDRESS_LEN = 3,
-#endif
             ROW_ADDRESS_START = 3,
             ROW_ADDRESS_LEN = 5,
 
@@ -168,30 +164,20 @@ class fields<DDR5, BASE_CNFG>
             TRP_MIN_LSB_START = 0,
             TRP_MIN_LSB_LEN   = 8,
             // Byte 35
-#ifndef __PPE__
             TRP_MIN_MSB_START = 0,
             TRP_MIN_MSB_LEN   = 8,
-#endif
             // Byte 36
-#ifndef __PPE__
             TRAS_MIN_LSB_START = 0,
             TRAS_MIN_LSB_LEN   = 8,
-#endif
             // Byte 37
-#ifndef __PPE__
             TRAS_MIN_MSB_START = 0,
             TRAS_MIN_MSB_LEN   = 8,
-#endif
             // Byte 38
-#ifndef __PPE__
             TRC_MIN_LSB_START = 0,
             TRC_MIN_LSB_LEN   = 8,
-#endif
             // Byte 39
-#ifndef __PPE__
             TRC_MIN_MSB_START = 0,
             TRC_MIN_MSB_LEN   = 8,
-#endif
             // Byte 40
             TWR_MIN_LSB_START = 0,
             TWR_MIN_LSB_LEN   = 8,
@@ -344,17 +330,14 @@ class fields<DDR5, BASE_CNFG>
             // Byte 235
             ENABLED_PHY_CHANNELS_START = 0,
             ENABLED_PHY_CHANNELS_LEN = 2,
-#ifndef __PPE__
             BUS_WIDTH_CHB_START = 2,
             BUS_WIDTH_CHB_LEN = 3,
             BUS_WIDTH_CHA_START = 5,
             BUS_WIDTH_CHA_LEN = 3,
-#endif
 
             /////////////////////////////////////////////
             //// Bytes 512-637: manufacturing information
             /////////////////////////////////////////////
-#ifndef __PPE__
             // Byte 512
             CONTINUATION_CODES_START = 0,
             CONTINUATION_CODES_LEN = 8,
@@ -366,7 +349,6 @@ class fields<DDR5, BASE_CNFG>
             // Byte 552-553
             DRAM_MFR_ID_CODE_START = 0,
             DRAM_MFR_ID_CODE_LEN = 8,
-#endif
         };
 
     public:
@@ -378,17 +360,13 @@ class fields<DDR5, BASE_CNFG>
         //////////////////////////////////////
         //// Bytes 0-18: prior to timings
         //////////////////////////////////////
-#ifndef __PPE__
         static constexpr mss::field_t<mss::endian::LITTLE> HYBRID {3, HYBRID_START, HYBRID_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> HYBRID_MEDIA{3, HYBRID_MEDIA_START, HYBRID_MEDIA_LEN};
-#endif
         static constexpr mss::field_t<mss::endian::LITTLE> BASE_MODULE {3, BASE_MODULE_START, BASE_MODULE_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> DIE_PER_PACKAGE{4, DIE_PER_PACKAGE_START, DIE_PER_PACKAGE_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> DENSITY_PER_DIE{4, DENSITY_PER_DIE_START, DENSITY_PER_DIE_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> HEIGHT_3DS{4, HEIGHT_3DS_START, HEIGHT_3DS_LEN};
-#ifndef __PPE__
         static constexpr mss::field_t<mss::endian::LITTLE> COL_ADDR_BITS {5, COL_ADDRESS_START, COL_ADDRESS_LEN};
-#endif
         static constexpr mss::field_t<mss::endian::LITTLE> ROW_ADDR_BITS {5, ROW_ADDRESS_START, ROW_ADDRESS_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> SDRAM_WIDTH {6, SDRAM_WIDTH_START, SDRAM_WIDTH_LEN};
 
@@ -435,13 +413,11 @@ class fields<DDR5, BASE_CNFG>
         static constexpr mss::field_t<mss::endian::LITTLE> TRCD_MIN_MSB {33, TRCD_MIN_MSB_START, TRCD_MIN_MSB_LEN};
 #endif
         static constexpr mss::field_t<mss::endian::LITTLE> TRP_MIN_LSB {34, TRP_MIN_LSB_START, TRP_MIN_LSB_LEN};
-#ifndef __PPE__
         static constexpr mss::field_t<mss::endian::LITTLE> TRP_MIN_MSB {35, TRP_MIN_MSB_START, TRP_MIN_MSB_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> TRAS_MIN_LSB{36, TRAS_MIN_LSB_START, TRAS_MIN_LSB_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> TRAS_MIN_MSB{37, TRAS_MIN_MSB_START, TRAS_MIN_MSB_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> TRC_MIN_LSB{38, TRC_MIN_LSB_START, TRC_MIN_LSB_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> TRC_MIN_MSB{39, TRC_MIN_MSB_START, TRC_MIN_MSB_LEN};
-#endif
         static constexpr mss::field_t<mss::endian::LITTLE> TWR_MIN_LSB {40, TWR_MIN_LSB_START, TWR_MIN_LSB_LEN};
 #ifndef __PPE__
         static constexpr mss::field_t<mss::endian::LITTLE> TWR_MIN_MSB {41, TWR_MIN_MSB_START, TWR_MIN_MSB_LEN};
@@ -502,21 +478,17 @@ class fields<DDR5, BASE_CNFG>
 #endif
         static constexpr mss::field_t<mss::endian::LITTLE> PACKAGE_RANKS_PER_PORT0 {234, PACKAGE_RANKS_ON_PORT0_START, PACKAGE_RANKS_ON_PORT0_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> PACKAGE_RANKS_PER_PORT1{234, PACKAGE_RANKS_ON_PORT1_START, PACKAGE_RANKS_ON_PORT1_LEN};
-#ifndef __PPE__
         static constexpr mss::field_t<mss::endian::LITTLE> BUS_WIDTH_CHA {235, BUS_WIDTH_CHA_START, BUS_WIDTH_CHA_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> BUS_WIDTH_CHB{235, BUS_WIDTH_CHB_START, BUS_WIDTH_CHB_LEN};
-#endif
         static constexpr mss::field_t<mss::endian::LITTLE> ENABLED_PHY_CHANNELS {235, ENABLED_PHY_CHANNELS_START, ENABLED_PHY_CHANNELS_LEN};
 
         //////////////////////////////////////
         //// Bytes 512-513: module information
         //////////////////////////////////////
-#ifndef __PPE__
         static constexpr mss::field_t<mss::endian::LITTLE> CONTINUATION_CODES {512, CONTINUATION_CODES_START, CONTINUATION_CODES_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> LAST_NON_ZERO_BYTE{513, LAST_NON_ZERO_BYTE_START, LAST_NON_ZERO_BYTE_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> DRAM_MFR_ID_CODE_LSB{552, DRAM_MFR_ID_CODE_START, DRAM_MFR_ID_CODE_LEN};
         static constexpr mss::field_t<mss::endian::LITTLE> DRAM_MFR_ID_CODE_MSB{553, DRAM_MFR_ID_CODE_START, DRAM_MFR_ID_CODE_LEN};
-#endif
 };
 
 ///
@@ -638,11 +610,9 @@ class fields<DDR5, DDIMM_MODULE>
 #endif
 
             // Byte 212: Thermal Sensors Device Type
-#ifndef __PPE__
             THERMAL_SENSORS_DEVICE_TYPE_BYTE = 212,
             THERMAL_SENSORS_CFG_DEVICES_START = 0,
             THERMAL_SENSORS_CFG_DEVICES_LEN = 4,
-#endif
 
             // Byte 213: Thermal Sensor0 Revision Number
 #ifndef __PPE__
@@ -861,10 +831,8 @@ class fields<DDR5, DDIMM_MODULE>
             THERMAL_SENSOR_0_PROFILE_BYTE = 261,
             THERMAL_SENSOR_0_AVAIL_START = 0,
             THERMAL_SENSOR_0_AVAIL_LEN = 1,
-#ifndef __PPE__
             THERMAL_SENSOR_0_TYPE_START = 2,
             THERMAL_SENSOR_0_TYPE_LEN = 3,
-#endif
             THERMAL_SENSOR_0_USAGE_START = 5,
             THERMAL_SENSOR_0_USAGE_LEN = 3,
 
@@ -872,10 +840,8 @@ class fields<DDR5, DDIMM_MODULE>
             THERMAL_SENSOR_1_PROFILE_BYTE = 262,
             THERMAL_SENSOR_1_AVAIL_START = 0,
             THERMAL_SENSOR_1_AVAIL_LEN = 1,
-#ifndef __PPE__
             THERMAL_SENSOR_1_TYPE_START = 2,
             THERMAL_SENSOR_1_TYPE_LEN = 3,
-#endif
             THERMAL_SENSOR_1_USAGE_START = 5,
             THERMAL_SENSOR_1_USAGE_LEN = 3,
 
@@ -883,10 +849,8 @@ class fields<DDR5, DDIMM_MODULE>
             THERMAL_SENSOR_2_PROFILE_BYTE = 263,
             THERMAL_SENSOR_2_AVAIL_START = 0,
             THERMAL_SENSOR_2_AVAIL_LEN = 1,
-#ifndef __PPE__
             THERMAL_SENSOR_2_TYPE_START = 2,
             THERMAL_SENSOR_2_TYPE_LEN = 3,
-#endif
             THERMAL_SENSOR_2_USAGE_START = 5,
             THERMAL_SENSOR_2_USAGE_LEN = 3,
 
@@ -894,14 +858,11 @@ class fields<DDR5, DDIMM_MODULE>
             THERMAL_SENSOR_3_PROFILE_BYTE = 264,
             THERMAL_SENSOR_3_AVAIL_START = 0,
             THERMAL_SENSOR_3_AVAIL_LEN = 1,
-#ifndef __PPE__
             THERMAL_SENSOR_3_TYPE_START = 2,
             THERMAL_SENSOR_3_TYPE_LEN = 3,
-#endif
             THERMAL_SENSOR_3_USAGE_START = 5,
             THERMAL_SENSOR_3_USAGE_LEN = 3,
 
-#ifndef __PPE__
             // Byte 265: Thermal Sensor 0 I2C Address
             THERMAL_SENSOR_0_I2C_ADDRESS_BYTE = 265,
             THERMAL_SENSOR_0_I2C_ADDRESS_START = 0,
@@ -921,25 +882,20 @@ class fields<DDR5, DDIMM_MODULE>
             THERMAL_SENSOR_3_I2C_ADDRESS_BYTE = 268,
             THERMAL_SENSOR_3_I2C_ADDRESS_START = 0,
             THERMAL_SENSOR_3_I2C_ADDRESS_LEN = 8,
-#endif
 
             // Byte 269: Differential Buffer Thermal Sensor Profile
             THERMAL_SENSOR_DIFF_PROFILE_BYTE = 269,
             THERMAL_SENSOR_DIFF_AVAIL_START = 0,
             THERMAL_SENSOR_DIFF_AVAIL_LEN = 1,
-#ifndef __PPE__
             THERMAL_SENSOR_DIFF_TYPE_START = 1,
             THERMAL_SENSOR_DIFF_TYPE_LEN = 4,
             THERMAL_SENSOR_DIFF_USAGE_START = 5,
             THERMAL_SENSOR_DIFF_USAGE_LEN = 3,
-#endif
 
-#ifndef __PPE
             // Byte 270: Differential Buffer Thermal Sensor I2C Address
             THERMAL_SENSOR_DIFF_I2C_ADDRESS_BYTE = 270,
             THERMAL_SENSOR_DIFF_I2C_ADDRESS_START = 0,
             THERMAL_SENSOR_DIFF_I2C_ADDRESS_LEN = 8,
-#endif
 
             // Byte 271: Registered Clock Drivers (RCD)
             MODULE_RCD_BYTE = 271,
@@ -952,7 +908,6 @@ class fields<DDR5, DDIMM_MODULE>
             MODULE_RCD_START = 6,
             MODULE_RCD_LEN = 2,
 
-#ifndef __PPE__
             // Byte 272-273: RCD MFG ID Code
             RCD_MFG_ID_LSB_BYTE = 272,
             RCD_MFG_ID_LSB_START = 0,
@@ -960,7 +915,6 @@ class fields<DDR5, DDIMM_MODULE>
             RCD_MFG_ID_MSB_BYTE = 273,
             RCD_MFG_ID_MSB_START = 0,
             RCD_MFG_ID_MSB_LEN = 8,
-#endif
 
             // Byte 274: RCD Revision Nunber
 #ifndef __PPE__
@@ -984,11 +938,9 @@ class fields<DDR5, DDIMM_MODULE>
 #endif
 
             // Byte 277: SPD Content Revision
-#ifndef __PPE__
             SPD_CONTENT_REVISION_BYTE = 277,
             SPD_CONTENT_REVISION_START = 0,
             SPD_CONTENT_REVISION_LEN = 8,
-#endif
 
             // Byte 278: SPD REDUNDANCY
 #ifndef __PPE__
@@ -1682,11 +1634,9 @@ class fields<DDR5, DDIMM_MODULE>
             PHY_A1_B1_MEM_ALERT_LEN = 1,
 
             // Byte 365: Address Mirroring
-#ifndef __PPE__
             ADDRESS_MIRROR_BYTE = 365,
             ADDRESS_MIRROR_START = 0,
             ADDRESS_MIRROR_LEN = 8,
-#endif
 
             // Byte 366: Byte enables LSB
             BYTE_ENABLES_LSB_BYTE = 366,
@@ -1757,11 +1707,9 @@ class fields<DDR5, DDIMM_MODULE>
 #endif
 
             // Byte 377: Host Interface Speed to DDR Interface Speed Ratio
-#ifndef __PPE__
             HI_DDR_SPEED_RATIO_BYTE = 377,
             HI_DDR_SPEED_RATIO_START = 4,
             HI_DDR_SPEED_RATIO_LEN = 4,
-#endif
 
             // Byte 378: External PHY Calibration Resistor Value
             EXT_PHY_CAL_RESISTOR_VALUE_BYTE = 378,
@@ -1776,7 +1724,6 @@ class fields<DDR5, DDIMM_MODULE>
             SERIAL_NUMBER_11S_FIELD_LEN = 8,
             SERIAL_NUMBER_11S_TOTAL_BYTES = 26,
 
-#ifndef __PPE__
             // Byte 512-513
             MODULE_MFG_ID_CODE_LSB_BYTE = 512,
             MODULE_MFG_ID_CODE_MSB_BYTE = 513,
@@ -1788,7 +1735,6 @@ class fields<DDR5, DDIMM_MODULE>
             DRAM_MFR_ID_CODE_MSB_BYTE = 553,
             DRAM_MFR_ID_CODE_START = 0,
             DRAM_MFR_ID_CODE_LEN = 8,
-#endif
         };
 
     public:
@@ -1893,9 +1839,7 @@ class fields<DDR5, DDIMM_MODULE>
 #endif
 
         // Byte 212: Thermal Sensors Device Type
-#ifndef __PPE__
         static constexpr field_t THERMAL_SENSORS_CFG_DEVICES {THERMAL_SENSORS_DEVICE_TYPE_BYTE, THERMAL_SENSORS_CFG_DEVICES_START, THERMAL_SENSORS_CFG_DEVICES_LEN};
-#endif
 
         // Byte 213: Thermal Sensor0 Revision Number
 #ifndef __PPE__
@@ -2040,33 +1984,24 @@ class fields<DDR5, DDIMM_MODULE>
 
         // Byte 261: Thermal Sensor 0 Profile
         static constexpr field_t THERMAL_SENSOR_0_AVAIL{THERMAL_SENSOR_0_PROFILE_BYTE, THERMAL_SENSOR_0_AVAIL_START, THERMAL_SENSOR_0_AVAIL_LEN};
-#ifndef __PPE__
         static constexpr field_t THERMAL_SENSOR_0_TYPE {THERMAL_SENSOR_0_PROFILE_BYTE, THERMAL_SENSOR_0_TYPE_START, THERMAL_SENSOR_0_TYPE_LEN};
-#endif
         static constexpr field_t THERMAL_SENSOR_0_USAGE {THERMAL_SENSOR_0_PROFILE_BYTE, THERMAL_SENSOR_0_USAGE_START, THERMAL_SENSOR_0_USAGE_LEN};
 
         // Byte 262: Thermal Sensor 1 Profile
         static constexpr field_t THERMAL_SENSOR_1_AVAIL{THERMAL_SENSOR_1_PROFILE_BYTE, THERMAL_SENSOR_1_AVAIL_START, THERMAL_SENSOR_1_AVAIL_LEN};
-#ifndef __PPE__
         static constexpr field_t THERMAL_SENSOR_1_TYPE {THERMAL_SENSOR_1_PROFILE_BYTE, THERMAL_SENSOR_1_TYPE_START, THERMAL_SENSOR_1_TYPE_LEN};
-#endif
         static constexpr field_t THERMAL_SENSOR_1_USAGE {THERMAL_SENSOR_1_PROFILE_BYTE, THERMAL_SENSOR_1_USAGE_START, THERMAL_SENSOR_1_USAGE_LEN};
 
         // Byte 263: Thermal Sensor 2 Profile
         static constexpr field_t THERMAL_SENSOR_2_AVAIL{THERMAL_SENSOR_2_PROFILE_BYTE, THERMAL_SENSOR_2_AVAIL_START, THERMAL_SENSOR_2_AVAIL_LEN};
-#ifndef __PPE__
         static constexpr field_t THERMAL_SENSOR_2_TYPE {THERMAL_SENSOR_2_PROFILE_BYTE, THERMAL_SENSOR_2_TYPE_START, THERMAL_SENSOR_2_TYPE_LEN};
-#endif
         static constexpr field_t THERMAL_SENSOR_2_USAGE {THERMAL_SENSOR_2_PROFILE_BYTE, THERMAL_SENSOR_2_USAGE_START, THERMAL_SENSOR_2_USAGE_LEN};
 
         // Byte 264: Thermal Sensor 3 Profile
         static constexpr field_t THERMAL_SENSOR_3_AVAIL{THERMAL_SENSOR_3_PROFILE_BYTE, THERMAL_SENSOR_3_AVAIL_START, THERMAL_SENSOR_3_AVAIL_LEN};
-#ifndef __PPE__
         static constexpr field_t THERMAL_SENSOR_3_TYPE {THERMAL_SENSOR_3_PROFILE_BYTE, THERMAL_SENSOR_3_TYPE_START, THERMAL_SENSOR_3_TYPE_LEN};
-#endif
         static constexpr field_t THERMAL_SENSOR_3_USAGE {THERMAL_SENSOR_3_PROFILE_BYTE, THERMAL_SENSOR_3_USAGE_START, THERMAL_SENSOR_3_USAGE_LEN};
 
-#ifndef __PPE__
         // Byte 265: Thermal Sensor 0 I2C Address
         static constexpr field_t THERMAL_SENSOR_0_I2C_ADDRESS{THERMAL_SENSOR_0_I2C_ADDRESS_BYTE, THERMAL_SENSOR_0_I2C_ADDRESS_START, THERMAL_SENSOR_0_I2C_ADDRESS_LEN};
 
@@ -2078,19 +2013,14 @@ class fields<DDR5, DDIMM_MODULE>
 
         // Byte 268: Thermal Sensor 3 I2C Address
         static constexpr field_t THERMAL_SENSOR_3_I2C_ADDRESS{THERMAL_SENSOR_3_I2C_ADDRESS_BYTE, THERMAL_SENSOR_3_I2C_ADDRESS_START, THERMAL_SENSOR_3_I2C_ADDRESS_LEN};
-#endif
 
         // Byte 269: Differential Buffer Thermal Sensor Profile
         static constexpr field_t THERMAL_SENSOR_DIFF_AVAIL{THERMAL_SENSOR_DIFF_PROFILE_BYTE, THERMAL_SENSOR_DIFF_AVAIL_START, THERMAL_SENSOR_DIFF_AVAIL_LEN};
-#ifndef __PPE__
         static constexpr field_t THERMAL_SENSOR_DIFF_TYPE {THERMAL_SENSOR_DIFF_PROFILE_BYTE, THERMAL_SENSOR_DIFF_TYPE_START, THERMAL_SENSOR_DIFF_TYPE_LEN};
         static constexpr field_t THERMAL_SENSOR_DIFF_USAGE{THERMAL_SENSOR_DIFF_PROFILE_BYTE, THERMAL_SENSOR_DIFF_USAGE_START, THERMAL_SENSOR_DIFF_USAGE_LEN};
-#endif
 
-#ifndef __PPE__
         // Byte 270: Differential Buffer Thermal Sensor I2C Address
         static constexpr field_t THERMAL_SENSOR_DIFF_I2C_ADDRESS{THERMAL_SENSOR_DIFF_I2C_ADDRESS_BYTE, THERMAL_SENSOR_DIFF_I2C_ADDRESS_START, THERMAL_SENSOR_DIFF_I2C_ADDRESS_LEN};
-#endif
 
         // Byte 271: Registered Clock Drivers (RCD)
 #ifndef __PPE__
@@ -2099,11 +2029,9 @@ class fields<DDR5, DDIMM_MODULE>
 #endif
         static constexpr field_t MODULE_RCD {MODULE_RCD_BYTE, MODULE_RCD_START, MODULE_RCD_LEN};
 
-#ifndef __PPE__
         // Byte 272-273: RCD MFG ID Code
         static constexpr field_t RCD_MFG_ID_LSB{RCD_MFG_ID_LSB_BYTE, RCD_MFG_ID_LSB_START, RCD_MFG_ID_LSB_LEN};
         static constexpr field_t RCD_MFG_ID_MSB{RCD_MFG_ID_MSB_BYTE, RCD_MFG_ID_MSB_START, RCD_MFG_ID_MSB_LEN};
-#endif
 
         // Byte 274: RCD Revision Nunber
 #ifndef __PPE__
@@ -2121,9 +2049,7 @@ class fields<DDR5, DDIMM_MODULE>
 #endif
 
         // Byte 277: SPD Content Revision
-#ifndef __PPE__
         static constexpr field_t SPD_CONTENT_REVISION {SPD_CONTENT_REVISION_BYTE, SPD_CONTENT_REVISION_START, SPD_CONTENT_REVISION_LEN};
-#endif
 
         // Byte 278: SPD REDUNDANCY
 #ifndef __PPE__
@@ -2546,9 +2472,7 @@ class fields<DDR5, DDIMM_MODULE>
         static constexpr field_t PHY_A1_B1_MEM_ALERT{MEM_ALERT_EN_PULL_UP_BYTE, PHY_A1_B1_MEM_ALERT_START, PHY_A1_B1_MEM_ALERT_LEN};
 
         // Byte 365: Address Mirroring
-#ifndef __PPE__
         static constexpr field_t ADDRESS_MIRROR {ADDRESS_MIRROR_BYTE, ADDRESS_MIRROR_START, ADDRESS_MIRROR_LEN};
-#endif
 
         // Byte 366: Byte enables LSB
         static constexpr field_t BYTE_ENABLES_LSB{BYTE_ENABLES_LSB_BYTE, BYTE_ENABLES_LSB_START, BYTE_ENABLES_LSB_LEN};
@@ -2591,9 +2515,7 @@ class fields<DDR5, DDIMM_MODULE>
 #endif
 
         // Byte 377: Host Interface Speed to DDR Interface Speed Ratio
-#ifndef __PPE__
         static constexpr field_t HI_DDR_SPEED_RATIO {HI_DDR_SPEED_RATIO_BYTE, HI_DDR_SPEED_RATIO_START, HI_DDR_SPEED_RATIO_LEN};
-#endif
 
         // Byte 378: External PHY Calibration Resistor Value
         static constexpr field_t PHY_A0_B0_CAL_RESISTOR{EXT_PHY_CAL_RESISTOR_VALUE_BYTE, PHY_A0_B0_CAL_RESISTOR_START, PHY_A0_B0_CAL_RESISTOR_LEN};
@@ -2606,7 +2528,6 @@ class fields<DDR5, DDIMM_MODULE>
         static constexpr field_t SERIAL_NUMBER_LAST_BYTE {SERIAL_NUMBER_LAST_VALID_BYTE, SERIAL_NUMBER_11S_FIELD_START, SERIAL_NUMBER_11S_FIELD_LEN};
 #endif
 
-#ifndef __PPE__
         // Byte 512 and 513 Module MFG ID
         static constexpr field_t MODULE_MFG_ID_CODE_LSB{MODULE_MFG_ID_CODE_LSB_BYTE, MODULE_MFG_ID_CODE_START, MODULE_MFG_ID_CODE_LEN};
         static constexpr field_t MODULE_MFG_ID_CODE_MSB{MODULE_MFG_ID_CODE_MSB_BYTE, MODULE_MFG_ID_CODE_START, MODULE_MFG_ID_CODE_LEN};
@@ -2614,7 +2535,6 @@ class fields<DDR5, DDIMM_MODULE>
         // Byte 552 and 553: DRAM manufacturing ID for DDIMMs
         static constexpr field_t DRAM_MFR_ID_CODE_LSB{DRAM_MFR_ID_CODE_LSB_BYTE, DRAM_MFR_ID_CODE_START, DRAM_MFR_ID_CODE_LEN};
         static constexpr field_t DRAM_MFR_ID_CODE_MSB{DRAM_MFR_ID_CODE_MSB_BYTE, DRAM_MFR_ID_CODE_START, DRAM_MFR_ID_CODE_LEN};
-#endif
 };
 
 }// spd

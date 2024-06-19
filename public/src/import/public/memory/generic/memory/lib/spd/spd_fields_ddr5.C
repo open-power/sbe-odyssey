@@ -49,10 +49,8 @@ namespace spd
 //////////////////////////////////////
 //// Bytes 0-18: prior to timings
 //////////////////////////////////////
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::HYBRID;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::HYBRID_MEDIA;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::HYBRID;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::HYBRID_MEDIA;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::BASE_MODULE;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::DIE_PER_PACKAGE;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::DENSITY_PER_DIE;
@@ -74,9 +72,7 @@ constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::DENSITY_PER
 #endif
 
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::HEIGHT_3DS;
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::COL_ADDR_BITS;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::COL_ADDR_BITS;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::ROW_ADDR_BITS;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::SDRAM_WIDTH;
 
@@ -107,13 +103,11 @@ constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TRCD_MIN_LS
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TRCD_MIN_MSB;
 #endif
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TRP_MIN_LSB;
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TRP_MIN_MSB;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TRAS_MIN_LSB;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TRAS_MIN_MSB;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TRC_MIN_LSB;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TRC_MIN_MSB;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TRP_MIN_MSB;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TRAS_MIN_LSB;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TRAS_MIN_MSB;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TRC_MIN_LSB;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TRC_MIN_MSB;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TWR_MIN_LSB;
 #ifndef __PPE__
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TWR_MIN_MSB;
@@ -174,17 +168,13 @@ constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::TRTP_MIN_LS
 #endif
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::PACKAGE_RANKS_PER_PORT1;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::PACKAGE_RANKS_PER_PORT0;
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::BUS_WIDTH_CHA;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::BUS_WIDTH_CHB;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::BUS_WIDTH_CHA;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::BUS_WIDTH_CHB;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::ENABLED_PHY_CHANNELS;
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::CONTINUATION_CODES;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::LAST_NON_ZERO_BYTE;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::DRAM_MFR_ID_CODE_LSB;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::DRAM_MFR_ID_CODE_MSB;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::CONTINUATION_CODES;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::LAST_NON_ZERO_BYTE;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::DRAM_MFR_ID_CODE_LSB;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, BASE_CNFG>::DRAM_MFR_ID_CODE_MSB;
 
 // fields<DDR5, DDIMM_MODULE>
 #ifndef __PPE__
@@ -207,9 +197,7 @@ constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::PMIC2_DE
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR0_MANF_ID_CODE_FIRST;
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR0_MANF_ID_CODE_SECOND;
 #endif
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSORS_CFG_DEVICES;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSORS_CFG_DEVICES;
 #ifndef __PPE__
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR0_REV_NUM;
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::DRAM_SPEC_LEVEL;
@@ -256,54 +244,38 @@ constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_1_LOCATION;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_0_LOCATION;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_0_AVAIL;
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_0_TYPE;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_0_TYPE;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_0_USAGE;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_1_AVAIL;
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_1_TYPE;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_1_TYPE;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_1_USAGE;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_2_AVAIL;
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_2_TYPE;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_2_TYPE;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_2_USAGE;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_3_AVAIL;
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_3_TYPE;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_3_TYPE;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_3_USAGE;
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_0_I2C_ADDRESS;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_1_I2C_ADDRESS;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_2_I2C_ADDRESS;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_3_I2C_ADDRESS;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_0_I2C_ADDRESS;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_1_I2C_ADDRESS;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_2_I2C_ADDRESS;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_3_I2C_ADDRESS;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_DIFF_AVAIL;
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_DIFF_TYPE;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_DIFF_USAGE;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_DIFF_I2C_ADDRESS;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_DIFF_TYPE;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_DIFF_USAGE;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::THERMAL_SENSOR_DIFF_I2C_ADDRESS;
 #ifndef __PPE__
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::MODULE_RCD_MEDIA_CONTROLLER_TYPE;
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::MODULE_RCD_JEDEC_COMPLIANT;
 #endif
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::MODULE_RCD;
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::RCD_MFG_ID_LSB;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::RCD_MFG_ID_MSB;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::RCD_MFG_ID_LSB;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::RCD_MFG_ID_MSB;
 #ifndef __PPE__
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::RCD_REV_NUM;
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::RCD0_I2C_ADDR;
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::RCD1_I2C_ADDR;
 #endif
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::SPD_CONTENT_REVISION;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::SPD_CONTENT_REVISION;
 #ifndef __PPE__
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::SPD_REDUNDANCY;
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::SPD_REDUNDANCY_I2C_ADDR;
@@ -518,9 +490,7 @@ constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::PHY_A0_B
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::PHY_A1_B1_MEM_ALERT_PULL_UP_VALUE;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::PHY_A0_B0_MEM_ALERT;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::PHY_A1_B1_MEM_ALERT;
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::ADDRESS_MIRROR;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::ADDRESS_MIRROR;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::BYTE_ENABLES_LSB;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::BYTE_ENABLES_MSB;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::NIBBLE_ENABLES_LSB0;
@@ -541,20 +511,16 @@ constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::SPARE_DE
 #ifndef __PPE__
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::SPARE_DEVICE_LSB1;
 #endif
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::HI_DDR_SPEED_RATIO;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::HI_DDR_SPEED_RATIO;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::PHY_A0_B0_CAL_RESISTOR;
 constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::PHY_A1_B1_CAL_RESISTOR;
 #ifndef __PPE__
     constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::SERIAL_NUMBER_LAST_BYTE;
 #endif
-#ifndef __PPE__
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::MODULE_MFG_ID_CODE_LSB;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::MODULE_MFG_ID_CODE_MSB;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::DRAM_MFR_ID_CODE_LSB;
-    constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::DRAM_MFR_ID_CODE_MSB;
-#endif
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::MODULE_MFG_ID_CODE_LSB;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::MODULE_MFG_ID_CODE_MSB;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::DRAM_MFR_ID_CODE_LSB;
+constexpr mss::field_t<mss::endian::LITTLE> fields<DDR5, DDIMM_MODULE>::DRAM_MFR_ID_CODE_MSB;
 
 constexpr mss::field_t<mss::endian::LITTLE>
 fields<DDR5, DDIMM_MODULE>::SERIAL_NUMBER_FIELDS[fields<DDR5, DDIMM_MODULE>::SERIAL_NUMBER_LEN];

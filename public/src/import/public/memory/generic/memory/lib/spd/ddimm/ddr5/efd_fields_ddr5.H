@@ -484,12 +484,10 @@ class fields<mss::spd::device_type::DDR5, mss::efd::id::DDR5_CUSTOM_IBM>
 
             // Byte 78: DFI Max Read Latency
             DFI_MAX_RD_LATENCY_BYTE = 78,
-#ifndef __PPE__
             DFIMRL_DDRCLK_P1_START = 0,
             DFIMRL_DDRCLK_P1_LEN = 4,
             DFIMRL_DDRCLK_P0_START = 4,
             DFIMRL_DDRCLK_P0_LEN = 4,
-#endif
 
             // Byte 82-89: Group A CK/CS ODT and CA
             // BYTE0: A0 RANK0
@@ -1964,10 +1962,8 @@ class fields<mss::spd::device_type::DDR5, mss::efd::id::DDR5_CUSTOM_IBM>
         static constexpr field_t NT_ODT_WR_A1_B1_RANK1{NT_ODT_BYTE, NT_ODT_WR_A1_B1_RANK1_START, NT_ODT_WR_A1_B1_RANK1_LEN};
 
         // Byte 78: DFI Max Read Latency
-#ifndef __PPE__
         static constexpr field_t DFIMRL_DDRCLK_P0 {DFI_MAX_RD_LATENCY_BYTE, DFIMRL_DDRCLK_P0_START, DFIMRL_DDRCLK_P0_LEN};
         static constexpr field_t DFIMRL_DDRCLK_P1 {DFI_MAX_RD_LATENCY_BYTE, DFIMRL_DDRCLK_P1_START, DFIMRL_DDRCLK_P1_LEN};
-#endif
 
         // Byte 82-89: Group A CK/CS ODT and CA
         // BYTE0: A0 RANK0

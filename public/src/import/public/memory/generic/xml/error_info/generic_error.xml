@@ -842,6 +842,7 @@
     <ffdc>DRAM_GENERATION</ffdc>
     <ffdc>IS_PLANAR</ffdc>
     <ffdc>FUNCTION_CODE</ffdc>
+    <ffdc>DIMM_TARGET</ffdc>
     <callout>
       <procedure>CODE</procedure>
       <priority>MEDIUM</priority>
@@ -874,6 +875,7 @@
     <ffdc>DRAM_GENERATION</ffdc>
     <ffdc>DIMM_TYPE</ffdc>
     <ffdc>FUNCTION_CODE</ffdc>
+    <ffdc>DIMM_TARGET</ffdc>
     <callout>
       <procedure>CODE</procedure>
       <priority>MEDIUM</priority>
