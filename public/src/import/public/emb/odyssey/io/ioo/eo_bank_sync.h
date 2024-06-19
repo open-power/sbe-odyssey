@@ -25,7 +25,6 @@
 // *!---------------------------------------------------------------------------
 // *! (C) Copyright International Business Machines Corp. 2023
 // *! All Rights Reserved -- Property of IBM
-// *! *** IBM Confidential ***
 // *!---------------------------------------------------------------------------
 // *! FILENAME    : eo_bank_sync.h
 // *! TITLE       :

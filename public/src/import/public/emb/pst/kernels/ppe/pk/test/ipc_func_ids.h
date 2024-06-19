@@ -27,7 +27,6 @@
 //-----------------------------------------------------------------------------
 // *! (C) Copyright International Business Machines Corp. 2015
 // *! All Rights Reserved -- Property of IBM
-// *! *** IBM Confidential ***
 //-----------------------------------------------------------------------------
 
 /// \file ipc_func_ids.h
