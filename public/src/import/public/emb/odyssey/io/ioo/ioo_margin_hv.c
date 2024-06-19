@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -25,7 +25,6 @@
 // *!---------------------------------------------------------------------------
 // *! (C) Copyright International Business Machines Corp. 2022
 // *! All Rights Reserved -- Property of IBM
-// *! *** IBM Confidential ***
 // *!---------------------------------------------------------------------------
 // *! FILENAME    : ioo_margin_hv.c
 // *! TITLE       :

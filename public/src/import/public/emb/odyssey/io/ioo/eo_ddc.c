@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -25,7 +25,6 @@
 // *!---------------------------------------------------------------------------
 // *! (C) Copyright International Business Machines Corp. 2016
 // *! All Rights Reserved -- Property of IBM
-// *! *** IBM Confidential ***
 // *!---------------------------------------------------------------------------
 // *! FILENAME    : eo_ddc.c
 // *! TITLE       :

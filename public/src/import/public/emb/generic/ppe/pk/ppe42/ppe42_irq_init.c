@@ -25,7 +25,6 @@
 //-----------------------------------------------------------------------------
 // *! (C) Copyright International Business Machines Corp. 2014
 // *! All Rights Reserved -- Property of IBM
-// *! *** IBM Confidential ***
 //-----------------------------------------------------------------------------
 
 /// \file ppe42_irq_init.c

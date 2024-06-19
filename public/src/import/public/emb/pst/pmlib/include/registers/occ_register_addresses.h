@@ -30,7 +30,6 @@
 //-----------------------------------------------------------------------------
 // *! (C) Copyright International Business Machines Corp. 2019
 // *! All Rights Reserved -- Property of IBM
-// *! *** IBM Confidential ***
 //-----------------------------------------------------------------------------
 
 /// \file occ_register_addresses.h
