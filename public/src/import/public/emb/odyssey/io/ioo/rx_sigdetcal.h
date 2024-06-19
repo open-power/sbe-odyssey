@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -54,4 +54,4 @@
 
 int rx_sigdetcal(t_gcr_addr* gcr_addr);
 
-#endif // _RX_SIGDETCAL_H       
+#endif // _RX_SIGDETCAL_H
