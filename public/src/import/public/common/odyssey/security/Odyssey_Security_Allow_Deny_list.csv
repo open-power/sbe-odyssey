@@ -83,7 +83,43 @@ Version,Chiplet,Base Address,Chiplet Id - range,Bit Mask,User,Register name,Desc
 ,TP,000B0813,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE8_REQ_RESET,Signaling location for requesting FIFO reset,read_denylist
 ,TP,000B0804,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE8_RESET,Applying reset function to FIFO,read_denylist
 ,TP,000B0805,0x00,,SBE FW team,OD.T.CFAM.FSI.W.FSI_SBE_FIFO.FSB_PIPE8_ACK_EOT,Acknowledging EndOfTransfer (EOT),read_denylist
-,MC,08012411,0x08,,IO HWP Team,ODC.DLX.D.REG.DL0_CONFIG1,IO DL configuration settings, useful for debug and writing EDPL threshold,write_allowlist
+,MC,08012411,0x08,,IO HWP Team,ODC.DLX.D.REG.DL0_CONFIG1,"IO DL configuration settings, useful for debug and writing EDPL threshold",write_allowlist
 ,MC,08010C0D,0x08,,IO HWP Team,IOO.PHY_PPE_WRAP0.PPE.ARB.ARB.CSAR,PPE Local SRAM Address Register,write_allowlist
 ,MC,08010C3F,0x08,,IO HWP Team,HW IO PHY Indirect 64 bit registers ,HW IO PHY Indirect 64 bit registers ,write_allowlist
 ,MC,08012415,0x08,,IO HWP Team,ODC.DLX.D.REG.DL0_EDPL_MAX_COUNT,Update the maximum EDPL count during debug,write_allowlist
+,TP,000A0001,0x00,,PRD Team,OD.T.TPCHIP.PIB.I2CC.RESET_REGISTER_B,Used by PRD to clear/mask FIRs,write_allowlist
+,TP,000F001F,0x00,,PRD Team,OD.T.TPCHIP.PIB.PCBCTL.ERROR_REG,Used by PRD to clear/mask FIRs,write_allowlist
+,TP,01010001,0x01,,PRD Team,OD.T.TPCHIP.TPC.EPS.PSC.PSC.PSCOM_STATUS_ERROR_REG,Used by PRD to clear/mask FIRs,write_allowlist
+,TP,01010786,0x01,,PRD Team,OD.T.TPCHIP.TPC.ITR.FMU.FMU_ERROR_RPT,Used by PRD to clear/mask FIRs,write_allowlist
+,TP,0103000F,0x01,,PRD Team,OD.T.TPCHIP.TPC.ERROR_STATUS,Used by PRD to clear/mask FIRs,write_allowlist
+,TP,01040100,0x01,,PRD Team,OD.T.TPCHIP.TPC.LFIR,Used by PRD to clear/mask FIRs,write_allowlist
+,TP,01040103,0x01,,PRD Team,OD.T.TPCHIP.TPC.EPS.MASK,Used by PRD to clear/mask FIRs,write_allowlist
+,TP,0105002F,0x01,,PRD Team,OD.T.TPCHIP.TPC.EPS.DTS_ERROR_REG,Used by PRD to clear/mask FIRs,write_allowlist
+,TP,010F001E,0x01,,PRD Team,OD.T.TPCHIP.NET.PCBRSPPERV.RESPONDER_CONFIG_REG,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08010001,0x08,,PRD Team,OD.T.TCMC.EPS.PSC.PSC.PSCOM_STATUS_ERROR_REG,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08010870,0x08,,PRD Team,OD.ODC.MMIO.MFIR,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08010873,0x08,,PRD Team,OD.ODC.MMIO.MFIRMASK,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08010C00,0x08,,PRD Team,OD.IOO.PHY_SCOM_MAC0.LFIR_REG,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08010C03,0x08,,PRD Team,OD.IOO.PHY_SCOM_MAC0.LFIR_MASK_REG,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08011000,0x08,,PRD Team,OD.ODC.SRQ.LFIR,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08011003,0x08,,PRD Team,OD.ODC.SRQ.MASK,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08011400,0x08,,PRD Team,OD.ODC.MCBIST.SCOM.MCBISTFIRQ,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08011403,0x08,,PRD Team,OD.ODC.MCBIST.SCOM.MCBISTFIRMASK,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08011800,0x08,,PRD Team,OD.ODC.RDF0.SCOM.FIR,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08011803,0x08,,PRD Team,OD.ODC.RDF0.SCOM.RDFFIRMASK,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08012000,0x08,,PRD Team,OD.ODC.TLXT.TLXT_REGS.TLX_LFIR,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08012003,0x08,,PRD Team,OD.ODC.TLXT.TLXT_REGS.TLX_MASK,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08012400,0x08,,PRD Team,OD.ODC.DLX.D.REG.MC_OMI_FIR_REG,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08012403,0x08,,PRD Team,OD.ODC.DLX.D.REG.MC_OMI_FIR_MASK_REG,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08012800,0x08,,PRD Team,OD.ODC.RDF1.SCOM.FIR,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08012803,0x08,,PRD Team,OD.ODC.RDF1.SCOM.RDFFIRMASK,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08013000,0x08,,PRD Team,OD.ODP.TOP0.S.LFIR,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08013003,0x08,,PRD Team,OD.ODP.TOP0.S.MASK,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08013400,0x08,,PRD Team,OD.ODP.TOP1.S.LFIR,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08013403,0x08,,PRD Team,OD.ODP.TOP1.S.MASK,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,0803000F,0x08,,PRD Team,OD.T.TCMC.ERROR_STATUS,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08040100,0x08,,PRD Team,OD.T.TCMC.LFIR,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,08040103,0x08,,PRD Team,OD.T.TCMC.EPS.MASK,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,0805002F,0x08,,PRD Team,OD.T.TCMC.EPS.DTS_ERROR_REG,Used by PRD to clear/mask FIRs,write_allowlist
+,MC,080F001E,0x08,,PRD Team,OD.T.TPCHIP.NET.PCBRSPMC.RESPONDER_CONFIG_REG,Used by PRD to clear/mask FIRs,write_allowlist
+,All,470F001F,0x00-0x08,,PRD Team,"OD.T.TPCHIP.PIB.PCBCTL.ERROR_REG, OD.T.TPCHIP.NET.PCBRSPPERV.ERROR_REG, OD.T.TPCHIP.NET.PCBRSPMC.ERROR_REG (Multicast)",Used by PRD to clear/mask FIRs,write_allowlist
