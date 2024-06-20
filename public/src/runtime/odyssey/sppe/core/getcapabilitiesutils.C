@@ -54,14 +54,13 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
             uint32_t l_timeStamp = 0, l_commitId = 0;
             char l_tag[BUILD_TAG_CHAR_MAX_LENGTH] = {0};
 
+            // Update the image type
+            o_capMsg.iv_imageInfo[l_img].iv_imageType = g_getCapabilitiesImages[l_img].imageNum;
+
             switch (g_getCapabilitiesImages[l_img].imageNum)
             {
                 case CU_IMAGES::SROM:
                     {
-                        // Update the image type as SROM.
-                        o_capMsg.iv_imageInfo[l_img].iv_imageType =
-                                                    CU_IMAGES::SROM;
-
                         // Calling function to get commitID
                         l_rc = getCommitId((uint8_t*)(SROM_ORIGIN +
                                                       SROM_VECTOR_SIZE),
@@ -86,10 +85,6 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                     {
                         l_timeStamp = 0;
                         l_commitId = 0;
-
-                        // Update the image type as BOOTLOADER
-                        o_capMsg.iv_imageInfo[l_img].iv_imageType =
-                                                CU_IMAGES::BOOTLOADER;
 
                         PakWrapper pak((void *)g_partitionOffset,
                                        (void *)(g_partitionOffset + g_partitionSize));
@@ -143,10 +138,6 @@ uint32_t fillImagesDetails(GetCapabilityResp_t &o_capMsg)
                     {
                         l_timeStamp = 0;
                         l_commitId = 0;
-
-                        // Update the image type as RUNTIME.
-                        o_capMsg.iv_imageInfo[l_img].iv_imageType =
-                                                    CU_IMAGES::RUNTIME;
 
                         // Calling function to get commit id
                         l_rc = getCommitId((uint8_t*)(SRAM_ORIGIN +
