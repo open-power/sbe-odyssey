@@ -66,9 +66,6 @@
   <entry name="ATTR_ENABLE_ABIST">
     <value>0x00</value>
   </entry>
-  <entry name="ATTR_SPI_BUS_DIV_REF">
-    <value>0x0041</value>
-  </entry>
   <entry name="ATTR_IO_TANK_PLL_BYPASS">
     <value>0x00</value>
   </entry>

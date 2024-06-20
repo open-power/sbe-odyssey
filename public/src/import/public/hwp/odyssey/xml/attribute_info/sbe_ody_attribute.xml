@@ -2733,4 +2733,7 @@
   <entry name="ATTR_ODY_SETUP_SAFEMODE_THROTTLES">
     <value>0</value>
   </entry>  
+  <entry name="ATTR_SPI_BUS_DIV_REF">
+    <value>0x0041</value>
+  </entry>
 </entries>
