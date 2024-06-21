@@ -458,7 +458,7 @@ uint32_t commit_errl ( errlHndl_t io_err )
  * @return      SUCCESS if function succeeds, error code otherwise.
  */
 uint32_t  add_usr_dtls_to_errl ( errlHndl_t io_err, uint8_t* i_data_ptr, const uint16_t i_size,
-                                 const uint8_t i_version, const ERRL_USR_DETAIL_TYPE i_type )
+                                 const uint8_t i_version, const ElogSectnSumm_t i_type )
 {
     uint32_t l_status = ERRL_STATUS_USER_ERROR;
 
@@ -551,7 +551,7 @@ void add_trace_to_errl ( errlHndl_t io_err )
     pk_critical_section_enter (&ctx);
 
     add_usr_dtls_to_errl ( io_err, (uint8_t*) &g_pk_trace_buf, G_errlConfigData.traceSz,
-                           ERRL_TRACE_VERSION_1, ERRL_USR_DTL_TRACE_DATA );
+                           ERRL_TRACE_VERSION_1, TRACE_SECTN );
     pk_critical_section_exit (&ctx);
 }
 
@@ -693,7 +693,7 @@ void get_ppe_regs_usr_dtls ( const uint8_t i_source,
                              errlPpeRegs_t* o_ppe_regs,
                              errlDataUsrDtls_t* o_usrDtls)
 {
-    o_usrDtls->iv_type  =   ERRL_USR_DTL_PPE_REGS;
+    o_usrDtls->iv_type  =   SCOM_SECTN;
     o_usrDtls->iv_size  = sizeof (errlPpeRegs_t);
     o_usrDtls->iv_pData = (uint8_t*) o_ppe_regs;
     o_usrDtls->iv_version = ERRL_PPE_REGS_VERSION_1;
@@ -731,10 +731,12 @@ void get_ppe_regs ( const uint8_t  i_errl_source,
     switch ( i_errl_source )
     {
         case ERRL_SOURCE_PGPE:
+        case ERRL_SOURCE_PCE:
             l_ppeId = 0;
             break;
 
         case ERRL_SOURCE_XGPE:
+        case ERRL_SOURCE_XCE:
             l_ppeId = 1;
             break;
 

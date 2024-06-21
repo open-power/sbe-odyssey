@@ -79,6 +79,7 @@ enum ElogSectnSumm
     SCOM_SECTN          =   0x00000010,
     OP_TRACE_SECTN      =   0x00000020,
 };
+typedef enum   ElogSectnSumm ElogSectnSumm_t;
 
 /// Self referential structure to add code/hardware  (e.g. code, core, cache,
 /// etc.) callouts to an error log
@@ -96,7 +97,7 @@ typedef struct errlDataCallout errlDataCallout_t;
 /// Self referential structure to add user detail sections to an error log
 struct errlDataUsrDtls
 {
-    ERRL_USR_DETAIL_TYPE      iv_type;      ///< see ERRL_USR_DETAIL_TYPE
+    ElogSectnSumm_t           iv_type;      ///< see ElogSectnSumm
     uint16_t                  iv_size;      ///< size of data at pData, multiples of 8B
     uint8_t*                  iv_pData;     ///< ptr. to user details data, 8B aligned
     uint8_t                   iv_version;   ///< version on the user details added
@@ -138,7 +139,6 @@ typedef struct errlPpeRegs errlPpeRegs_t;
 /// Map ElogOrginSumm_t to ElogOrginSumm
 typedef struct ElogOrginSumm    ElogOrginSumm_t;
 /// Section summary
-typedef enum   ElogSectnSumm ElogSectnSumm_t;
 
 /// @addtogroup pm_hcode_errl
 /// @{
@@ -197,7 +197,7 @@ uint32_t add_usr_dtls_to_errl (
     uint8_t* i_dataPtr,
     const uint16_t i_size,
     const uint8_t i_version,
-    const ERRL_USR_DETAIL_TYPE i_type );
+    const ElogSectnSumm_t i_type );
 
 /// @brief Add Trace Data to the Error log
 ///
