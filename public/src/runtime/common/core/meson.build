@@ -63,7 +63,9 @@ abs_runtime_cmn_core_infra_c_path = files('initthreads.C',
                                             'sbeirqhandler.C',
                                             'chipophandlerutils.C',
                                             'sbeexceptionhandler.C',
-                                            'sbecmdgenericffdc.C'
+                                            'sbecmdgenericffdc.C',
+                                            'istep.C',
+                                            'istepIplUtils.C'
                                           )
 
 # Exception handler files.

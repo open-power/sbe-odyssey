@@ -38,8 +38,12 @@
 #include "fapi2.H"
 #include "sbestreampaktohwp.H"
 #include "metadata.H"
+#include <istepIplUtils.H>
 
 using namespace fapi2;
+
+extern istepIplUtils* g_pSbeIstepIplUtils;
+extern "C" void __sbe_register_saveoff();
 
 void sbeSecurityCheckWrap(void)
 {
@@ -150,4 +154,12 @@ fapi_try_exit:
     Heap::get_instance().scratch_free(l_scratchArea);
     return fapi2::current_err;
     #undef SBE_FUNC
+}
+
+void isSpiParityErrorWrap(void)
+{
+    if (g_pSbeIstepIplUtils->isSpiParityError()) // If true call saveoff and halt
+    {
+        __sbe_register_saveoff();
+    }
 }

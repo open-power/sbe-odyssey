@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -61,6 +61,15 @@ public:
     static istepIplUtils& getInstance(uint32_t i_spiStatusRegAddr,
                                       uint8_t i_istepStartMinorNumber,
                                       uint8_t i_istepEndMajorNumber);
+        /**
+     * @brief isSpiParityError() Check for parity error while
+     *        accessing data via SPI from PNOR/SEEPROM
+     *
+     * @return true if there is a parity error
+     * @return false if there is no parity error
+     */
+    bool isSpiParityError();
+
 
 protected:
 
@@ -83,15 +92,13 @@ private:
         iv_spiStatusRegAdr(i_spiStatusRegAddr)
         {};
 
-    /**
-     * @brief isSpiParityError() Check for parity error while
-     *        accessing data via SPI from PNOR/SEEPROM
-     *
-     * @return true if there is a parity error
-     * @return false if there is no parity error
-     */
-    bool isSpiParityError();
 
 }; //class istepIplUtils
 
 extern istepIplUtils* g_pSbeIstepIplUtils;
+
+/**
+ * @brief Wrapper function to check and handle spi parity error
+ *
+ */
+void isSpiParityErrorWrap(void);

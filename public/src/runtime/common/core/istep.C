@@ -197,10 +197,7 @@ ReturnCode istep::sbeExecuteIstep(const uint8_t i_major, const uint8_t i_minor)
         }
     }
 
-    if (isSpiParityError()) // If true call saveoff and halt
-    {
-        __sbe_register_saveoff();
-    }
+    isSpiParityErrorWrap();
 
     if(rc != FAPI2_RC_SUCCESS)
     {

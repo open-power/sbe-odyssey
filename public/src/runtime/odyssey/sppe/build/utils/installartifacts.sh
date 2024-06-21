@@ -68,6 +68,7 @@ if [ -d "${MESON_SOURCE_ROOT}/internal/" ]; then
       ${MESON_SOURCE_ROOT}/internal/src/tools/simics/pozmsgregparser.py \
       ${MESON_SOURCE_ROOT}/internal/src/test/utils/toolwrappers.py \
       ${MESON_SOURCE_ROOT}/internal/src/test/utils/sbeSimUtils.py \
+      ${MESON_SOURCE_ROOT}/internal/src/test/utils/istepArray.py \
       ${MESON_SOURCE_ROOT}/internal/src/test/utils/sbeIstepAuto.py \
       ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/simics/ || exit 1
 
