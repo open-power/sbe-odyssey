@@ -39,10 +39,8 @@ import gzip
 import struct
 import subprocess
 from tabulate import tabulate
-from shutil import copyfileobj
+from shutil import copyfileobj, rmtree
 from typing import Optional, TextIO
-
-from icecream.icecream import ic
 
 '''
 ! Tool version
@@ -331,8 +329,8 @@ class fileTools(utilsTools):
         ! Class constructor
         '''
         self.isSysDumpFile = isSysDumpFile
+        self.file  = file
         if isSysDumpFile == True:
-            self.file  = file
             if (self.file.endswith(".gz")):
                 print("gunzip on file: %s" % self.file)
                 gzfileTmp=gzip.open(self.file, 'rb')
@@ -347,13 +345,17 @@ class fileTools(utilsTools):
 
             self.structEndian, self.endianness = self.getEndian()
         else:
-            self.file = file
             self.endianness = 'big'
 
         # Set default output path if not provided
         if outputPath is None:
             outputPath = pathlib.Path('./')
         self.outputpath = outputPath
+
+        # Clean up output directory
+        if self.outputpath.exists():
+            print (f"Output {self.outputpath} path exist, Removing..")
+            rmtree(self.outputpath)
 
         # Create the directory if it does not exist
         self.outputpath.mkdir(parents=True, exist_ok=True)
@@ -584,21 +586,23 @@ class fileTools(utilsTools):
         print ("\r\n\r\n", "-" * 80)
         def checkAndCorrectEndianness(inputfile, outputfile):
             if (self.endianness == 'little'):
+                print ("Executing checkAndCorrectEndianness")
                 self.executeCommand("hexdump -v -e \'1/8 \"%016x\"\' -e \'\"\\n\"\' " + inputfile + "| xxd -r -p > " + outputfile)
+                return True
             else:
-                outputfile = inputfile
+                return False
 
 
         if self.isSysDumpFile:
             pibmemDump = self.getFile(self.platDumpPath, self.PLAT_DUMP_FILE_PIBMEM_DUMP)
+            pibmemDumpInfile = str( pibmemDump )
+            pibmemDumpOutfile = '/'.join(pibmemDumpInfile.rsplit('/', 1)[0:1] + ["pibmemdump_out.bin"])
+            if (checkAndCorrectEndianness(pibmemDumpInfile, pibmemDumpOutfile)):
+                pibmemDump = pibmemDumpOutfile
+            else:
+                pibmemDump = pibmemDumpInfile
         else:
             pibmemDump = self.file
-
-        pibmemDumpInfile = str( pibmemDump )
-        pibmemDumpOutfile = '/'.join(pibmemDumpInfile.rsplit('/', 1)[0:1] + ["pibmemdump_out.bin"])
-
-        checkAndCorrectEndianness(pibmemDumpInfile, pibmemDumpOutfile)
-        pibmemDump = pibmemDumpOutfile
 
         tmpEndianness = self.endianness
         self.endianness = 'big'
@@ -715,6 +719,20 @@ def file_extract_dump(args):
 
 def file_parse_dump(args):
     print("\n\n##- Extract and Parse dump File -##")
+
+    # Required arg validate fot trace
+    if 'trace' in args.dumptype or 'all' in args.dumptype:
+        # required arg
+        if not (hasattr(args, "stringfile") & hasattr(args, "tracetoolpath")):
+            raise AttributeError ("trace level requires args are: project, img, sys, str, tracetoolpath")
+
+        p = pathlib.Path(args.stringfile)
+        if not p.exists():
+            raise ParseError (f"Trace Dump type String file not exist, Check the {args.stringfile} file before run.")
+        if not args.tracetoolpath.exists():
+            raise ParseError (f"Trace Dump type Trace tool path not exist, Check the {args.tracetoolpath.name} file before run")
+
+
     # file arg
     if args.individualFile != None:
         if len ( args.dumptype ) > 1:
@@ -722,11 +740,6 @@ def file_parse_dump(args):
         parsefiletools = fileTools (args.individualFile, args.outputpath, False)
 
     if args.dumpfile != None:
-        if 'trace' in args.dumptype:
-            # required arg
-            if not (hasattr(args, "str") & hasattr(args, "tracetoolpath")):
-                raise AttributeError ("trace level requires args are: project, img, sys, str, tracetoolpath")
-
         parsefiletools = fileTools (args.dumpfile, args.outputpath)
         parsefiletools.extract()
 
