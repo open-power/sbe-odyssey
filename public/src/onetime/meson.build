@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -25,8 +25,9 @@
 
 #Tools registration
 fusemapgen = find_program('common/otprom/build/utils/fusemapgen.py')
-
+if not (platform == 'nexus' or platform == 'florence')
 subdir('common')
+endif
 
 if platform == 'odyssey' or platform == 'odysseylab' or platform == 'all'
   subdir('odyssey')

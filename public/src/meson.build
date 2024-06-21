@@ -297,10 +297,11 @@ obj_gen_s = generator(as,
                                  cmn_abs_inc_paths, ekb_cmn_abs_inc_paths,
                                  '-o','@OUTPUT@','@INPUT@']
                     )
-
+if not (platform == 'nexus' or platform == 'florence')
 subdir('tools')
 subdir('build')
 subdir('common')
+endif
 
 if get_option('srom').enabled() or get_option('bldr').enabled() or get_option('otprom').enabled()
   subdir('onetime')
