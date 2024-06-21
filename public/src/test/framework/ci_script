@@ -7,6 +7,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2015,2024
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,7 +55,7 @@ if [ $# -ne 0 ]; then
 fi
 
 #TODO: need to enable PST SEEPROM CI and remove the if else condition
-if [[ $SBE_IMAGE == "pseeprom" || $SBE_IMAGE == "all" || "$SBE_PLATFORM" == "metis" || "$SBE_PLATFORM" == "all" ]]; then
+if [[ $SBE_IMAGE == "pseeprom" || $SBE_IMAGE == "all" || "$SBE_PLATFORM" == "metis" || "$SBE_PLATFORM" == "nexus" || "$SBE_PLATFORM" == "florence" || "$SBE_PLATFORM" == "all" ]]; then
     echo "Skipping tests. Simics is not supported for CI run. Selected Platform: $SBE_PLATFORM, Image Type: $SBE_IMAGE "
 else
     # Add SBE files to simics sandbox.
