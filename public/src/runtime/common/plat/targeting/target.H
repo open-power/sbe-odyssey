@@ -40,6 +40,8 @@ namespace fapi2
     constexpr TargetType TARGET_TYPE_OCMB_CHIP_CHILDREN = TARGET_TYPE_PMIC | TARGET_TYPE_GENERICI2CRESPONDER | TARGET_TYPE_MEM_PORT |
                                                           TARGET_TYPE_DIMM | TARGET_TYPE_POWER_IC | TARGET_TYPE_TEMP_SENSOR;
 
+    constexpr TargetType TARGET_TYPE_EQ_CHILDREN = TARGET_TYPE_L3CACHE
+                                                    | TARGET_TYPE_CORE;
     template<TargetType T>
     constexpr LogTargetType fapiTargetTypeToPlatTargetType()
     {
@@ -72,7 +74,8 @@ namespace fapi2
     TARGET_TYPE_SUPPORT(PMIC);
     TARGET_TYPE_SUPPORT(GENERICI2CRESPONDER);
     TARGET_TYPE_SUPPORT(POWER_IC);
-
+    TARGET_TYPE_SUPPORT(TBUSL);
+    TARGET_TYPE_SUPPORT(EQ);
 #undef TARGET_TYPE_SUPPORT
 
     template<TargetType K, MulticastType M, typename V>
@@ -164,6 +167,12 @@ namespace fapi2
             STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_OCMB_CHIP_CHILDREN) == 0,
                          "Invalid child target for OCMB parent");
             return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_OCMB_CHIP>(*this);
+        }
+        else if (T_NO_MCAST == TARGET_TYPE_EQ)
+        {
+            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_EQ_CHILDREN) == 0,
+                         "Invalid child target for EQ parent");
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_EQ>(*this);
         }
         // If we fall through to here, there is no defined code path to handle the
         // combination of T and K -- let's fail loudly.
@@ -259,6 +268,13 @@ namespace fapi2
         {
             STATIC_CHECK((T & ~TARGET_TYPE_OMI_CHILDREN) == 0,
                          "Invalid child type for OMI target");
+            g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+        else if (K_NO_T == TARGET_TYPE_EQ)
+        {
+            STATIC_CHECK((T & ~TARGET_TYPE_EQ_CHILDREN) == 0,
+                         "Invalid child type for EQ target");
             g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
             return l_children;
         }
