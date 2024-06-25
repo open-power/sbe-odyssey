@@ -1,7 +1,3 @@
-/* IBM_PROLOG_BEGIN_TAG                                                   */
-/* COPYRIGHT 2021                                                         */
-/* IBM_PROLOG_END_TAG                                                     */
-
 # FAPI 2 and FAPI Lite definitions for targets, buffers, error handling.
 
 ## Were are some examples?

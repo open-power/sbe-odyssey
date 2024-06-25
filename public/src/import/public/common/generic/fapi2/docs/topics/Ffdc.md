@@ -1,7 +1,3 @@
-/* IBM_PROLOG_BEGIN_TAG                                                   */
-/* COPYRIGHT 2021                                                         */
-/* IBM_PROLOG_END_TAG                                                     */
-
 # Using the FFDC/XML Error Parsing Tools
 
 For FAPI2, the parseErrorInfo PERL script has changed. The main goal was to
