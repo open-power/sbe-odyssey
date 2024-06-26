@@ -51,7 +51,12 @@ def getTraceStrData(i_traceBinDataFile, i_stringFile):
 def getTraces(i_pkTraceBinFile, stringFileCommitId):
     # Get trace binary data from the PK trace
     traceBinDataFile = "/tmp/pozTraceBin"
-    get_sbe_trace_data_as_string(i_pkTraceBinFile, traceBinDataFile)
+    #If we don't pass the endianness to the below function, then it will 
+    #default to sys.byteorder, which is little-endian on eBMC systems. 
+    #Hence, numerical values printed in the SBE trace will be incorrect. 
+    #To avoid this, specify that numerical values printed in SBE trace 
+    #are stored in "big" endian format.
+    get_sbe_trace_data_as_string(i_pkTraceBinFile, traceBinDataFile, "big")
     lidMap = {
         "RT_STRING_FILE":"81e006bd.lid",
         "GLDN_STRING_FILE":"81e006be.lid"
