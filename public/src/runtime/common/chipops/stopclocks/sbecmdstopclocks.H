@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/common/chipops/stopclock/sbecmdstopclocks.H $ */
+/* $Source: public/src/runtime/common/chipops/stopclocks/sbecmdstopclocks.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
