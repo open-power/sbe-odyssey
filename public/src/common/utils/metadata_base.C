@@ -59,7 +59,7 @@ void populateMetaData(uint32_t i_metadata_ptr, uint32_t i_metaDataTag,
 
     // Check for the meta data size
     uint8_t *l_metaDataSize = l_metaDataPtr-1;
-    if(WORD_TO_BYTES(*l_metaDataSize) != i_metaDataSizeInBytes)
+    if(WORD_TO_BYTES(*l_metaDataSize) < i_metaDataSizeInBytes)
     {
         SBE_ERROR("Expected meta data tag 0x%08x len : [%d], Actual len : [%d]",
                     i_metaDataTag,i_metaDataSizeInBytes, WORD_TO_BYTES(*l_metaDataSize));

@@ -139,8 +139,7 @@ ReturnCode sbeRuntimePopulateMetadataWrap(uint32_t i_metadata_ptr)
         // Populate Build Tag into meta data
         populateMetaData(i_metadata_ptr, BLD_ASCII,
                          &l_sbeBuildInfo.buildTag,
-                         //Adding 1 byte for NULL char in string.
-                         (((BUILD_TAG_CHAR_MAX_LENGTH + 1) + 3) & ~3));
+                        BUILD_TAG_CHAR_MAX_LENGTH);
 
     }while (false);
 
