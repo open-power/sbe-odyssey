@@ -29,16 +29,11 @@
 
 using namespace fapi2;
 
-constexpr uint64_t literal_0xF = 0xF;
-constexpr uint64_t literal_0x10 = 0x10;
-constexpr uint64_t literal_0x4 = 0x4;
 constexpr uint64_t literal_0b0001 = 0b0001;
 constexpr uint64_t literal_0b0100 = 0b0100;
+constexpr uint64_t literal_0x10 = 0x10;
 constexpr uint64_t literal_0x80 = 0x80;
 constexpr uint64_t literal_0x8 = 0x8;
-constexpr uint64_t literal_6 = 6;
-constexpr uint64_t literal_4 = 4;
-constexpr uint64_t literal_0x0F = 0x0F;
 
 fapi2::ReturnCode pt_ncu_scom(const fapi2::Target<fapi2::TARGET_TYPE_L3CACHE>& TGT0,
                               const fapi2::Target<fapi2::TARGET_TYPE_SYSTEM>& TGT1, const fapi2::Target<fapi2::TARGET_TYPE_COMPUTE_CHIP>& TGT2)
@@ -48,30 +43,9 @@ fapi2::ReturnCode pt_ncu_scom(const fapi2::Target<fapi2::TARGET_TYPE_L3CACHE>& T
         fapi2::ATTR_NAME_Type l_chip_id;
         FAPI_TRY(FAPI_ATTR_GET_PRIVILEGED(fapi2::ATTR_NAME, TGT2, l_chip_id));
         FAPI_TRY(FAPI_ATTR_GET_PRIVILEGED(fapi2::ATTR_EC, TGT2, l_chip_ec));
-        fapi2::ATTR_PROC_FABRIC_BROADCAST_MODE_Type l_TGT1_ATTR_PROC_FABRIC_BROADCAST_MODE;
-        FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_PROC_FABRIC_BROADCAST_MODE, TGT1, l_TGT1_ATTR_PROC_FABRIC_BROADCAST_MODE));
+        fapi2::ATTR_SMF_CONFIG_Type l_TGT1_ATTR_SMF_CONFIG;
+        FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_SMF_CONFIG, TGT1, l_TGT1_ATTR_SMF_CONFIG));
         fapi2::buffer<uint64_t> l_scom_buffer;
-        {
-            FAPI_TRY(fapi2::getScom( TGT0, 0x2001064aull, l_scom_buffer ));
-
-            if ((l_TGT1_ATTR_PROC_FABRIC_BROADCAST_MODE == fapi2::ENUM_ATTR_PROC_FABRIC_BROADCAST_MODE_1HOP_CHIP_IS_GROUP))
-            {
-                constexpr auto l_ECP_NC_NCMISC_NCSCOMS_SKIP_GRP_SCOPE_EN_ON = 0x1;
-                l_scom_buffer.insert<48, 1, 63, uint64_t>(l_ECP_NC_NCMISC_NCSCOMS_SKIP_GRP_SCOPE_EN_ON );
-            }
-            else if (( true ))
-            {
-                constexpr auto l_ECP_NC_NCMISC_NCSCOMS_SKIP_GRP_SCOPE_EN_OFF = 0x0;
-                l_scom_buffer.insert<48, 1, 63, uint64_t>(l_ECP_NC_NCMISC_NCSCOMS_SKIP_GRP_SCOPE_EN_OFF );
-            }
-
-            constexpr auto l_ECP_NC_NCMISC_NCSCOMS_TLBIE_PACING_CNT_EN_ON = 0x1;
-            l_scom_buffer.insert<14, 1, 63, uint64_t>(l_ECP_NC_NCMISC_NCSCOMS_TLBIE_PACING_CNT_EN_ON );
-            l_scom_buffer.insert<24, 8, 56, uint64_t>(literal_0xF );
-            l_scom_buffer.insert<16, 8, 56, uint64_t>(literal_0x10 );
-            l_scom_buffer.insert<32, 8, 56, uint64_t>(literal_0x4 );
-            FAPI_TRY(fapi2::putScom(TGT0, 0x2001064aull, l_scom_buffer));
-        }
         {
             FAPI_TRY(fapi2::getScom( TGT0, 0x2001064bull, l_scom_buffer ));
 
@@ -86,20 +60,10 @@ fapi2::ReturnCode pt_ncu_scom(const fapi2::Target<fapi2::TARGET_TYPE_L3CACHE>& T
         {
             FAPI_TRY(fapi2::getScom( TGT0, 0x2001064cull, l_scom_buffer ));
 
-            constexpr auto l_ECP_NC_NCMISC_NCSCOMS_TLBIE_PACING_MST_DLY_EN_ON = 0x1;
-            l_scom_buffer.insert<16, 1, 63, uint64_t>(l_ECP_NC_NCMISC_NCSCOMS_TLBIE_PACING_MST_DLY_EN_ON );
-            constexpr auto l_ECP_NC_NCMISC_NCSCOMS_TLBIE_STALL_EN_ON = 0x1;
-            l_scom_buffer.insert<0, 1, 63, uint64_t>(l_ECP_NC_NCMISC_NCSCOMS_TLBIE_STALL_EN_ON );
-            l_scom_buffer.insert<1, 3, 61, uint64_t>(literal_6 );
-
-            if (( true ))
+            if ((l_TGT1_ATTR_SMF_CONFIG == fapi2::ENUM_ATTR_SMF_CONFIG_ENABLED))
             {
-                l_scom_buffer.insert<4, 4, 60, uint64_t>(literal_4 );
-            }
-
-            if (( true ))
-            {
-                l_scom_buffer.insert<8, 8, 56, uint64_t>(literal_0x0F );
+                constexpr auto l_ECP_NC_NCMISC_NCSCOMS_SMF_ENABLE_ON = 0x1;
+                l_scom_buffer.insert<20, 1, 63, uint64_t>(l_ECP_NC_NCMISC_NCSCOMS_SMF_ENABLE_ON );
             }
 
             FAPI_TRY(fapi2::putScom(TGT0, 0x2001064cull, l_scom_buffer));

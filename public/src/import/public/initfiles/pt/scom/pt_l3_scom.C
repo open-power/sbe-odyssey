@@ -45,12 +45,14 @@ fapi2::ReturnCode pt_l3_scom(const fapi2::Target<fapi2::TARGET_TYPE_L3CACHE>& TG
         FAPI_TRY(FAPI_ATTR_GET_PRIVILEGED(fapi2::ATTR_EC, TGT2, l_chip_ec));
         fapi2::ATTR_PROC_LCO_TARGETS_COUNT_Type l_TGT2_ATTR_PROC_LCO_TARGETS_COUNT;
         FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_PROC_LCO_TARGETS_COUNT, TGT2, l_TGT2_ATTR_PROC_LCO_TARGETS_COUNT));
+        uint64_t l_def_LCO_TARGETS_COUNT = l_TGT2_ATTR_PROC_LCO_TARGETS_COUNT;
         fapi2::ATTR_PROC_LCO_MODE_DISABLE_Type l_TGT1_ATTR_PROC_LCO_MODE_DISABLE;
         FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_PROC_LCO_MODE_DISABLE, TGT1, l_TGT1_ATTR_PROC_LCO_MODE_DISABLE));
         fapi2::ATTR_CHIP_UNIT_POS_Type l_TGT0_ATTR_CHIP_UNIT_POS;
         FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CHIP_UNIT_POS, TGT0, l_TGT0_ATTR_CHIP_UNIT_POS));
         fapi2::ATTR_PROC_LCO_TARGETS_VECTOR_Type l_TGT2_ATTR_PROC_LCO_TARGETS_VECTOR;
         FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_PROC_LCO_TARGETS_VECTOR, TGT2, l_TGT2_ATTR_PROC_LCO_TARGETS_VECTOR));
+        uint64_t l_def_LCO_TARGETS_VECTOR = l_TGT2_ATTR_PROC_LCO_TARGETS_VECTOR;
         uint64_t l_def_L3_EPS_DIVIDE = literal_1;
         fapi2::ATTR_PROC_EPS_READ_CYCLES_T0_Type l_TGT1_ATTR_PROC_EPS_READ_CYCLES_T0;
         FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_PROC_EPS_READ_CYCLES_T0, TGT1, l_TGT1_ATTR_PROC_EPS_READ_CYCLES_T0));
@@ -69,7 +71,7 @@ fapi2::ReturnCode pt_l3_scom(const fapi2::Target<fapi2::TARGET_TYPE_L3CACHE>& TG
             FAPI_TRY(fapi2::getScom( TGT0, 0x2001060aull, l_scom_buffer ));
 
             if (((l_TGT1_ATTR_PROC_LCO_MODE_DISABLE == fapi2::ENUM_ATTR_PROC_LCO_MODE_DISABLE_FALSE)
-                 && (l_TGT2_ATTR_PROC_LCO_TARGETS_COUNT >= literal_3)))
+                 && (l_def_LCO_TARGETS_COUNT >= literal_3)))
             {
                 constexpr auto l_ECP_L3_L3_MISC_L3CERRS_L3_LCO_ENABLE_CFG_ON = 0x1;
                 l_scom_buffer.insert<0, 1, 63, uint64_t>(l_ECP_L3_L3_MISC_L3CERRS_L3_LCO_ENABLE_CFG_ON );
@@ -81,7 +83,7 @@ fapi2::ReturnCode pt_l3_scom(const fapi2::Target<fapi2::TARGET_TYPE_L3CACHE>& TG
             }
 
             l_scom_buffer.insert<1, 3, 61, uint64_t>(l_TGT0_ATTR_CHIP_UNIT_POS );
-            l_scom_buffer.insert<4, 8, 56, uint64_t>(l_TGT2_ATTR_PROC_LCO_TARGETS_VECTOR );
+            l_scom_buffer.insert<4, 8, 56, uint64_t>(l_def_LCO_TARGETS_VECTOR );
             FAPI_TRY(fapi2::putScom(TGT0, 0x2001060aull, l_scom_buffer));
         }
         {
@@ -107,12 +109,6 @@ fapi2::ReturnCode pt_l3_scom(const fapi2::Target<fapi2::TARGET_TYPE_L3CACHE>& TG
         }
         {
             FAPI_TRY(fapi2::getScom( TGT0, 0x2001062bull, l_scom_buffer ));
-
-            if (( true ))
-            {
-                constexpr auto l_ECP_L3_L3_MISC_L3CERRS_L3_CERRS_PF_CFG_SKIP_GRP_SCOPE_EN_ON = 0x1;
-                l_scom_buffer.insert<5, 1, 63, uint64_t>(l_ECP_L3_L3_MISC_L3CERRS_L3_CERRS_PF_CFG_SKIP_GRP_SCOPE_EN_ON );
-            }
 
             if ((l_TGT1_ATTR_PROC_L3_HASH_DISABLE == fapi2::ENUM_ATTR_PROC_L3_HASH_DISABLE_ON))
             {

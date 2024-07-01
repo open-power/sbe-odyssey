@@ -61,12 +61,6 @@ fapi2::ReturnCode pt_l2_scom(const fapi2::Target<fapi2::TARGET_TYPE_CORE>& TGT0,
         {
             FAPI_TRY(fapi2::getScom( TGT0, 0x2002000aull, l_scom_buffer ));
 
-            if (( true ))
-            {
-                constexpr auto l_ECP_L2_L2MISC_L2CERRS_CFG_SKIP_GRP_SCOPE_EN_ON = 0x1;
-                l_scom_buffer.insert<38, 1, 63, uint64_t>(l_ECP_L2_L2MISC_L2CERRS_CFG_SKIP_GRP_SCOPE_EN_ON );
-            }
-
             if ((l_TGT1_ATTR_PROC_L3_HASH_DISABLE == fapi2::ENUM_ATTR_PROC_L3_HASH_DISABLE_ON))
             {
                 constexpr auto l_ECP_L2_L2MISC_L2CERRS_CFG_HASH_L3_ADDR_EN_OFF = 0x0;
@@ -98,8 +92,6 @@ fapi2::ReturnCode pt_l2_scom(const fapi2::Target<fapi2::TARGET_TYPE_CORE>& TGT0,
         {
             FAPI_TRY(fapi2::getScom( TGT0, 0x2002000bull, l_scom_buffer ));
 
-            constexpr auto l_ECP_L2_L2MISC_L2CERRS_CFG_MASTER_RTY_BACKOFF_EN_ON = 0x1;
-            l_scom_buffer.insert<23, 1, 63, uint64_t>(l_ECP_L2_L2MISC_L2CERRS_CFG_MASTER_RTY_BACKOFF_EN_ON );
             l_scom_buffer.insert<4, 4, 60, uint64_t>(literal_0b0001 );
             l_scom_buffer.insert<8, 4, 60, uint64_t>(literal_0b0100 );
             FAPI_TRY(fapi2::putScom(TGT0, 0x2002000bull, l_scom_buffer));
