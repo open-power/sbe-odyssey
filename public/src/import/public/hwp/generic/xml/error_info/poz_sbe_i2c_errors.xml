@@ -101,7 +101,7 @@
       <hwpError>
           <sbeError/>
           <rc>RC_POZ_I2CC_RESET_ERROR</rc>
-          <description>Error resetting Odyssey I2C controller</description>
+          <description>Error resetting I2C controller</description>
           <ffdc>STATUS_REG_VAL</ffdc>
           <ffdc>PORT</ffdc>
           <ffdc>ENGINE</ffdc>
