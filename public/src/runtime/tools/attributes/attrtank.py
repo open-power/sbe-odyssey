@@ -538,6 +538,10 @@ class SymbolTable(object):
         with open(fname, "r") as symtab:
             for line in symtab:
                 parts = line.strip().split()
+                # skip this if its Undefined symbols
+                if(parts[0] == 'U'):
+                    continue
+
                 size = None
                 if len(parts) == 4:
                     size = int(parts[1], 16)
