@@ -798,6 +798,7 @@ void write_tx_pl_overrides(t_gcr_addr* gcr_addr)
 // Write Per-Lane Register Overrides (shared between hw_reg_init and reset_lane).
 // Assumes that gcr_addr has the correct group and lane (or broadcast) set.
 //////////////////////////////////////////////////////////////////////////////////////////////
+PK_STATIC_ASSERT(rx_bist_cir_alias_width == 16);
 void update_rx_rate_dependent_analog_ctrl_pl_regs(t_gcr_addr* gcr_addr, uint32_t ovr_rate_one_hot)
 {
     int l_vio_volt  = img_field_get(ppe_vio_volts);
@@ -844,14 +845,15 @@ void update_rx_rate_dependent_analog_ctrl_pl_regs(t_gcr_addr* gcr_addr, uint32_t
         bist_freq_adjust = l_data_rate_settings->rx_bist_freq_adjust_8xx;
     }
 
-    int bist_atten_dc_ac_sel_fadj_lfpath = (l_data_rate_settings->rx_bist_atten_dc_sel_dc <<
-                                            (rx_bist_atten_dc_sel_dc_shift - rx_bist_atten_dc_ac_fadj_lfpath_alias_shift)) |
-                                           (l_data_rate_settings->rx_bist_atten_ac_sel_dc << (rx_bist_atten_ac_sel_dc_shift -
-                                                   rx_bist_atten_dc_ac_fadj_lfpath_alias_shift)) |
-                                           (bist_freq_adjust << (rx_bist_freq_adjust_dc_shift - rx_bist_atten_dc_ac_fadj_lfpath_alias_shift)) |
-                                           (l_data_rate_settings->rx_bist_lfpath_sel_dc << rx_bist_lfpath_sel_dc_shift);
-    put_ptr_field(gcr_addr, rx_bist_atten_dc_ac_fadj_lfpath_alias, bist_atten_dc_ac_sel_fadj_lfpath,
-                  read_modify_write); //pl
+    int rx_bist_cir_fullreg_val =
+        (0 << rx_bist_en_dc_shift) |
+        (l_data_rate_settings->rx_bist_atten_dc_sel_dc << (rx_bist_atten_dc_sel_dc_shift -
+                rx_bist_atten_dc_ac_fadj_lfpath_alias_shift)) |
+        (l_data_rate_settings->rx_bist_atten_ac_sel_dc << (rx_bist_atten_ac_sel_dc_shift -
+                rx_bist_atten_dc_ac_fadj_lfpath_alias_shift)) |
+        (bist_freq_adjust << (rx_bist_freq_adjust_dc_shift - rx_bist_atten_dc_ac_fadj_lfpath_alias_shift)) |
+        (l_data_rate_settings->rx_bist_lfpath_sel_dc << rx_bist_lfpath_sel_dc_shift);
+    put_ptr_field(gcr_addr, rx_bist_cir_alias, rx_bist_cir_fullreg_val, fast_write); //pl
 
 
 
