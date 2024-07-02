@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -437,7 +437,14 @@ return_op:
         // are we returning from the cust table?
         bb1wi   limit, 31, return_from_cust
         // if we're returning from the main table, we're officially done
+#ifdef ASIC_SBE
+        // There is no jump to runtime code
+        // After cust table execution, SBE will be in a forever loop
+        asic_loop:
+                b asic_loop
+#else
         b       __pk_boot
+#endif
 
 return_from_cust:
         // swap state back and continue
@@ -452,7 +459,9 @@ scom_op:
         lwz     addr, 0(addr)
 
         // factor out the address filter into its own function just for neatness
+#ifndef ASIC_SBE
         bl      filter_address
+#endif
 
         // decode data
         rlwinm  data0, insn, 3, 20, 28  // extract bits 23:31 into bits 20:28 (multiplying by 8)

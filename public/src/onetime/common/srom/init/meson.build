@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -28,11 +28,16 @@ infile_s = ['cmdtable.S',
 
 lib_file_name = 'cmnsrominit'
 
+compile_flag = meson.get_external_property('pre_processing_args')
+if (platform == 'nexus' or platform == 'florence')
+    compile_flag += '-DASIC_SBE'
+endif
+
 fsm_pre_process = custom_target(
                     output : '@BASENAME@.s',
                     input : infile_s,
                     command : [ cc,
-                                meson.get_external_property('pre_processing_args'),
+                                compile_flag,
                                 ekb_cmn_abs_inc_paths, cmn_abs_inc_paths,
                                 onetime_cmn_abs_inc_paths,
                                 '-o','@OUTPUT@','@INPUT@'],

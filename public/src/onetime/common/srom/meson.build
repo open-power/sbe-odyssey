@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -24,4 +24,6 @@
 # IBM_PROLOG_END_TAG
 
 subdir('init')
+if not (platform == 'nexus' or platform == 'florence')
 subdir('core')
+endif

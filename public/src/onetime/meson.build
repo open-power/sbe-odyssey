@@ -25,9 +25,7 @@
 
 #Tools registration
 fusemapgen = find_program('common/otprom/build/utils/fusemapgen.py')
-if not (platform == 'nexus' or platform == 'florence')
 subdir('common')
-endif
 
 if platform == 'odyssey' or platform == 'odysseylab' or platform == 'all'
   subdir('odyssey')
