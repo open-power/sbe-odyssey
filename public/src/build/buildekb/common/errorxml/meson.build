@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -42,6 +42,7 @@ common_error_xml_files = [
                           'poz_sbe_i2c_errors.xml',
                           'poz_efuse_errors.xml',
                           'poz_hss_errors.xml',
+                          'poz_scratch_regs_errors.xml',
                           'io_ppe_errors.xml',
                         ]
 
