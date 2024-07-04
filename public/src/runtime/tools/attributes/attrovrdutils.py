@@ -392,10 +392,10 @@ class AttributeFileParser(AttributeFile):
     def __init__(self, i_attr_file, i_attr_db)->None:
         self.iv_attr_file = i_attr_file
         self.iv_offset = 0
-        self.iv_attr_db = i_attr_db
+        self.iv_attr_db = pickle.loads(self.utilOpen(i_attr_db))
+        self.iv_attr_fields = {field.name: field for field in self.iv_attr_db.field_list}
         self.iv_AttrId_NameMap = {}
-        dbfile = pickle.loads(self.utilOpen(self.iv_attr_db))
-        for attr in dbfile.field_list:
+        for attr in self.iv_attr_db.field_list:
             attr_hash28bits = Utils._getAttrHash(attr.name)
             self.iv_AttrId_NameMap[attr_hash28bits] = attr.name
 
@@ -406,45 +406,56 @@ class AttributeFileParser(AttributeFile):
             raise Exception("ERR -- '{}' FILE NOT FOUND ".format(filename))
 
     def getAttrName(self, id)->str:
-        return self.iv_AttrId_NameMap.get(id, 'Not Found Attr id '+ str(hex(id)))
+        try:
+            return self.iv_AttrId_NameMap[id]
+        except KeyError:
+            raise KeyError("Attribute hash not found: " + hex(id))
+
+    def _get_bytes(self, nbytes):
+        new_ofs = self.iv_offset + nbytes
+        value = self.iv_attr_file[self.iv_offset : new_ofs]
+        self.iv_offset = new_ofs
+        return value
+
+    def _get(self, nbytes):
+        return int.from_bytes(self._get_bytes(nbytes), "big", signed=False)
+
+    def _align(self, alignment):
+        self.iv_offset += -self.iv_offset % alignment
 
     def _getAttrId(self):
-        return int.from_bytes(self.iv_attr_file[self.iv_offset:self.iv_offset+4],
-                "big", signed=False)&0xFFFFFFFF
+        return self._get(4) & 0x0FFFFFFF
+
+    def _getIndex(self):
+        return [self._get(1) for _ in range(4)]
 
     def readHeader(self):
-        offset = self.iv_offset
-        format_major_version = self.iv_attr_file[0]
-        format_minor_version = self.iv_attr_file[1]
-        if(format_major_version!=Const.FORMAT_MAJOR_VERSION):
+        format_major_version = self._get(1)
+        format_minor_version = self._get(1)
+        if format_major_version!=Const.FORMAT_MAJOR_VERSION:
             raise Exception("Format major version mismatch")
-        elif(format_minor_version!=Const.FORMAT_MINOR_VERSION):
+        elif format_minor_version!=Const.FORMAT_MINOR_VERSION:
             raise Exception("Format minor version mismatch")
-        chip_type = Fapi2.ChipType(self.iv_attr_file[2]).name
-        if(self.iv_file_type != Fapi2.FileType(self.iv_attr_file[3])):
+
+        chip_type = Fapi2.ChipType(self._get(1)).name
+        file_type = Fapi2.FileType(self._get(1))
+        if self.iv_file_type != file_type:
             raise Exception("File Type Mismatch Expected - \
-            {}\n Got - {}".format(self.iv_file_type,
-            Fapi2.FileType(self.iv_attr_file[3])))
-        number_target_sections = int.from_bytes(self.iv_attr_file[4:8],
-                                                "big",signed=False)
-        self.iv_offset += 8
+            {}\n Got - {}".format(self.iv_file_type, file_type))
+
+        number_target_sections = self._get(4)
         return number_target_sections
 
-    def readTarget(self)-> 'list[int, Fapi2.Target]':
-        offset = self.iv_offset
-        magic_word = int.from_bytes(
-            self.iv_attr_file[offset+4:offset+8], "big", signed=False)
-        assert magic_word == Const.ATTR_FILE_TARGET_MAGIC_WORD, "Input data is corrupted"
+    def readTarget(self) -> 'list[int, Fapi2.Target]':
+        fapi_target_type = Fapi2.TargetType(self._get(1)).name
+        inst_num = self._get(1)
+        num_attribute_rows = self._get(2)
+        magic_word = self._get(4)
 
-        fapi_target_type = Fapi2.TargetType(int.from_bytes(
-            self.iv_attr_file[offset:offset+1], "big", signed=False)).name
-        inst_num = int.from_bytes(self.iv_attr_file[offset+1:offset+2],
-                                "big", signed=False)
-        num_attribute_rows = int.from_bytes(self.iv_attr_file[offset+2:offset+4],
-                                            "big", signed=False)
-        self.iv_offset+=8
-        target = AttributeFile.Target(fapi_target_type, inst_num)
-        return num_attribute_rows, target
+        if magic_word != Const.ATTR_FILE_TARGET_MAGIC_WORD:
+            raise Exception("Input data is corrupted, target magic word expected")
+
+        return num_attribute_rows, AttributeFile.Target(fapi_target_type, inst_num)
 
     def getResponse(self):
         response={}
@@ -453,12 +464,44 @@ class AttributeFileParser(AttributeFile):
             num_attribute_rows, target = self.readTarget()
             response[target] = list()
             if(num_attribute_rows == 0):
-                print("Invalid Target section, num attributes = 0")
-                raise Exception()
+                raise Exception("Invalid Target section, num attributes = 0")
             for k in range(num_attribute_rows):
-                response[target].append(self.readAttribute())
+                attr = self.readAttribute()
+                if attr is not None:
+                    response[target].append(attr)
         return response
 
+
+class AttributeOverrideFileParser(AttributeFileParser):
+    '''
+    Parse an attribute override file
+    '''
+    def __init__(
+        self,
+        i_attr_file : bytearray, # a pak file containing one or more attribute ovrd resp file
+        i_attr_db) -> None:
+        super().__init__(i_attr_file, i_attr_db)
+        self.iv_file_type = Fapi2.FileType.OVERRIDE
+
+    def readAttribute(self):
+        attr_id = self._getAttrId()
+        size = self._get(2)
+        index = self._getIndex()
+        value = self._get_bytes(size)
+        self._align(8)
+
+        try:
+            attr_name = self.getAttrName(attr_id)
+        except KeyError as e:
+            print(e.msg)
+            return None
+
+        attr_info = self.iv_attr_fields[attr_name]
+        ndims = len(attr_info.array_dims)
+
+        return AttributeFile.AttributeOverride(
+            AttributeFile.AttributeInfo(attr_name, index[:ndims], size),
+            value)
 
 class AttributeUpdateRespFileParser(AttributeFileParser):
     '''
@@ -471,23 +514,13 @@ class AttributeUpdateRespFileParser(AttributeFileParser):
         super().__init__(i_attr_file, i_attr_db)
         self.iv_file_type = Fapi2.FileType.RESPONSE
 
-    def _getStatus(self):
-        return (self.iv_attr_file[self.iv_offset])&0xF0
-
-    def _getAttrRc(self):
-        return int.from_bytes(self.iv_attr_file[self.iv_offset+4:self.iv_offset+8],
-                "big", signed=False)
-
     def readAttribute(self):
         attr_id = self._getAttrId()
         attr_name = self.getAttrName(attr_id)
-        rc = self._getAttrRc()
-        attr_ovrd = AttributeFile.AttributeOvrdResponse(attr_name=attr_name,
-        rc = AttributeFile.AttributeRc(rc))
-        offset = self.iv_offset+8
-        self.iv_offset = offset
-        if(offset%8!=0):
-           self.iv_offset = offset+ 8-(offset%8)
+        rc = self._get(4)
+        attr_ovrd = AttributeFile.AttributeOvrdResponse(
+            attr_name=attr_name,
+            rc = AttributeFile.AttributeRc(rc))
         return attr_ovrd
 
 
@@ -496,29 +529,17 @@ class AttributeListRespFileParser(AttributeFileParser):
         super().__init__(i_attr_file, i_attr_db)
         self.iv_file_type = Fapi2.FileType.LIST
 
-    def _getSize(self):
-        return int.from_bytes(self.iv_attr_file[self.iv_offset+4:self.iv_offset+6],
-                "big", signed=False)
-
-    def _getIndex(self):
-        return list(self.iv_attr_file[self.iv_offset+6:self.iv_offset+9])
-
-    def _getData(self, size):
-        return list(self.iv_attr_file[self.iv_offset+10:self.iv_offset+10+size])
-
     def readAttribute(self):
-        offset = self.iv_offset
         attr_id = self._getAttrId()
         attr_name = self.getAttrName(attr_id)
-        size = self._getSize()
+        size = self._get(2)
         index = self._getIndex()
-        data = self._getData(size)
-        attr_inf = AttributeFile.AttributeInfo(id = attr_name,
-                                               index = index, size=size)
-        attr_ovrd = AttributeFile.AttributeReadResponse(attr_inf = attr_inf,
-        value = data, rc = AttributeFile.AttributeRc["AttrOverrideRc_SUCCESS"])
-        offset = self.iv_offset+10+size
-        self.iv_offset = offset
-        if(offset%8!=0):
-            self.iv_offset = offset+ 8-(offset%8)
+        data = self._get_bytes(size)
+        attr_inf = AttributeFile.AttributeInfo(
+            id = attr_name, index = index, size=size)
+        attr_ovrd = AttributeFile.AttributeReadResponse(
+            attr_inf = attr_inf, value = data,
+            rc = AttributeFile.AttributeRc["AttrOverrideRc_SUCCESS"])
+
+        self._align(8)
         return attr_ovrd

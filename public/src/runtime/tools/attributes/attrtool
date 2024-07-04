@@ -36,6 +36,7 @@ import re
 from attrdb import *
 from attrtank import *
 from attrtoolutils import *
+from attrovrdutils import *
 import attrmodule
 
 #special library imports :
@@ -68,11 +69,11 @@ def cmd_parse(args):
         vprint("Parsing SBE attributes from " + filt_xml)
         if filt_xml != '':
             SBEAttributes(filt_xml).update_attrdb(db)
-    
+
     if args.chiptype is not None:
         vprint("Validating attribute sync to SBE")
         db.validateAttrSync(args.chiptype)
- 
+
     sbe_attr_tank = AttributeStructure(db)
 
     vprint("Storing attribute database to " + args.dbfile[0])
@@ -178,6 +179,69 @@ def cmd_dumpattr(args):
         print(e)
         sys.exit(1)
 
+def cmd_dumpovrd(args):
+    ovrd = open(args.ovrd, "rb").read()
+    overrides = AttributeOverrideFileParser(ovrd, args.dbfile).getResponse()
+    for target, ovrs in overrides.items():
+        print("Target: %s[%d]" % (target.targ_type, target.targ_inst))
+        for ovr in ovrs:
+            if not ovr.attr_inf.index or all(i == 0xFF for i in ovr.attr_inf.index):
+                indexstr = ""
+            else:
+                indexstr = "".join("[%d]" % i for i in ovr.attr_inf.index)
+
+            print("    %s%s = %s" % (ovr.attr_inf.id, indexstr, ovr.value.hex()))
+
+def cmd_applyovrd(args):
+    ovrd = open(args.ovrd, "rb").read()
+    parser = AttributeOverrideFileParser(ovrd, args.dbfile)
+    overrides = parser.getResponse()
+    db = parser.iv_attr_db
+    image = bytearray(open(args.image, "rb").read())
+
+    for target, ovrs in overrides.items():
+        vprint("Target: %s[%d]" % (target.targ_type, target.targ_inst))
+        target_fields = {
+            field.name: field for field in db.field_list
+            if isinstance(field, RealAttrFieldInfo)
+            and ("LOG_"+field.sbe_targ_type) == target.targ_type    # whyyyy
+        }
+
+        for ovr in ovrs:
+            if not ovr.attr_inf.index or all(i == 0xFF for i in ovr.attr_inf.index):
+                indexstr = ""
+            else:
+                indexstr = "".join("[%d]" % i for i in ovr.attr_inf.index)
+            vprint("    %s%s = %s" % (ovr.attr_inf.id, indexstr, ovr.value.hex()))
+
+            try:
+                attr = target_fields[ovr.attr_inf.id]
+            except KeyError:
+                vprint("    skipping virtual attr %s" % ovr.attr_inf.id)
+                continue
+
+            index = ovr.attr_inf.index
+            if attr.adj_num_targ_inst > 1:
+                index.insert(0, target.targ_inst)
+
+            try:
+                index_depth = index.index(0xFF)
+            except ValueError:
+                index_depth = len(index)
+
+            offset = attr.sbe_address - db.image_base
+            attr_type = attr._type
+            for idx in index[:index_depth]:
+                offset += idx * attr_type._base.size
+                attr_type = attr_type._base
+
+            if len(ovr.value) != attr_type.size:
+                print("ERROR: final type size %d, override size %d, index %s, index_depth %d" % (attr_type.size, len(ovr.value), index, index_depth))
+            else:
+                image[offset : offset + attr_type.size] = ovr.value
+
+    open(args.image, "wb").write(image)
+
 def cmd_genhwp(args):
     db = AttributeDB(args.targetlist, args.chiptype)
     for xml in args.attr_xml:
@@ -267,6 +331,17 @@ if __name__ == "__main__":
     sub = subparsers.add_parser("setfixed", help="Set an image's attribute values based on the values in the SBE attribute file")
     img_standard_parms(sub)
     sub.set_defaults(func=cmd_setfixed)
+
+    sub = subparsers.add_parser("dumpovrd", help="Dump the contents of a binary attribute override file")
+    sub.add_argument("-v", "--verbose", action="store_true", help="Increase verbosity")
+    sub.add_argument("dbfile", help="Name of the attributes database")
+    sub.add_argument("ovrd", help="Name of the override file")
+    sub.set_defaults(func=cmd_dumpovrd)
+
+    sub = subparsers.add_parser("applyovrd", help="Apply the contents of a binary attribute override file to a binary image")
+    img_standard_parms(sub)
+    sub.add_argument("ovrd", help="Name of the override file")
+    sub.set_defaults(func=cmd_applyovrd)
 
     CHIP_TYPE_CHOICES = ["p", "ody", "z"]
     sub = subparsers.add_parser("genhwp", help="Generate ekb hardware procedure for attribute update and attribute list")
