@@ -363,9 +363,9 @@ def run_commands(main, cust, target, verbose=True):
             return -1
 
         cmd = tables[level][ips[level]]
-        ips[level] += 1
         if verbose:
             print("%s:%05d%s" % (("main", "cust")[level], ips[level], cmd))
+        ips[level] += 1
 
         if cmd.op == Opcode.CALL:
             if level > 0:
