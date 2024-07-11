@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/common/generic/fapi2/include/fapi2.H $ */
+/* $Source: public/src/import/public/common/generic/fapi2/include/fapi2_trace.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2024                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,35 +23,18 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 ///
-/// @file fapi2.H
-/// @brief top level header for fapi2
-///
+/// @file fapi2_trace.H
+/// @brief Macros for specialized trace
+/// EKB-Mirror-To: hw/ppe, hwsv, hostboot
 
-#pragma once
+#ifndef _FAPI2_TRACE_H_
+#define _FAPI2_TRACE_H_
 
-#include <base_utils.H>
-#include <target.H>
-#include <return_code.H>
-#include <buffer.H>
-#include <hw_access.H>
-#include <utils.H>
-#include <plat_trace.H>
-#include <fapi2_trace.H>
-
-// In turn includes the needed generated headers (hwp_ffd_classes, etc.)
-#include <error_scope.H>
-
-#include <fapi2_hwp_executor.H>
-#include <fapi2_attribute_service.H>
-
-// Not supported by Hostboot Bootloader
-#ifndef PLAT_EC_FEATURE_NOT_SUPPORTED
-    #include <fapi2_chip_ec_feature.H>
-#endif
-
-#include <mvpd_access.H>
-
-// Block of headers not currently in fapi2
-#ifdef FAPI2_MISSING_HEADERS
-    #include <mbvpdAccess.H>
-#endif
+#ifdef __PPE__
+    // Macro for simplfing FAPI_INF calls in code used in SBE/SPPE - Does nothing if PPE defined
+    #define FAPI_INF_NO_SBE(_fmt_, _args_...)
+#else // !defined(__PPE__)
+    // Macro for simplfing FAPI_INF calls in code used in SBE/SPPE - FAPI_INF if PPE not defined
+    #define FAPI_INF_NO_SBE(_fmt_, _args_...) FAPI_INF(_fmt_, ##_args_)
+#endif // !defined(__PPE__)
+#endif // _FAPI2_TRACE_H_
