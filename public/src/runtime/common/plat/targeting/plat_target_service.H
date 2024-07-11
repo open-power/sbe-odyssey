@@ -188,11 +188,14 @@ namespace fapi2
             copy.setTargetType(K);
 
             // set the instance number.
-            copy.setTargetInstance(i_child.getParentTargetInstance(i_child));
-
-            // TODO: PST SBE PORTING
-            // This will work for Odyssey.
-            // Set the specific bit related to core/phb/pauc.
+            if(K == LOG_TARGET_TYPE_PERV)
+            {
+                copy.setTargetInstance(i_child.getChipletNumber());
+            }
+            else
+            {
+                copy.setTargetInstance(i_child.getParentTargetInstance(i_child));
+            }
 
             return copy;
         }
