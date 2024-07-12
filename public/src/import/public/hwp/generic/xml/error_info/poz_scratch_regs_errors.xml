@@ -25,6 +25,7 @@
 <hwpErrors>
 <!-- ******************************************************************** -->
 <hwpError>
+  <sbeError/>
   <rc>RC_SCRATCH_REGS_INVALID_ACCESS_ERR</rc>
   <description>
     Requested hardware access method is not supported by platform
