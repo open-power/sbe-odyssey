@@ -366,7 +366,7 @@ ReturnCode poz_bist(
     const bool repeat_exec_loop = l_inner_loop_mask.getBit(15);
 
     // Stuff for saving register values to restore after cleanup
-    const bool l_allow_fast_cleanup = !(i_params.stages & i_params.bist_flags::DIAGNOSTICS);
+    const bool l_allow_fast_cleanup = !(i_params.flags & i_params.bist_flags::DIAGNOSTICS);
     const bool l_save_uc_reg_values = (i_params.stages & i_params.bist_stages::REG_SETUP) &&
                                       (i_params.stages & i_params.bist_stages::REG_CLEANUP) &&
                                       (!(i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST));
