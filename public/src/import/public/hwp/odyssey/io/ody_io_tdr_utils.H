@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -29,6 +29,8 @@
 ///-----------------------------------------------------------------------------
 /// *HW HW Maintainer: Josh Chica <Josh.Chica@ibm.com>
 /// *HW FW Maintainer:
+/// *HWP Team: IO
+/// *HWP Level: 3
 /// *HW Consumed by  : SBE
 ///-----------------------------------------------------------------------------
 #pragma once
