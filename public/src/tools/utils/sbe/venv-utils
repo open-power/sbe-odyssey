@@ -88,6 +88,16 @@ venvActivate()
 # Function for install required packages which is their in requirements.txt
 installRequiredPackages()
 {
+    echo "Update pip..."
+    CMD="python3 -m pip install --upgrade pip --no-cache-dir"
+    echo $CMD
+    $CMD || {
+        if (($? != 0)); then
+            echo "Error: venv-utils | installRequiredPackages  | Failure: $?"
+        fi
+        exit 1
+    }
+
     echo "Installing Required packages..."
     CMD="python3 -m pip install --no-cache-dir"
     CMD="$CMD -r $SBEROOT_PUB/src/tools/install/buildtoolrequirements.txt      \

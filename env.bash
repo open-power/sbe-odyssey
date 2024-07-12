@@ -44,7 +44,7 @@ export SBEROOT_INT="${SBEROOT}/internal"
 # SBE_VENV_PATH path can be set according to the user's preferred location.
 # Can be overide using customrc / set SBE_VENV_PATH before workon
 if [ -z "${SBE_VENV_PATH}" ]; then
-    export SBE_VENV_PATH="venv"
+    export SBE_VENV_PATH="venv_`uname -m`"
 fi
 
 if [ -e ${SBEROOT_PUB}/projectrc ]; then

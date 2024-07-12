@@ -29,6 +29,7 @@ cp ${MESON_SOURCE_ROOT}/public/src/build/utils/imageTool.py \
    ${MESON_SOURCE_ROOT}/public/src/build/utils/signHashList \
    ${MESON_SOURCE_ROOT}/public/src/build/utils/genMeasuredHash.sh \
    ${MESON_SOURCE_ROOT}/public/src/build/utils/ecc \
+   ${MESON_SOURCE_ROOT}/public/src/build/utils/ecc_ppc64le \
    ${MESON_SOURCE_ROOT}/public/src/tools/debug/sbe-debug.py \
    ${MESON_SOURCE_ROOT}/public/src/tools/trace/fsp-trace \
    ${MESON_SOURCE_ROOT}/public/src/tools/trace/ppe2fsp.py \
