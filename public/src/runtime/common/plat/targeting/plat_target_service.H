@@ -224,6 +224,32 @@ namespace fapi2
             // Platform are supposed to provide the implementation;
         }
 
+        ///
+        ///
+        /// @brief      Get the Second/other End target for the chiplet target
+        ///             Ex:
+        ///                        EQs
+        ///                   ______|______
+        ///                  |             |
+        ///                 Core <------> L3Cache
+        ///
+        ///             Currently supporting below relationships only.
+        ///             1. Core has L3cache as its other/second end and
+        ///             2. L3cache has core as its other/second end.
+        ///
+        /// @param[in]  i_second_end_type Second End target type
+        /// @param[in]  i_first_end First End target handle
+        /// @param[in]  i_include_nonfunctional Return also targets that are not functional
+        /// @param[out] o_second_end Second end target handle
+        /// @return     FAPI2_RC_SUCCESS if OK, will return a non-success
+        ///             ReturnCodes in the event of failure.
+        /// @note       o_second_end is only valid if return is FAPI2_RC_SUCCESS
+        ///
+        ReturnCodes getChipletOtherEnd(const LogTargetType i_second_end_type,
+                                const plat_target_sbe_handle i_first_end,
+                                const bool i_include_nonfunctional,
+                                plat_target_sbe_handle &o_second_end) const;
+
     protected:
         static const uint32_t MAX_TARGETS = 256;
         static plat_target_sbe_handle iv_targets[MAX_TARGETS];

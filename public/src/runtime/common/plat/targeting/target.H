@@ -42,6 +42,10 @@ namespace fapi2
 
     constexpr TargetType TARGET_TYPE_EQ_CHILDREN = TARGET_TYPE_L3CACHE
                                                     | TARGET_TYPE_CORE;
+
+    constexpr TargetType TARGET_TYPE_CORE_OTHEREND = TARGET_TYPE_L3CACHE;
+    constexpr TargetType TARGET_TYPE_L3CACHE_OTHEREND = TARGET_TYPE_CORE;
+
     template<TargetType T>
     constexpr LogTargetType fapiTargetTypeToPlatTargetType()
     {
@@ -432,5 +436,44 @@ namespace fapi2
         }
         o_target = get();
         return FAPI2_RC_SUCCESS;
+    }
+
+    ///
+    /// @brief      Get the target at the other end.
+    /// @tparam     T The type of the target on the other end
+    /// @param[out] o_target A target representing the thing on the other end
+    /// @param[in]  i_state The desired TargetState of the other end
+    /// @return     FAPI2_RC_SUCCESS if OK, platforms will return a non-success
+    ///             ReturnCode in the event of failure
+    /// @note       o_target is only valid if return is FAPI2_RC_SUCCESS
+    ///
+    template<TargetType K, MulticastType M, typename V>
+    template<TargetType T>
+    ReturnCodes Target<K, M, V>::getOtherEnd(Target<T, M, V>& o_target, const TargetState i_state) const
+    {
+        constexpr LogTargetType l_logTargetTypeOtherEnd = fapiTargetTypeToPlatTargetType<T>();
+
+        const bool l_include_nonfunctional = i_state == TARGET_STATE_PRESENT;
+        ReturnCodes l_return_status = FAPI2_RC_FALSE;
+        plat_target_sbe_handle l_otherend;
+
+        if (T == TARGET_TYPE_CORE)
+        {
+            STATIC_CHECK((K == TARGET_TYPE_CORE_OTHEREND), "Invalid Other End type for CORE target");
+            l_return_status = g_platTarget->getChipletOtherEnd(l_logTargetTypeOtherEnd, *this, l_include_nonfunctional, l_otherend);
+        }
+        else if (T == TARGET_TYPE_L3CACHE)
+        {
+            STATIC_CHECK((K == TARGET_TYPE_L3CACHE_OTHEREND), "Invalid Other End type for L3Cache target");
+            l_return_status = g_platTarget->getChipletOtherEnd(l_logTargetTypeOtherEnd, *this, l_include_nonfunctional, l_otherend);
+        }
+        else
+        {
+            // If we fall through to here, there is no defined code path to handle the
+            // combination of T and K -- let's fail loudly.
+            STATIC_COMPILE_ERROR("Unsupported combination of other ends");
+        }
+        o_target =  l_otherend;
+        return l_return_status;
     }
 }

@@ -438,3 +438,31 @@ void sbe_target_service::getPervChildren(const TargetFilter i_filter,
         targetIndex += targetInfo.targetCnt;
     }
 }
+
+ReturnCodes sbe_target_service::getChipletOtherEnd(const LogTargetType i_second_end_type,
+                                            const plat_target_sbe_handle i_first_end,
+                                            const bool i_include_nonfunctional,
+                                            plat_target_sbe_handle &o_second_end) const
+{
+    const uint8_t l_cplt_id = i_first_end.getChipletNumber();
+    const uint8_t l_first_end_instance = i_first_end.getTargetInstance();
+    ReturnCodes l_return_status = FAPI2_RC_FALSE;
+
+    for (uint32_t i = 0; i < iv_targets_size; i++)
+    {
+        auto &target = iv_targets[i];
+        if (target.getTargetType() == i_second_end_type &&
+            target.getChipletNumber() == l_cplt_id &&
+            target.getTargetInstance() == l_first_end_instance)
+        {
+            if((i_include_nonfunctional || target.getFunctional()) &&
+               (target.getPresent()))
+            {
+                o_second_end = target;
+                l_return_status = FAPI2_RC_SUCCESS;
+                break;
+            }
+        }
+    }
+    return l_return_status;
+}
