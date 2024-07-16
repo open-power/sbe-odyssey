@@ -47,11 +47,9 @@ chipop_default_cmd_class_init ="""
 #include "chipop_handler.H"
 
 #define HASH_KEY(key)\\
-        $$$@@@ for entry in break_class -@@@$$$
-        $$$@@@ if not loop.last -@@@$$$
-        (0x$@ entry.cmd_class @$ == key) ? size_t($@ entry.index @$):\\
-        $$$@@@ else @@@$$$ size_t($@ entry.index @$)\\$$$@@@- endif @@@$$$
-        $$$@@@- endfor@@@$$$
+    $$$@@@ for entry in break_class -@@@$$$
+    (0x$@ entry.cmd_class @$ == key) ? size_t($@ entry.index @$): \\
+    $$$@@@ endfor @@@$$$ size_t($@ break_class[-1].index + 1 @$)
 
 #define CMD_CLASS_LIST \\
 constexpr cmdClass_t cmdClassArr[] = { \\
