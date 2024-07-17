@@ -53,20 +53,34 @@ foreach infile : infile_c
   abs_runtime_cmn_core_c_path += runtime_cmn_core_dir_path + infile
 endforeach
 
-# Tap specifc common files.
-abs_runtime_cmn_core_infra_c_path = files('initthreads.C',
-                                            'sbeglobals.C',
-                                            'sbeSpMsg.C',
-                                            'sberegaccess.C',
-                                            'irqutils.C',
-                                            'sbestatesutils.C',
-                                            'sbeirqhandler.C',
-                                            'chipophandlerutils.C',
-                                            'sbeexceptionhandler.C',
-                                            'sbecmdgenericffdc.C',
-                                            'istep.C',
-                                            'istepIplUtils.C'
-                                          )
-
+# threads files
+abs_runtime_cmn_core_infra_threads_c_files = files('initthreads.C',
+                                         )
+# irq files
+abs_runtime_cmn_core_infra_irq_c_files = files('irqutils.C',
+                                  'sbeirqhandler.C',
+                                  )
+# globals files
+abs_runtime_cmn_core_infra_globals_c_files = files('sbeglobals.C',
+                                      )
+# regaccess files
+abs_runtime_cmn_core_infra_regaccess_c_files = files('sberegaccess.C',
+                                       )
+# stateutils files
+abs_runtime_cmn_core_infra_stateutils_c_files = files('sbestatesutils.C',
+                                         )
+# sbeSpMsg files
+abs_runtime_cmn_core_infra_spMsg_c_files = files('sbeSpMsg.C',
+                                   )
+# chipop_handler files
+abs_runtime_cmn_core_infra_chipop_handler_c_files = files('chipophandlerutils.C',
+                                            )
+# istep files
+abs_runtime_cmn_core_infra_istep_c_files = files('istep.C',
+                                                  'istepIplUtils.C',
+                                                )
+# ffdc files
+abs_runtime_cmn_core_infra_ffdc_c_files = files('sbecmdgenericffdc.C',
+                                  )
 # Exception handler files.
-exeption_handler_cmn_core_infra_c_path = files('sbeexceptionhandler.C')
+exception_handler_cmn_core_infra_c_path = files('sbeexceptionhandler.C')
