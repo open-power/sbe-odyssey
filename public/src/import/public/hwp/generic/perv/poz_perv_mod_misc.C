@@ -55,7 +55,9 @@ enum POZ_PERV_MOD_MISC_Private_Constants
     PGOOD_REGIONS_OFFSET = 12,
 
     LFIR_MASK_DEFAULT = 0x80dfffffffffffff,
+    TP_LFIR_SPPE_HALTED_BIT = 30,
     TP_LFIR_MASK_DEFAULT = 0x80c1c7fcf3fbffff,
+    TP_LFIR_MASK_SPPE_HALTED = 0x80c1c7fef3fbffff,
     XSTOP_MASK_ANY_ATTN_AND_DBG = 0x3000000000000000,
     RECOV_MASK_LOCAL_XSTOP = 0x2000000000000000,
     CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF,
@@ -531,7 +533,13 @@ ReturnCode mod_poz_tp_init_common(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_targ
     FAPI_TRY(PERV_CTRL0.putScom_SET(i_target));
 
     FAPI_DBG("Unmask pervasive FIRs");
-    FAPI_TRY(putScom(l_tpchiplet, EPS_MASK_RW_WCLEAR, ~TP_LFIR_MASK_DEFAULT));
+    // If SPPE is currently halted, don't unmask the corresponding LFIR bit
+    FAPI_TRY(getScom(l_tpchiplet, LFIR_RW_WCLEAR, l_data64));
+    {
+        const uint64_t l_mask = l_data64.getBit<TP_LFIR_SPPE_HALTED_BIT>() ?
+                                TP_LFIR_MASK_SPPE_HALTED : TP_LFIR_MASK_DEFAULT;
+        FAPI_TRY(putScom(l_tpchiplet, EPS_MASK_RW_WCLEAR, ~l_mask));
+    }
     FAPI_TRY(putScom(l_tpchiplet, XSTOP_MASK_RW, XSTOP_MASK_ANY_ATTN_AND_DBG));
     FAPI_TRY(putScom(l_tpchiplet, RECOV_MASK_RW, RECOV_MASK_LOCAL_XSTOP));
     FAPI_TRY(putScom(l_tpchiplet, ATTN_MASK_RW, 0));
