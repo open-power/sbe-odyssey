@@ -22,6 +22,11 @@ run-command-file (lookup-file "sbestandaloneenv.simics")
 # Load POZ-SBE debug tools.
 echo "Attempting to register POZ-SBE Tools"
 try {
+    # Disable ECC bits for odyssey OTPROM
+    $odys = (list-objects class = odyssey_cmp -all)
+    foreach $ody in $odys {
+        $ody.pib.write address = 0x10008<<4 0x0000000000000000 8 -b
+    }
     run-python-file (lookup-file "poz-simics-debug-framework.py")
 } except {
     echo "ERROR: Failed to load SBE debug tools."
