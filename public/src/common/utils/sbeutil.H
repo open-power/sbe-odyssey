@@ -442,4 +442,10 @@ namespace SBE
                                const uint8_t i_size,
                                const uint8_t i_hexSize,
                                uint8_t *o_hex);
+    /**
+     * @brief Get the messaging register address for platform
+     *
+     * @return messaging regiter address
+     **/
+    uint64_t getMessageRegisterAddress(void);
 } // namespace SBE

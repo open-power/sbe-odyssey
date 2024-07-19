@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -44,23 +44,6 @@ SbeRegAccess SbeRegAccess::cv_instance __attribute__((section (".sbss")));
  *
  * @return An RC indicating success/failure
  */
-static uint64_t getPPEMessageRegisterAddress() {
-    if (SBE_GLOBAL->pibCtrlId == PIBCTRL_SBE)
-    {
-        return scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_15_RW;
-    }
-    if (SBE_GLOBAL->pibCtrlId == PIBCTRL_PME)
-    {
-        return scomt::poz::FSXCOMP_FSXLOG_SCRATCH_REGISTER_2_RW;
-    }
-    return scomt::poz::FSXCOMP_FSXLOG_SB_MSG;
-}
-
-/**
- * @brief Initialize the class
- *
- * @return An RC indicating success/failure
- */
 uint32_t SbeRegAccess::init(bool forced)
 {
     #define SBE_FUNC "SbeRegAccess::init "
@@ -88,7 +71,7 @@ uint32_t SbeRegAccess::init(bool forced)
         }
 
         // Read SBE messaging register into iv_messagingReg
-        rc = getscom_abs(getPPEMessageRegisterAddress(), &messagingReg.iv_messagingReg);
+        rc = getscom_abs(SBE::getMessageRegisterAddress(), &messagingReg.iv_messagingReg);
         if(PCB_ERROR_NONE != rc)
         {
             SBE_ERROR(SBE_FUNC"Failed reading sbe messaging reg., RC: 0x%08X. ",
@@ -149,12 +132,12 @@ uint32_t SbeRegAccess::updateSbeState(const uint8_t &i_state)
     #define SBE_FUNC "SbeRegAccess::updateSbeState "
     uint32_t rc = 0;
 
-    getscom_abs(getPPEMessageRegisterAddress(), &messagingReg.iv_messagingReg);
+    getscom_abs(SBE::getMessageRegisterAddress(), &messagingReg.iv_messagingReg);
 
     messagingReg.iv_prevState = messagingReg.iv_currState;
     messagingReg.iv_currState = i_state;
 
-    rc = putscom_abs(getPPEMessageRegisterAddress(), messagingReg.iv_messagingReg);
+    rc = putscom_abs(SBE::getMessageRegisterAddress(), messagingReg.iv_messagingReg);
     if(PCB_ERROR_NONE != rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update STATE: 0x%08X to messaging "
@@ -181,12 +164,12 @@ uint32_t SbeRegAccess::updateSbeStep(const uint8_t i_major,
     #define SBE_FUNC "SbeRegAccess::updateSbeStep "
     uint32_t rc = 0;
 
-    getscom_abs(getPPEMessageRegisterAddress(), &messagingReg.iv_messagingReg);
+    getscom_abs(SBE::getMessageRegisterAddress(), &messagingReg.iv_messagingReg);
 
     messagingReg.iv_majorStep = i_major;
     messagingReg.iv_minorStep = i_minor;
 
-    rc = putscom_abs(getPPEMessageRegisterAddress(), messagingReg.iv_messagingReg);
+    rc = putscom_abs(SBE::getMessageRegisterAddress(), messagingReg.iv_messagingReg);
     if(rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update SBE step: 0x%08X.0x%08X to messaging "
@@ -210,10 +193,10 @@ uint32_t SbeRegAccess::setSbeReady()
     #define SBE_FUNC "SbeRegAccess::setSbeReady "
     uint32_t rc = 0;
 
-    getscom_abs(getPPEMessageRegisterAddress(), &messagingReg.iv_messagingReg);
+    getscom_abs(SBE::getMessageRegisterAddress(), &messagingReg.iv_messagingReg);
 
     messagingReg.iv_sbeBooted = true;
-    rc = putscom_abs(getPPEMessageRegisterAddress(), messagingReg.iv_messagingReg);
+    rc = putscom_abs(SBE::getMessageRegisterAddress(), messagingReg.iv_messagingReg);
     if(rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update SBE ready state to "
@@ -228,11 +211,11 @@ uint32_t SbeRegAccess::updateAsyncFFDCBit( bool i_on )
     #define SBE_FUNC "SbeRegAccess::updateAsyncFFDCBit "
     uint32_t rc = 0;
 
-    getscom_abs(getPPEMessageRegisterAddress(), &messagingReg.iv_messagingReg);
+    getscom_abs(SBE::getMessageRegisterAddress(), &messagingReg.iv_messagingReg);
 
     messagingReg.iv_asyncFFDC = i_on;
 
-    rc = putscom_abs(getPPEMessageRegisterAddress(), messagingReg.iv_messagingReg);
+    rc = putscom_abs(SBE::getMessageRegisterAddress(), messagingReg.iv_messagingReg);
     if(rc)
     {
         SBE_ERROR(SBE_FUNC"Failed to update SBE Aync bit in message "

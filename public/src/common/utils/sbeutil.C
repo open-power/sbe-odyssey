@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -36,6 +36,12 @@ namespace SBE
 {
     bool isSimics() __attribute__((alias("__isSimicsRunning")));
     extern "C" void __isSimicsRunning() __attribute__ ((noinline));
+
+    uint64_t __attribute__((weak)) getMessageRegisterAddress()
+    {
+        SBE_DEBUG("getMessageRegisterAddress - default");
+        return scomt::poz::FSXCOMP_FSXLOG_SB_MSG;
+    }
 
     void __isSimicsRunning()
     {
@@ -195,13 +201,13 @@ namespace SBE
         // store lfr with updated hreset bit
         PPE_STVD(scomt::poz_ppe::TP_TPCHIP_PIB_SBE_SBEPRV_LCL_LFR_SCRATCH_PPE2, lfrReg);
     }
-
+    
     void updateProgressCode(uint8_t value)
     {
         messagingReg_t messagingReg;
-        getscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, &messagingReg.iv_messagingReg);
+        getscom_abs(getMessageRegisterAddress(), &messagingReg.iv_messagingReg);
         messagingReg.iv_progressCode = value;
-        putscom_abs(scomt::poz::FSXCOMP_FSXLOG_SB_MSG, messagingReg.iv_messagingReg);
+        putscom_abs(getMessageRegisterAddress(), messagingReg.iv_messagingReg);
     }
 
     uint32_t alphaNumericToHex(const uint8_t *i_str,
