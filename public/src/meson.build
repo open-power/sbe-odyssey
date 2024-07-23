@@ -258,6 +258,13 @@ if platform == 'pst' or platform == 'all'
 
   endforeach
 
+  foreach inc_path : meson.get_external_property('pst_hsbe_inc_paths')
+
+    abs_inc_path = '-I' + meson.global_source_root() + inc_path
+    pst_hsbe_abs_inc_paths += abs_inc_path
+
+  endforeach
+
 endif
 
 #Object file generation generator's (api's)

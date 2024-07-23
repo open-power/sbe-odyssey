@@ -65,6 +65,7 @@ enum SbeChipType_t : uint8_t
     CHIP_TYPE_COMPUTE_05,   ///< Compute chip 5
     CHIP_TYPE_COMPUTE_06,   ///< Compute chip 6
     CHIP_TYPE_COMPUTE_07,   ///< Compute chip 7
+    CHIP_TYPE_HUB,          ///< Hub chip
 };
 
 /**
