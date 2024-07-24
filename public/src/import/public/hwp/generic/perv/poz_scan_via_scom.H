@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -95,7 +95,7 @@ namespace svs
  */
 inline constexpr uint32_t SCAN_ROTATE_MAX()
 {
-    return 0x380;
+    return 0x80;
 }
 inline constexpr uint32_t LONG_ROTATE_MAX()
 {

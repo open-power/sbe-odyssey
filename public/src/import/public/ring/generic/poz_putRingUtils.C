@@ -79,7 +79,8 @@ enum
     CPLT_STAT0_CC_CTRL_PARALLEL_SCAN_COMPARE_ERR = 10,
 
     SVS_LONG_ROTATE_MAX         = 0xFFFFF,
-    SVS_SHORT_ROTATE_MAX        = 0x380,
+    SVS_SHORT_ROTATE_MAX        = 0x80,
+    SVS_SHORT_ROTATE_MAX_QME    = 0x380,
 };
 
 /// @brief Constants for operations performed by putRing function.
@@ -316,7 +317,10 @@ static ReturnCode scanRotate(const ScanTarget& i_target, uint64_t i_nbits)
 {
     uint64_t l_rotateCount       =   i_nbits;
 
-    while (l_rotateCount > SVS_SHORT_ROTATE_MAX)
+    constexpr uint64_t l_short_rotate_max = is_platform<PLAT_QME>() ?
+                                            SVS_SHORT_ROTATE_MAX_QME : SVS_SHORT_ROTATE_MAX;
+
+    while (l_rotateCount > l_short_rotate_max)
     {
         const uint32_t l_nbits = std::min(uint64_t(SVS_LONG_ROTATE_MAX), l_rotateCount);
         FAPI_TRY(longRotate(i_target, l_nbits));
