@@ -28,6 +28,7 @@
 #include "sbeglobals.H"
 #include "sbetrace.H"
 #include "heap.H"
+#include "sbe_app_cfg.h"
 
 // Max defines for Semaphores
 static uint32_t MAX_SEMAPHORE_COUNT = 3;
