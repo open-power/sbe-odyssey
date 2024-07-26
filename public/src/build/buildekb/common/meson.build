@@ -23,6 +23,7 @@
 #
 # IBM_PROLOG_END_TAG
 
+subdir('pklib')
 subdir('ppebaselib')
 subdir('ppetrace')
 subdir('pkkernel')
