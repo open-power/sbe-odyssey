@@ -57,7 +57,7 @@ enum pll_lock_bits
     PS_PERV_FPLL4     = 0x04,
     PS_PERV_PLLNEST   = 0x02,
 
-    ODY_PERV_PLLMC      = 0x02,
+    ODY_PERV_PLLMC      = 0x80,
 
     ZME_PERV_PLLCLKSW0  = 0x80,
     ZME_PERV_PLLCLKSW1  = 0x40,

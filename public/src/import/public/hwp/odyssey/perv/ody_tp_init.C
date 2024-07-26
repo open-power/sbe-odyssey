@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -42,6 +42,7 @@ using namespace scomt::perv;
 using namespace pib;
 
 SCOMT_PERV_USE_CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_ROOT_CTRL0;
+SCOMT_PERV_USE_TPCHIP_NET_PCBRSPPERV_RESPONDER_CONFIG_REG;
 
 enum ODY_TP_INIT_Private_Constants
 {
@@ -63,7 +64,9 @@ ReturnCode ody_tp_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
 
     auto l_mc_allgood = i_target.getMulticast<fapi2::TARGET_TYPE_PERV>(fapi2::MCGROUP_GOOD);
     CFAM_FSI_W_MAILBOX_FSXCOMP_FSXLOG_ROOT_CTRL0_t ROOT_CTRL0;
+    TPCHIP_NET_PCBRSPPERV_RESPONDER_CONFIG_REG_t PCB_RESPONDER_CONFIG_REG;
     ATTR_OCMB_PLL_BUCKET_Type l_pll_bucket;
+    ATTR_IO_TANK_PLL_BYPASS_Type l_pll_bypass;
 
     // TODO : Set up TOD error routing, error mask via scan inits
     // TODO : Set up perv LFIR, XSTOP_MASK, RECOV_MASK via scan inits
@@ -71,6 +74,7 @@ ReturnCode ody_tp_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
     FAPI_INF("Entering ...");
 
     FAPI_TRY(FAPI_ATTR_GET(ATTR_OCMB_PLL_BUCKET, i_target, l_pll_bucket));
+    FAPI_TRY(FAPI_ATTR_GET(ATTR_IO_TANK_PLL_BYPASS, i_target, l_pll_bypass));
 
     FAPI_DBG("Drop GLOBAL_EP_RESET.");
     ROOT_CTRL0 = 0;
@@ -98,6 +102,16 @@ ReturnCode ody_tp_init(const Target<TARGET_TYPE_OCMB_CHIP>& i_target)
                             PC_GSD2PIB, false, PC_SPPE, true,
                             PC_NONE, false, PC_NONE, false,
                             PC_NONE, false, PC_NONE, false));
+
+    FAPI_DBG("Unmask PLL unlock reporting");
+
+    if (!l_pll_bypass)
+    {
+        FAPI_TRY(PCB_RESPONDER_CONFIG_REG.getScom(i_target));
+        PCB_RESPONDER_CONFIG_REG.set_CFG_MASK_PLL_ERRS(PCB_RESPONDER_CONFIG_REG.get_CFG_MASK_PLL_ERRS() & ~
+                (pll::ODY_PERV_PLLMC));
+        FAPI_TRY(PCB_RESPONDER_CONFIG_REG.putScom(i_target));
+    }
 
     FAPI_INF("Miscellaneous TP setup");
     FAPI_TRY(mod_poz_tp_init_common(i_target));
