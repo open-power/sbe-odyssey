@@ -48,8 +48,6 @@ infile_c = [
             '/hwp/odyssey/perv/ody_scratch_regs_utils.C',
             '/hwp/odyssey/perv/ody_stopclocks.C',
             '/hwp/odyssey/perv/ody_gettracearray.C',
-            '/hwp/odyssey/perv/ody_putsram.C',
-            '/hwp/odyssey/perv/ody_getsram.C',
 
             '/memory/odyssey/hwp/ody_sppe_draminit.C',
             '/memory/odyssey/hwp/ody_thermal_init.C',
@@ -83,6 +81,8 @@ infile_c = [
             '/hwp/odyssey/io/ody_omi_train_check.C',
             '/hwp/odyssey/io/ody_omi_posttrain_adv.C',
             '/memory/odyssey/hwp/ody_scominit.C',
+            '/hwp/odyssey/io/ody_putsram.C',
+            '/hwp/odyssey/io/ody_getsram.C',
 
             # Files needed for ody_ddrphyinit
             '/memory/odyssey/hwp/ody_ddrphyinit.C',

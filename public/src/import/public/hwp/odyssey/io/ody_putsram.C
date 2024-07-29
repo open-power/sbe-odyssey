@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_getsram.H $     */
+/* $Source: public/src/import/public/hwp/odyssey/io/ody_putsram.C $       */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -23,38 +23,53 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 ///
-/// @file ody_getsram.H
-/// @brief Read data from Odyssey SRAM
-///
+/// @file ody_putsram.C
+/// @brief Write data to SRAM
 /// *HWP HW Maintainer: Thi Tran <thi@us.ibm.com>
 /// *HWP FW Maintainer:
 /// *HWP Consumed by: HB, Cronus, SBE
 ///
 
-#pragma once
-
 //------------------------------------------------------------------------------
 // Includes
 //------------------------------------------------------------------------------
-#include <fapi2.H>
+#include <ody_putsram.H>
+#include <poz_writesram.H>
+#include <ody_scom_omi_ioo.H>
 
 //------------------------------------------------------------------------------
-// Function prototype
+// Constants
 //------------------------------------------------------------------------------
-//
+// OCMB
+SCOMT_OMI_USE_PHY_PPE_WRAP0_ARB_CSAR
 
-///
-/// @brief Read data from Odyssey SRAM
-///
-/// @param[in]  i_target        Reference to proc Odyssey target
-/// @param[in]  i_offset        SRAM offset to read from
-/// @param[in]  i_bytes         Size of data to read (in bytes)
-/// @param[out] o_data          Pointer to data storage
-///
-/// @return FAPI_RC_SUCCESS if success, else error code
-///
-DECLARE_HWP(ody_getsram,
-            const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
-            const uint64_t i_offset,
-            const uint32_t i_bytes,
-            uint8_t* o_data);
+//------------------------------------------------------------------------------
+// Function definitions
+//------------------------------------------------------------------------------
+fapi2::ReturnCode ody_putsram(const fapi2::Target <fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,
+                              const uint64_t i_offset,
+                              const uint32_t i_bytes,
+                              const uint8_t* i_data)
+{
+    FAPI_DBG("Start");
+    using namespace scomt::omi;
+    PHY_PPE_WRAP0_ARB_CSAR_t  WRAP0_ARB_CSAR;
+
+    FAPI_DBG("i_offset [0x%.8X%.8X], i_bytes %u.",
+             ((i_offset >> 32) & 0xFFFFFFFF), (i_offset & 0xFFFFFFFF), i_bytes);
+
+    // Set SRAM address
+    WRAP0_ARB_CSAR = i_offset;
+    FAPI_TRY(WRAP0_ARB_CSAR.putScom(i_target),
+             "Error putscom to WRAP0_ARB_CSAR (SRAM address).");
+
+    // Write SRAM
+    FAPI_TRY(poz_writesram(i_target, PHY_PPE_WRAP0_ARB_CSCR_RW, PHY_PPE_WRAP0_ARB_CSDR, i_bytes, i_data),
+             "Error from poz_writesram (Odyssey).");
+
+    FAPI_DBG("poz_writesram completes.");
+
+fapi_try_exit:
+    FAPI_DBG("End");
+    return fapi2::current_err;
+}
