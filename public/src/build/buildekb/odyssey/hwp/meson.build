@@ -134,6 +134,7 @@ infile_c = [
             '/memory/odyssey/hwp/lib/mcbist/ody_mcbist_address.C',
             '/memory/odyssey/hwp/lib/mcbist/ody_memdiags.C',
             '/memory/odyssey/hwp/lib/workarounds/ody_ccs_des_insert_workaround.C',
+            '/memory/odyssey/hwp/lib/workarounds/ody_temp_sensor_workarounds.C',
             ]
 
 #Create abs path for input files before creating .o
