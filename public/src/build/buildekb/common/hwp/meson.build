@@ -30,6 +30,7 @@ generic_infile_c = [
                     'poz_perv_mod_chiplet_clocking.C',
                     'poz_perv_mod_chip_clocking.C',
                     'poz_perv_mod_misc.C',
+                    'poz_perv_mod_cbs.C',
                     'poz_chiplet_clk_config.C',
                     'poz_chiplet_pll_setup.C',
                     'poz_bist.C',

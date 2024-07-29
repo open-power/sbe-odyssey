@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_cbs_start.C $   */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_perv_mod_root_controls.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2024                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,29 +23,32 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  ody_cbs_start.C
-/// @brief Start CFAM boot sequencer
+/// @file  poz_perv_mod_root_controls.H
+/// @brief Module definitions for root controls
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include <ody_cbs_start.H>
-#include <poz_perv_common_params.H>
-#include <poz_perv_mod_cbs.H>
+#pragma once
 
-using namespace fapi2;
+#include "fapi2.H"
 
-enum ODY_CBS_START_Private_Constants
+/// @brief Address and data to restore a root control (or other mailbox reg; we don't judge)
+struct root_ctrl_restore
 {
+    /// Address of the main and copy register
+    uint16_t main_addr, copy_addr;
+    /// Value to write; should equal the init value after CFAM_RESET
+    uint32_t init_value;
 };
 
-ReturnCode ody_cbs_start(const Target<TARGET_TYPE_OCMB_CHIP>& i_target, bool i_start_sbe, bool i_scan0_clockstart)
-{
-    FAPI_INF("Entering ...");
-    FAPI_TRY(mod_cbs_start(i_target, i_start_sbe, i_scan0_clockstart));
-
-fapi_try_exit:
-    FAPI_INF("Exiting ...");
-    return current_err;
-}
+/// @brief Restore root control register values according to a list
+///
+/// @param[in]   i_target              Target chip
+/// @param[in]   i_ctrl_reg_restores   List of root/perv control registers to restore to init values
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_restore_root_controls(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const fapi2::static_array<root_ctrl_restore>& i_restores);

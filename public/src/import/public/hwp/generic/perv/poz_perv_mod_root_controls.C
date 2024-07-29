@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_cbs_start.C $   */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_perv_mod_root_controls.C $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2024                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,29 +23,43 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  ody_cbs_start.C
-/// @brief Start CFAM boot sequencer
+/// @file  poz_perv_mod_root_controls.C
+/// @brief Module definitions for root controls
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include <ody_cbs_start.H>
-#include <poz_perv_common_params.H>
-#include <poz_perv_mod_cbs.H>
+#include <poz_perv_mod_root_controls.H>
+#include "poz_scom_perv.H"
+
+using namespace scomt::poz;
+
+SCOMT_PERV_USE_FSXCOMP_FSXLOG_GPWRP;
+using GPWRP_t = FSXCOMP_FSXLOG_GPWRP_t;
 
 using namespace fapi2;
 
-enum ODY_CBS_START_Private_Constants
-{
-};
+static constexpr int CONTROL_WRITE_PROTECT_DISABLE = 0x4453FFFF;
 
-ReturnCode ody_cbs_start(const Target<TARGET_TYPE_OCMB_CHIP>& i_target, bool i_start_sbe, bool i_scan0_clockstart)
+ReturnCode mod_restore_root_controls(
+    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const static_array<root_ctrl_restore>& i_restores)
 {
-    FAPI_INF("Entering ...");
-    FAPI_TRY(mod_cbs_start(i_target, i_start_sbe, i_scan0_clockstart));
+    GPWRP_t GPWRP;
+
+    FAPI_DBG("Disable Write Protection for Root/Perv Control registers");
+    GPWRP = CONTROL_WRITE_PROTECT_DISABLE;
+    FAPI_TRY(GPWRP.putCfam(i_target));
+
+    FAPI_DBG("Restoring root/perv control register values");
+
+    for (auto restore : i_restores)
+    {
+        FAPI_TRY(putCfamRegister(i_target, restore.main_addr, restore.init_value));
+        FAPI_TRY(putCfamRegister(i_target, restore.copy_addr, restore.init_value));
+    }
 
 fapi_try_exit:
-    FAPI_INF("Exiting ...");
     return current_err;
 }

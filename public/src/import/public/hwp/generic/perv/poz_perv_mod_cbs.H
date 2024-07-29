@@ -1,11 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/import/public/hwp/odyssey/perv/ody_cbs_start.C $   */
+/* $Source: public/src/import/public/hwp/generic/perv/poz_perv_mod_cbs.H $ */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2024                             */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -23,29 +23,27 @@
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
 //------------------------------------------------------------------------------
-/// @file  ody_cbs_start.C
-/// @brief Start CFAM boot sequencer
+/// @file  poz_perv_mod_cbs.H
+/// @brief Module definitions for CBS
 //------------------------------------------------------------------------------
-// *HWP HW Maintainer   : Daniela Yacovone (falconed@us.ibm.com)
+// *HWP HW Maintainer   : Sreekanth Reddy (skadapal@in.ibm.com)
 // *HWP FW Maintainer   : Raja Das (rajadas2@in.ibm.com)
 //------------------------------------------------------------------------------
 
-#include <ody_cbs_start.H>
-#include <poz_perv_common_params.H>
-#include <poz_perv_mod_cbs.H>
+#pragma once
 
-using namespace fapi2;
+#include "fapi2.H"
 
-enum ODY_CBS_START_Private_Constants
-{
-};
-
-ReturnCode ody_cbs_start(const Target<TARGET_TYPE_OCMB_CHIP>& i_target, bool i_start_sbe, bool i_scan0_clockstart)
-{
-    FAPI_INF("Entering ...");
-    FAPI_TRY(mod_cbs_start(i_target, i_start_sbe, i_scan0_clockstart));
-
-fapi_try_exit:
-    FAPI_INF("Exiting ...");
-    return current_err;
-}
+/// @brief CBS start module
+/// -- Prepare for CBS start
+/// -- Start CBS and check CBS_CS INTERNAL_STATE_VECTOR for IDLE state.
+///
+/// @param[in]   i_target                  Reference to TARGET_TYPE_ANY_POZ_CHIP
+/// @param[in]   i_start_sbe               Option to prevent SBE start
+/// @param[in]   i_scan0_clockstart        Option to skip scan0 and clockstart command
+///
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+fapi2::ReturnCode mod_cbs_start(
+    const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const bool i_start_sbe = true,
+    const bool i_scan0_clockstart = true);
