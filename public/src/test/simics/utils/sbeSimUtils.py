@@ -211,12 +211,6 @@ def startCbs(procNr=0, nodeNr=0):
             simTargets.spinal[0].lbus_map.iface.memory_space.write(None, 0x2c80, (0x00, 0x00, 0x00, 0x0c), 0x0)
             runCycles(10000000)
 
-        # Workaround - SIMICS ECC check bug - Disable ECC bits for odyssey OTPROM
-        if(simenv.sbe_project_type == "odyssey"):
-            for target in simTargets.odysseys:
-                target.pib.iface.memory_space.write(None, 0x100080, (0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00), False)
-            runCycles( 100000000 )
-
         # Enabling Spinal CFAM voltage domain
         chip.fsi2host_mbox.port.vdn_pgood.iface.signal.signal_raise()
         runCycles(1000000)
