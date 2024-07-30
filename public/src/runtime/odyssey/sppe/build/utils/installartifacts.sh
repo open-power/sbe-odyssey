@@ -51,27 +51,22 @@ cp -r ${MESON_BUILD_ROOT}/$BASE_PATH/src/runtime/$SBE_PLATFORM/sppe/odyssey_sppe
    ${MESON_SOURCE_ROOT}/public/src/tools/install/debugtoolrequirements.txt \
    ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/ || exit 1
 
-#NOTE: Add internal paths only inside below condition
-if [ -d "${MESON_SOURCE_ROOT}/internal/" ]; then
+cp -r ${MESON_SOURCE_ROOT}/public/src/tools/debug/ppe2fsp `# Keep copying x86 executable as a backup` \
+   ${MESON_SOURCE_ROOT}/public/src/tools/debug/fsp-trace \
+   ${MESON_SOURCE_ROOT}/public/src/onetime/odyssey/otprom/build/images/sim/ \
+   ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/ || exit 1
 
-   cp -r ${MESON_SOURCE_ROOT}/internal/src/tools/debug/ppe2fsp `# Keep copying x86 executable as a backup` \
-      ${MESON_SOURCE_ROOT}/internal/src/tools/debug/fsp-trace \
-      ${MESON_SOURCE_ROOT}/internal/src/onetime/odyssey/otprom/build/images/sim/ \
-      ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/ || exit 1
-
-   # Copy simics related tools and utils into simics dir (This is required for HB)
-   mkdir -p  ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/simics/
-   cp ${MESON_SOURCE_ROOT}/internal/src/tools/simics/pozsbeinitstandalone.simics \
-      ${MESON_SOURCE_ROOT}/internal/src/tools/simics/sbestandaloneenv.simics \
-      ${MESON_SOURCE_ROOT}/internal/src/test/utils/simTargets.py \
-      ${MESON_SOURCE_ROOT}/internal/src/tools/simics/poz-simics-debug-framework.py \
-      ${MESON_SOURCE_ROOT}/internal/src/tools/simics/pozmsgregparser.py \
-      ${MESON_SOURCE_ROOT}/internal/src/test/utils/toolwrappers.py \
-      ${MESON_SOURCE_ROOT}/internal/src/test/utils/sbeSimUtils.py \
-      ${MESON_SOURCE_ROOT}/internal/src/test/utils/sbeIstepAuto.py \
-      ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/simics/ || exit 1
-
-fi
+# Copy simics related tools and utils into simics dir (This is required for HB)
+mkdir -p  ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/simics/
+cp ${MESON_SOURCE_ROOT}/public/src/tools/simics/pozsbeinitstandalone.simics \
+   ${MESON_SOURCE_ROOT}/public/src/tools/simics/sbestandaloneenv.simics \
+   ${MESON_SOURCE_ROOT}/public/src/test/simics/utils/simTargets.py \
+   ${MESON_SOURCE_ROOT}/public/src/tools/simics/poz-simics-debug-framework.py \
+   ${MESON_SOURCE_ROOT}/public/src/tools/simics/pozmsgregparser.py \
+   ${MESON_SOURCE_ROOT}/public/src/test/simics/utils/toolwrappers.py \
+   ${MESON_SOURCE_ROOT}/public/src/test/simics/utils/sbeSimUtils.py \
+   ${MESON_SOURCE_ROOT}/public/src/test/simics/utils/sbeIstepAuto.py \
+   ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/simics/ || exit 1
 
 # Copy parser plugins on FSP based systems
 mkdir -p  ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/parserplugins

@@ -1,0 +1,57 @@
+# IBM_PROLOG_BEGIN_TAG
+# This is an automatically generated prolog.
+#
+# $Source: internal/src/tools/simics/sbestandaloneenv.simics $
+#
+# IBM CONFIDENTIAL
+#
+# sbe Project
+#
+# Contributors Listed Below - COPYRIGHT 2018,2023
+# [+] International Business Machines Corp.
+#
+#
+# The source code for this program is not published or otherwise
+# divested of its trade secrets, irrespective of what has been
+# deposited with the U.S. Copyright Office.
+#
+# IBM_PROLOG_END_TAG
+
+#######################################
+#Declare SBE specific simics environment variables
+#######################################
+decl {
+    group "sbe_standalone"
+
+    param sbe_project_type : string
+    ! SBE sbe-project-type at time 0
+    result sbe_project_type : string
+
+    param sbe_image_type : string
+    ! SBE sbe-image-type at time 0
+    result sbe_image_type : string
+
+    param sbe_ci : bool = FALSE
+    ! is sbe-ci TRUE
+    result sbe_ci : bool
+
+    param sbe_ci_script : string or nil = NIL
+    ! SBE ci script to run at time 0
+    result sbe_ci_script : string or nil
+
+    param sbe_run_till_boot : bool = FALSE
+    ! whether simics have to run till sbe reached runtime
+    result sbe_run_till_boot : bool
+
+    param sbe_security_check : bool = TRUE
+    ! Used to enable security check
+    result sbe_security_check : bool
+
+    param sbe_standalone : bool = FALSE
+    ! Used to decide whether the simics is running for the SBE standalone
+    result sbe_standalone : bool
+}
+
+if $sbe_ci_script != NIL {
+    $sbe_ci_script = (lookup-file $sbe_ci_script)
+}

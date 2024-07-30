@@ -1,0 +1,500 @@
+{
+    "0x18000": [
+        {
+            "scom_reg_name": "ECID_0",
+            "description": "Machine Specific ECID(0..7)"
+        },
+        {
+            "field": "ecid0",
+            "field_size": 64,
+            "value": null,
+            "description": "Machine Specific ECID(0..7)."
+        }
+    ],
+    "0x18001": [
+        {
+            "scom_reg_name": "ECID_1",
+            "description": "Machine Specific ECID(8..15)"
+        },
+        {
+            "field": "ecid1",
+            "field_size": 64,
+            "value": null,
+            "description": "Machine Specific ECID(8..15)."
+        }
+    ],
+    "0x18002": [
+        {
+            "scom_reg_name": "UNUSED0",
+            "description": "Unused"
+        },
+        {
+            "field": "unused",
+            "field_size": 64,
+            "value": null,
+            "description": "Unused"
+        }
+    ],
+    "0x18003": [
+        {
+            "scom_reg_name": "UNUSED1",
+            "description": "Unused"
+        },
+        {
+            "field": "unused",
+            "field_size": 64,
+            "value": null,
+            "description": "Unused"
+        }
+    ],
+    "0x18004": [
+        {
+            "scom_reg_name": "EXPORT_REGULATION_AND_SECURE_FUSE",
+            "description": "Export Regulation and Secure Fuse bits"
+        },
+        {
+            "field": "otp_secure_access_mode",
+            "field_size": 3,
+            "value": "0x7",
+            "description": "Bit 0..2"
+        },
+        {
+            "field": "Unused",
+            "field_size": 61,
+            "value": "0x0",
+            "description": "Bit 3..63"
+        }
+    ],
+    "0x18005": [
+        {
+            "scom_reg_name": "CONTROL_REG",
+            "description": "This register holds all control data pertaining to secure header verification"
+        },
+        {
+            "field": "hwKeyHashVerificationEnable",
+            "field_size": 3,
+            "value": "0x7",
+            "description": "Bit 0..2 : Enable verification of Hardware Public Key Hash. Calculate and compare the public key hash against the one stored in the OTPROM"
+        },
+        {
+            "field": "ecdsaSigCheckEnable",
+            "field_size": 3,
+            "value": "0x0",
+            "description": "Bit 3..5 : Enable ECDSA Signature checks"
+        },
+        {
+            "field": "ecdsaSigCheckDisable",
+            "field_size": 3,
+            "value": "0x0",
+            "description": "Bit 6..8 : Disable ECDSA Signature checks"
+        },
+        {
+            "field": "dilithiumSigCheckEnable",
+            "field_size": 3,
+            "value": "0x0",
+            "description": "Bit 9..11 : Enable Dilithium Signature checks"
+        },
+        {
+            "field": "dilithiumSigCheckDisable",
+            "field_size": 3,
+            "value": "0x0",
+            "description": "Bit 12..14 : Disable Dilithium Signature checks"
+        },
+        {
+            "field": "ecidCheckEnable",
+            "field_size": 3,
+            "value": "0x0",
+            "description": "Bit 15..17 : Enable ECID check.Denotes that this part can only boot FW with matching ECIDs"
+        },
+        {
+            "field": "matchingSecurityVersionEnforcement",
+            "field_size": 3,
+            "value": "0x0",
+            "description": "Bit 18..20 : Check for matching MSV in Secure Header"
+        },
+        {
+            "field": "fileHashCalculationEnable",
+            "field_size": 3,
+            "value": "0x7",
+            "description": "Bit 21..23 : Enable calculation of file hash while reading the file from PAK"
+        },
+        {
+            "field": "reserved",
+            "field_size": 40,
+            "value": null,
+            "description": "Bit 24..63 : Reserved for future use"
+        }
+    ],
+    "0x18006": [
+        {
+            "scom_reg_name": "MSV_FUSE_BANK",
+            "description": "Minimum Secure Version Fuse Bank"
+        },
+        {
+            "field": "msvFuseBank",
+            "field_size": 64,
+            "value": "0xFC00000000000000",
+            "description": "Bit 0..62 : Minimum Secure Version Fuse Bank. Bit 63 is reserved"
+        }
+    ],
+    "0x18007": [
+        {
+            "scom_reg_name": "OTPROM_BINARY_VERSION",
+            "description": "OTPROM Fuse Binary Version. Lets keep this value always at 18007 "
+        },
+        {
+            "field": "majorVersion",
+            "field_size": 4,
+            "value": "0x2",
+            "description": "Bit 0..3 : Major Version of OTPROM Fuse Binary"
+        },
+        {
+            "field": "minorVersion",
+            "field_size": 4,
+            "value": "0x0",
+            "description": "Bit 4..7 : Minor Version of OTPROM Fuse Binary"
+        },
+        {
+            "field": "reserved",
+            "field_size": 56,
+            "value": null,
+            "description": "Bit 8..63 : Unused"
+        }
+    ],
+    "0x18008": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET1_1",
+            "description": "Hardware Public Key Hash Set 1. (0..7)"
+        },
+        {
+            "field": "hwPubKeyHashSet1_1",
+            "field_size": 64,
+            "value": "0xb242ea5c2e4b1e04",
+            "description": "Hardware Public Key Hash Set 1. (0..7)"
+        }
+    ],
+    "0x18009": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET1_2",
+            "description": "Hardware Public Key Hash Set 1. (8..15)"
+        },
+        {
+            "field": "hwPubKeyHashSet1_2",
+            "field_size": 64,
+            "value": "0x90336e66f61c189b",
+            "description": "Hardware Public Key Hash Set 1. (8..15)"
+        }
+    ],
+    "0x1800A": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET1_3",
+            "description": "Hardware Public Key Hash Set 1. (16..23)"
+        },
+        {
+            "field": "hwPubKeyHashSet1_3",
+            "field_size": 64,
+            "value": "0x4d6127abf488211e",
+            "description": "Hardware Public Key Hash Set 1. (16..23)"
+        }
+    ],
+    "0x1800B": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET1_4",
+            "description": "Hardware Public Key Hash Set 1. (24..31)"
+        },
+        {
+            "field": "hwPubKeyHashSet1_4",
+            "field_size": 64,
+            "value": "0xf97dead695ef1e6e",
+            "description": "Hardware Public Key Hash Set 1. (24..31)"
+        }
+    ],
+    "0x1800C": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET1_5",
+            "description": "Hardware Public Key Hash Set 1. (32..39)"
+        },
+        {
+            "field": "hwPubKeyHashSet1_5",
+            "field_size": 64,
+            "value": "0xd208680126a3bff5",
+            "description": "Hardware Public Key Hash Set 1. (32..39)"
+        }
+    ],
+    "0x1800D": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET1_6",
+            "description": "Hardware Public Key Hash Set 1. (40..47)"
+        },
+        {
+            "field": "hwPubKeyHashSet1_6",
+            "field_size": 64,
+            "value": "0x4c624684c3fccb56",
+            "description": "Hardware Public Key Hash Set 1. (40..47)"
+        }
+    ],
+    "0x1800E": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET1_7",
+            "description": "Hardware Public Key Hash Set 1. (48..55)"
+        },
+        {
+            "field": "hwPubKeyHashSet1_7",
+            "field_size": 64,
+            "value": "0x679f6c2273743993",
+            "description": "Hardware Public Key Hash Set 1. (48..55)"
+        }
+    ],
+    "0x1800F": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET1_8",
+            "description": "Hardware Public Key Hash Set 1. (56..63)"
+        },
+        {
+            "field": "hwPubKeyHashSet1_8",
+            "field_size": 64,
+            "value": "0xa0d5e954188385d5",
+            "description": "Hardware Public Key Hash Set 1. (56..63)"
+        }
+    ],
+    "0x18010": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET2_1",
+            "description": "Hardware Public Key Hash Set 2. (0..7)"
+        },
+        {
+            "field": "hwPubKeyHashSet2_1",
+            "field_size": 64,
+            "value": "0xb40a07ba5fbaa755",
+            "description": "Hardware Public Key Hash Set 2. (0..7)"
+        }
+    ],
+    "0x18011": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET2_2",
+            "description": "Hardware Public Key Hash Set 2. (8..15)"
+        },
+        {
+            "field": "hwPubKeyHashSet2_2",
+            "field_size": 64,
+            "value": "0xbaaf37e5b40a240a",
+            "description": "Hardware Public Key Hash Set 2. (8..15)"
+        }
+    ],
+    "0x18012": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET2_3",
+            "description": "Hardware Public Key Hash Set 2. (16..23)"
+        },
+        {
+            "field": "hwPubKeyHashSet2_3",
+            "field_size": 64,
+            "value": "0x6e22186d6c6d3d3e",
+            "description": "Hardware Public Key Hash Set 2. (16..23)"
+        }
+    ],
+    "0x18013": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET2_4",
+            "description": "Hardware Public Key Hash Set 2. (24..31)"
+        },
+        {
+            "field": "hwPubKeyHashSet2_4",
+            "field_size": 64,
+            "value": "0x8ab49dc95fa1632c",
+            "description": "Hardware Public Key Hash Set 2. (24..31)"
+        }
+    ],
+    "0x18014": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET2_5",
+            "description": "Hardware Public Key Hash Set 2. (32..39)"
+        },
+        {
+            "field": "hwPubKeyHashSet2_5",
+            "field_size": 64,
+            "value": "0x061093fa134bfc35",
+            "description": "Hardware Public Key Hash Set 2. (32..39)"
+        }
+    ],
+    "0x18015": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET2_6",
+            "description": "Hardware Public Key Hash Set 2. (40..47)"
+        },
+        {
+            "field": "hwPubKeyHashSet2_6",
+            "field_size": 64,
+            "value": "0x90e0509bb2e29ee3",
+            "description": "Hardware Public Key Hash Set 2. (40..47)"
+        }
+    ],
+    "0x18016": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET2_7",
+            "description": "Hardware Public Key Hash Set 2. (48..55)"
+        },
+        {
+            "field": "hwPubKeyHashSet2_7",
+            "field_size": 64,
+            "value": "0x067740c85a8b702e",
+            "description": "Hardware Public Key Hash Set 2. (48..55)"
+        }
+    ],
+    "0x18017": [
+        {
+            "scom_reg_name": "HW_PUB_KEY_HASH_SET2_8",
+            "description": "Hardware Public Key Hash Set 2. (56..63)"
+        },
+        {
+            "field": "hwPubKeyHashSet2_8",
+            "field_size": 64,
+            "value": "0x5f622b1e461da9c7",
+            "description": "Hardware Public Key Hash Set 2. (56..63)"
+        }
+    ],
+    "0x18018": [
+        {
+            "scom_reg_name": "HASH_OF_HW_PUB_KEY_SET1_SET2_1",
+            "description": "Hash of hardware public keys set 1 and set 2. (0..7)"
+        },
+        {
+            "field": "hashOfHwPubKeySet1Set2_1",
+            "field_size": 64,
+            "value": "0x7c4e0b33df19c212",
+            "description": "Hash of hardware public keys set 1 and set 2. (0..7)"
+        }
+    ],
+    "0x18019": [
+        {
+            "scom_reg_name": "HASH_OF_HW_PUB_KEY_SET1_SET2_2",
+            "description": "Hash of hardware public keys set 1 and set 2. (8..15)"
+        },
+        {
+            "field": "hashOfHwPubKeySet1Set2_2",
+            "field_size": 64,
+            "value": "0x0a9d8a9bbdbf86f1",
+            "description": "Hash of hardware public keys set 1 and set 2. (8..15)"
+        }
+    ],
+    "0x1801A": [
+        {
+            "scom_reg_name": "HASH_OF_HW_PUB_KEY_SET1_SET2_3",
+            "description": "Hash of hardware public keys set 1 and set 2. (16..23)"
+        },
+        {
+            "field": "hashOfHwPubKeySet1Set2_3",
+            "field_size": 64,
+            "value": "0x4485f1f4d697976e",
+            "description": "Hash of hardware public keys set 1 and set 2. (16..23)"
+        }
+    ],
+    "0x1801B": [
+        {
+            "scom_reg_name": "HASH_OF_HW_PUB_KEY_SET1_SET2_4",
+            "description": "Hash of hardware public keys set 1 and set 2. (24..31)"
+        },
+        {
+            "field": "hashOfHwPubKeySet1Set2_4",
+            "field_size": 64,
+            "value": "0xf39846cb7757ee28",
+            "description": "Hash of hardware public keys set 1 and set 2. (24..31)"
+        }
+    ],
+    "0x1801C": [
+        {
+            "scom_reg_name": "HASH_OF_HW_PUB_KEY_SET1_SET2_5",
+            "description": "Hash of hardware public keys set 1 and set 2. (32..39)"
+        },
+        {
+            "field": "hashOfHwPubKeySet1Set2_5",
+            "field_size": 64,
+            "value": "0x98879ca9f446b84d",
+            "description": "Hash of hardware public keys set 1 and set 2. (32..39)"
+        }
+    ],
+    "0x1801D": [
+        {
+            "scom_reg_name": "HASH_OF_HW_PUB_KEY_SET1_SET2_6",
+            "description": "Hash of hardware public keys set 1 and set 2. (40..47)"
+        },
+        {
+            "field": "hashOfHwPubKeySet1Set2_6",
+            "field_size": 64,
+            "value": "0x291f6a660fdef05c",
+            "description": "Hash of hardware public keys set 1 and set 2. (40..47)"
+        }
+    ],
+    "0x1801E": [
+        {
+            "scom_reg_name": "HASH_OF_HW_PUB_KEY_SET1_SET2_7",
+            "description": "Hash of hardware public keys set 1 and set 2. (48..55)"
+        },
+        {
+            "field": "hashOfHwPubKeySet1Set2_7",
+            "field_size": 64,
+            "value": "0x6c23da34f3c03aff",
+            "description": "Hash of hardware public keys set 1 and set 2. (48..55)"
+        }
+    ],
+    "0x1801F": [
+        {
+            "scom_reg_name": "HASH_OF_HW_PUB_KEY_SET1_SET2_8",
+            "description": "Hash of hardware public keys set 1 and set 2. (56..63)"
+        },
+        {
+            "field": "hashOfHwPubKeySet1Set2_8",
+            "field_size": 64,
+            "value": "0xe55bed6098223c18",
+            "description": "Hash of hardware public keys set 1 and set 2. (56..63)"
+        }
+    ],
+    "0x18020": [
+        {
+            "scom_reg_name": "ODY_DTS_CALIB_COEFFS",
+            "description": "Calibration coefficients (P, M, B) for Odyssey DTS"
+        },
+        {
+            "field": "padding0",
+            "field_size": 2,
+            "value": "0x0",
+            "description": "Dummy to align bits nicely"
+        },
+        {
+            "field": "p_coeff",
+            "field_size": 6,
+            "value": "0x0",
+            "description": "P - coefficient for square term"
+        },
+        {
+            "field": "padding1",
+            "field_size": 1,
+            "value": "0x0",
+            "description": "Dummy to align bits nicely"
+        },
+        {
+            "field": "m_coeff",
+            "field_size": 7,
+            "value": "0x0",
+            "description": "M - coefficient for scalar term"
+        },
+        {
+            "field": "padding2",
+            "field_size": 7,
+            "value": "0x0",
+            "description": "Dummy to align bits nicely"
+        },
+        {
+            "field": "b_coeff",
+            "field_size": 9,
+            "value": "0x0",
+            "description": "B - signed(!) offset"
+        },
+        {
+            "field": "padding3",
+            "field_size": 32,
+            "value": "0x0",
+            "description": "Dummy to align bits nicely"
+        }
+    ]
+}

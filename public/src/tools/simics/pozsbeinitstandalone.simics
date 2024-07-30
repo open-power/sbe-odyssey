@@ -1,0 +1,124 @@
+# IBM_PROLOG_BEGIN_TAG
+# This is an automatically generated prolog.
+#
+# $Source: internal/src/tools/simics/pozsbeinitstandalone.simics $
+#
+# IBM CONFIDENTIAL
+#
+# sbe Project
+#
+# Contributors Listed Below - COPYRIGHT 2018,2023
+# [+] International Business Machines Corp.
+#
+#
+# The source code for this program is not published or otherwise
+# divested of its trade secrets, irrespective of what has been
+# deposited with the U.S. Copyright Office.
+#
+# IBM_PROLOG_END_TAG
+
+run-command-file (lookup-file "sbestandaloneenv.simics")
+
+# Load POZ-SBE debug tools.
+echo "Attempting to register POZ-SBE Tools"
+try {
+    run-python-file (lookup-file "poz-simics-debug-framework.py")
+} except {
+    echo "ERROR: Failed to load SBE debug tools."
+    local $error_msg = (get-error-message)
+    local $error_file = (get-error-file)
+    local $error_line_no = (dec (get-error-line))
+    local $error_cmd = (get-error-command)
+    echo "> get-error-message"
+    echo $error_msg
+    echo "> get-error-command"
+    echo $error_cmd
+    echo "> get-error-file"
+    echo $error_file
+    echo "> get-error-line"
+    echo $error_line_no
+
+    q 1
+}
+
+# Invoke sbe specific simics initialzation only if the simics is running
+# in the SBE standalone
+if $sbe_standalone == TRUE {
+# Initiallise simics for the SBE needs
+    try {
+        echo "Initializing simics based on the POZ-SBE needs"
+        run-python-file (lookup-file "simics_initialisation.py")
+    } except {
+        echo "ERROR: Failed to initiallise simics."
+        local $error_msg = (get-error-message)
+        local $error_file = (get-error-file)
+        local $error_line_no = (dec (get-error-line))
+        local $error_cmd = (get-error-command)
+        echo "> get-error-message"
+        echo $error_msg
+        echo "> get-error-command"
+        echo $error_cmd
+        echo "> get-error-file"
+        echo $error_file
+        echo "> get-error-line"
+        echo $error_line_no
+
+        q 1
+    }
+}
+
+if $sbe_ci == FALSE {
+    if $sbe_run_till_boot == TRUE {
+        echo "Running simics till sbe reaching runtime"
+        try {
+            run-python-file (lookup-file "testruntillsbebooted.py")
+        } except {
+            echo "ERROR: Failed to boot the SBE"
+            local $error_msg = (get-error-message)
+            local $error_file = (get-error-file)
+            local $error_line_no = (dec (get-error-line))
+            local $error_cmd = (get-error-command)
+            echo "> get-error-message"
+            echo $error_msg
+            echo "> get-error-command"
+            echo $error_cmd
+            echo "> get-error-file"
+            echo $error_file
+            echo "> get-error-line"
+            echo $error_line_no
+
+            # since this path will never executed in ci, we dont have to kill the
+            # simics. So that user can debug from here.
+        }
+    }
+}
+
+#If we are running CI, run the test cases
+if $sbe_ci == TRUE {
+    script-branch {
+        wait-for-simulation-started
+        stop
+        wait-for-simulation-stopped
+        try {
+            run-command-file $sbe_ci_script
+        } except{
+            echo " Debug ::SBE CI Script error"
+            local $error_msg = (get-error-message)
+            local $error_file = (get-error-file)
+            local $error_line_no = (dec (get-error-line))
+            local $error_cmd = (get-error-command)
+            echo "> get-error-message"
+            echo $error_msg
+            echo "> get-error-command"
+            echo $error_cmd
+            echo "> get-error-file"
+            echo $error_file
+            echo "> get-error-line"
+            echo $error_line_no
+
+            q 1
+        }
+        #Kill runsim if any test case fails.
+        q 0
+    }
+}
