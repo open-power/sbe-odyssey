@@ -194,7 +194,7 @@ namespace fapi2
             }
             else
             {
-                copy.setTargetInstance(i_child.getParentTargetInstance(i_child));
+                copy.setTargetInstance(i_child.getParentTargetInstance(i_child, K));
             }
 
             return copy;
@@ -249,6 +249,17 @@ namespace fapi2
                                 const plat_target_sbe_handle i_first_end,
                                 const bool i_include_nonfunctional,
                                 plat_target_sbe_handle &o_second_end) const;
+
+        ///
+        /// @brief Get the Target Children
+        /// @param [in]  i_child_type Children target type
+        /// @param [in]  i_parent Parent target handle
+        /// @param [in]  i_include_nonfunctional Return also targets that are not functional
+        /// @param [out] o_children A vector of child target handles
+        void getTargetChildren(const LogTargetType i_child_type,
+                                const plat_target_sbe_handle i_parent,
+                                const bool i_include_nonfunctional,
+                                std::vector<plat_target_sbe_handle> &o_children) const;
 
     protected:
         static const uint32_t MAX_TARGETS = 256;
@@ -373,6 +384,16 @@ namespace fapi2
                                          const buffer<uint64_t> &i_enabled,
                                          const bool i_include_nonfunctional,
                                          std::vector<plat_target_sbe_handle> &o_children) const;
+
+	///
+        /// @brief Function to get number of children of a parent for a specfic child type.
+        /// @param [in]  i_child_type Children target type
+        /// @param [in]  i_parent_type Parent target type
+        /// @return Number of children of i_child_type for parent of i_parent_type.
+        ///
+        virtual uint8_t plat_getNumberOfChildren(const LogTargetType i_child_type,
+                                                 const LogTargetType i_parent_type) const;
+
         public:
         ///
         /// @brief Function to get the plat target handle of a perv target using chiplet id

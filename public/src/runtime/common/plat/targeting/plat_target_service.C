@@ -513,3 +513,56 @@ ReturnCodes sbe_target_service::getChipletOtherEnd(const LogTargetType i_second_
     }
     return l_return_status;
 }
+
+void sbe_target_service::getTargetChildren(const LogTargetType i_child_type,
+                                            const plat_target_sbe_handle i_parent,
+                                            const bool i_include_nonfunctional,
+                                            std::vector<plat_target_sbe_handle> &o_children) const
+{
+#define SBE_FUNC "getTargetChildren "
+    SBE_ENTER(SBE_FUNC);
+
+    const uint8_t cplt_id = i_parent.getChipletNumber();
+    uint8_t parentInstance = i_parent.getTargetInstance();
+    uint8_t l_childCount = plat_getNumberOfChildren(i_child_type, i_parent.getTargetType());
+    for (uint32_t i = 0; i < iv_targets_size; i++)
+    {
+        auto &target = iv_targets[i];
+        if( (target.getTargetType() == i_child_type)
+            && (target.getChipletNumber() == cplt_id))
+        {
+            if ((target.getTargetInstance() >= (l_childCount * parentInstance))
+                && (target.getTargetInstance() < (l_childCount * parentInstance + l_childCount)))
+            {
+                if((i_include_nonfunctional || target.getFunctional()) &&
+                   (target.getPresent()))
+                {
+                    o_children.push_back(target);
+                }
+            }
+        }
+    }
+    SBE_EXIT(SBE_FUNC);
+#undef SBE_FUNC
+}
+
+uint8_t sbe_target_service::plat_getNumberOfChildren(const LogTargetType i_child_type,
+                                                     const LogTargetType i_parent_type) const
+{
+#define SBE_FUNC "plat_getNumberOfChildren "
+    SBE_ENTER(SBE_FUNC);
+
+    uint8_t l_childrenNumber = 0;
+
+    // Platforms are supposed to provide the implementation;
+
+    if(l_childrenNumber == 0)
+    {
+        SBE_ERROR(SBE_FUNC, "There is no children of requested child type for requested Parent type.");
+        pk_halt();
+    }
+
+    SBE_EXIT(SBE_FUNC);
+    return l_childrenNumber;
+#undef SBE_FUNC
+}

@@ -33,7 +33,10 @@ namespace fapi2
     constexpr TargetType TARGET_TYPE_PROC_CHILDREN = TARGET_TYPE_CHIPLETS;
     constexpr TargetType TARGET_TYPE_PERV_CHILDREN = TARGET_TYPE_CHIPLETS;
     constexpr TargetType TARGET_TYPE_MEM_PORT_CHILDREN = TARGET_TYPE_DIMM;
-    constexpr TargetType TARGET_TYPE_MC_CHILDREN = TARGET_TYPE_OMI;
+    constexpr TargetType TARGET_TYPE_MC_CHILDREN = TARGET_TYPE_OMIC
+                                                        | TARGET_TYPE_MI
+                                                        | TARGET_TYPE_MCC
+                                                        | TARGET_TYPE_OMI;
     constexpr TargetType TARGET_TYPE_OMI_CHILDREN = TARGET_TYPE_OCMB_CHIP;
     constexpr TargetType TARGET_TYPE_XBUS_CHILDREN = TARGET_TYPE_XBUSL;
     constexpr TargetType TARGET_TYPE_EX_CHILDREN = TARGET_TYPE_L3CACHE | TARGET_TYPE_SHADOW | TARGET_TYPE_CORE;
@@ -49,6 +52,15 @@ namespace fapi2
                                                          | TARGET_TYPE_PERV
                                                          | TARGET_TYPE_L3CACHE
                                                          | TARGET_TYPE_CORE;
+    constexpr TargetType TARGET_TYPE_TBUSC_CHILDREN = TARGET_TYPE_TBUSL;
+    constexpr TargetType TARGET_TYPE_PEC2P_CHILDREN = TARGET_TYPE_PHB16X;
+    constexpr TargetType TARGET_TYPE_PEC6P_CHILDREN = TARGET_TYPE_PHB248X;
+    constexpr TargetType TARGET_TYPE_IOHS_CHILDREN = TARGET_TYPE_PAX
+                                                    | TARGET_TYPE_PAXO;
+    constexpr TargetType TARGET_TYPE_MI_CHILDREN = TARGET_TYPE_MCC
+                                                        | TARGET_TYPE_OMI;
+    constexpr TargetType TARGET_TYPE_OMIC_CHILDREN = TARGET_TYPE_OMI;
+    constexpr TargetType TARGET_TYPE_MCC_CHILDREN = TARGET_TYPE_OMI;
 
     template<TargetType T>
     constexpr LogTargetType fapiTargetTypeToPlatTargetType()
@@ -84,6 +96,20 @@ namespace fapi2
     TARGET_TYPE_SUPPORT(POWER_IC);
     TARGET_TYPE_SUPPORT(TBUSL);
     TARGET_TYPE_SUPPORT(EQ);
+    TARGET_TYPE_SUPPORT(PAU);
+    TARGET_TYPE_SUPPORT(INT);
+    TARGET_TYPE_SUPPORT(NX);
+    TARGET_TYPE_SUPPORT(MI);
+    TARGET_TYPE_SUPPORT(MCC);
+    TARGET_TYPE_SUPPORT(OMIC);
+    TARGET_TYPE_SUPPORT(IOHS);
+    TARGET_TYPE_SUPPORT(PAX);
+    TARGET_TYPE_SUPPORT(PAXO);
+    TARGET_TYPE_SUPPORT(PEC6P);
+    TARGET_TYPE_SUPPORT(PEC2P);
+    TARGET_TYPE_SUPPORT(PHB248X);
+    TARGET_TYPE_SUPPORT(PHB16X);
+    TARGET_TYPE_SUPPORT(TBUSC);
 #undef TARGET_TYPE_SUPPORT
 
     template<TargetType K, MulticastType M, typename V>
@@ -185,6 +211,48 @@ namespace fapi2
             STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_EQ_CHILDREN) == 0,
                          "Invalid child target for EQ parent");
             return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_EQ>(*this);
+        }
+        else if (T_NO_MCAST == TARGET_TYPE_TBUSC)
+        {
+            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_TBUSC_CHILDREN) == 0,
+                         "Invalid child target for TBUSC parent");
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_TBUSC>(*this);
+        }
+        else if (T_NO_MCAST == TARGET_TYPE_PEC2P)
+        {
+            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_PEC2P_CHILDREN) == 0,
+                         "Invalid child target for PEC2P parent");
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_PEC2P>(*this);
+        }
+        else if (T_NO_MCAST == TARGET_TYPE_PEC6P)
+        {
+            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_PEC6P_CHILDREN) == 0,
+                         "Invalid child target for PEC6P parent");
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_PEC6P>(*this);
+        }
+        else if (T_NO_MCAST == TARGET_TYPE_IOHS)
+        {
+            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_IOHS_CHILDREN) == 0,
+                         "Invalid child target for IOHS parent");
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_IOHS>(*this);
+        }
+        else if (T_NO_MCAST == TARGET_TYPE_MI)
+        {
+            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_MI_CHILDREN) == 0,
+                         "Invalid child target for MI parent");
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_MI>(*this);
+        }
+        else if (T_NO_MCAST == TARGET_TYPE_OMIC)
+        {
+            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_OMIC_CHILDREN) == 0,
+                         "Invalid child target for OMIC parent");
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_OMIC>(*this);
+        }
+        else if (T_NO_MCAST == TARGET_TYPE_MCC)
+        {
+            STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_MCC_CHILDREN) == 0,
+                         "Invalid child target for MCC parent");
+            return g_platTarget->convertToChiplet<LOG_TARGET_TYPE_MCC>(*this);
         }
         // If we fall through to here, there is no defined code path to handle the
         // combination of T and K -- let's fail loudly.
@@ -290,6 +358,55 @@ namespace fapi2
             STATIC_CHECK((T & ~TARGET_TYPE_EQ_CHILDREN) == 0,
                          "Invalid child type for EQ target");
             g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+        else if (K_NO_T == TARGET_TYPE_TBUSC)
+        {
+            STATIC_CHECK((T & ~TARGET_TYPE_TBUSC_CHILDREN) == 0,
+                         "Invalid child type for TBUSC target");
+            g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+        else if (K_NO_T == TARGET_TYPE_PEC2P)
+        {
+            STATIC_CHECK((T & ~TARGET_TYPE_PEC2P_CHILDREN) == 0,
+                         "Invalid child type for PEC2P target");
+            g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+        else if (K_NO_T == TARGET_TYPE_PEC6P)
+        {
+            STATIC_CHECK((T & ~TARGET_TYPE_PEC6P_CHILDREN) == 0,
+                         "Invalid child type for PEC6P target");
+            g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+        else if (K_NO_T == TARGET_TYPE_IOHS)
+        {
+            STATIC_CHECK((T & ~TARGET_TYPE_IOHS_CHILDREN) == 0,
+                         "Invalid child type for IOHS target");
+            g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+        else if (K_NO_T == TARGET_TYPE_MI)
+        {
+            STATIC_CHECK((T & ~TARGET_TYPE_MI_CHILDREN) == 0,
+                         "Invalid child type for PAXO target");
+            g_platTarget->getTargetChildren(P, *this, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+        else if (K_NO_T == TARGET_TYPE_OMIC)
+        {
+            STATIC_CHECK((T & ~TARGET_TYPE_OMIC_CHILDREN) == 0,
+                         "Invalid child type for PAXO target");
+            g_platTarget->getChipletChildren(P, *this, l_include_nonfunctional, l_cast_children);
+            return l_children;
+        }
+        else if (K_NO_T == TARGET_TYPE_MCC)
+        {
+            STATIC_CHECK((T & ~TARGET_TYPE_MCC_CHILDREN) == 0,
+                         "Invalid child type for PAXO target");
+            g_platTarget->getTargetChildren(P, *this, l_include_nonfunctional, l_cast_children);
             return l_children;
         }
         else

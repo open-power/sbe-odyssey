@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -89,10 +89,11 @@ namespace fapi2
             }
 
             /// @brief Get the parent target instance number, used incase of convertToChiplet
-            /// @praram[in] i_child child target
+            /// @param[in] i_child child target
+            /// @param[in] parentType Parent Type of Target
             /// @return uint8 of parent target instance number
             ///
-            uint8_t getParentTargetInstance(const plat_target_sbe_handle i_child) const
+            uint8_t getParentTargetInstance(const plat_target_sbe_handle i_child, LogTargetType parentType) const
             {
                 uint8_t parentInstanceNum = 0;
                 // Child target type is memport.
