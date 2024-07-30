@@ -224,8 +224,10 @@ if platform == 'pst' or platform == 'all'
   pst_srom_genfiles_dir_path  = onetime_genfiles_dir_path + '/pst/srom/'
   pst_sppe_genfiles_dir_path = runtime_genfiles_dir_path + '/pst/sppe/'
   pst_tsbe_genfiles_dir_path = runtime_genfiles_dir_path + '/pst/tsbe/'
+  pst_hsbe_genfiles_dir_path = runtime_genfiles_dir_path + '/pst/hsbe/'
+
   run_command('mkdir','-p', pst_srom_genfiles_dir_path, pst_bldr_genfiles_dir_path,
-    pst_sppe_genfiles_dir_path, pst_tsbe_genfiles_dir_path, pst_cmn_genfiles_dir_path)
+    pst_sppe_genfiles_dir_path, pst_tsbe_genfiles_dir_path, pst_hsbe_genfiles_dir_path, pst_cmn_genfiles_dir_path)
 
   foreach inc_path : meson.get_external_property('pst_sppe_cmn_inc_paths')
 
