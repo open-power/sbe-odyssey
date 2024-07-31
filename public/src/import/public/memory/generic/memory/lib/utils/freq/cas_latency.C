@@ -56,7 +56,8 @@ const std::vector< uint32_t > CasLatencyTraits<mc_type::EXPLORER>::SUPPORTED_FRE
 const std::vector< uint32_t > CasLatencyTraits<mc_type::ODYSSEY>::SUPPORTED_FREQS =
 {
     DIMM_SPEED_3200,
-    // TODO Zen:MST-1555 Add support for faster DIMM frequencies that PST supports when we port this to PST
+    DIMM_SPEED_4000,
+    DIMM_SPEED_4800,
 };
 
 }// mss
