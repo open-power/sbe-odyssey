@@ -447,5 +447,5 @@ namespace SBE
      *
      * @return messaging regiter address
      **/
-    uint64_t getMessageRegisterAddress(void);
+    uint32_t getMessageRegisterAddress(void);
 } // namespace SBE

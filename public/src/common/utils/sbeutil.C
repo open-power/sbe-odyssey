@@ -37,7 +37,7 @@ namespace SBE
     bool isSimics() __attribute__((alias("__isSimicsRunning")));
     extern "C" void __isSimicsRunning() __attribute__ ((noinline));
 
-    uint64_t __attribute__((weak)) getMessageRegisterAddress()
+    uint32_t __attribute__((weak)) getMessageRegisterAddress()
     {
         SBE_DEBUG("getMessageRegisterAddress - default");
         return scomt::poz::FSXCOMP_FSXLOG_SB_MSG;
