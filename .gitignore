@@ -8,7 +8,8 @@ images/**
 builddir/**
 simics/**
 genfiles/**
-venv/**
+venv_x86_64/**
+venv_ppc64le/**
 
 # Ignore Python cache
 __pycache__
