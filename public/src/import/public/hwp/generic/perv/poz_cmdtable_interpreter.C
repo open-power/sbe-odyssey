@@ -41,7 +41,7 @@ enum POZ_CMDTABLE_INTERPRETER_Private_Constants
     FORMAT_MAGIC = 0x434d5461,    // 'CMTa'
     POLL_TIMEOUT = 1000,
     SB_MSG  = 0x50009,
-    NOP     = 0b000,
+    WAIT    = 0b000,
     CALL    = 0b001,
     RETURN  = 0b010,
     PUTSCOM = 0b011,
@@ -67,7 +67,8 @@ class Executor
 
         /// @brief Run the command table from i_start_address
         /// @return FAPI2_RC_FALSE if execution aborted, FAPI2_RC_SUCCESS on return, or another FAPI error
-        ReturnCode run(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, int i_start_address);
+        //Changed TARGET_TYPE_ANY_POZ_CHIP to  TARGET_TYPE_CHIPS to accommodate ASIC chips
+        ReturnCode run(const Target<TARGET_TYPE_CHIPS>& i_target, int i_start_address);
 
         /// @brief return true if the table is empty/nonexistent
         bool empty()
@@ -143,7 +144,7 @@ ReturnCode Executor::check()
 
 static const char* opcode_names[8] =
 {
-    "NOP",
+    "WAIT",
     "CALL",
     "RETURN",
     "PUTSCOM",
@@ -153,7 +154,7 @@ static const char* opcode_names[8] =
     "CMPBNE",
 };
 
-ReturnCode Executor::run(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, int i_start_address)
+ReturnCode Executor::run(const Target<TARGET_TYPE_CHIPS>& i_target, int i_start_address)
 {
     fapi2::buffer<uint64_t> buf;
     uint32_t ip = i_start_address;
@@ -208,8 +209,40 @@ ReturnCode Executor::run(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target, int i
         // Execute
         switch (opcode)
         {
-            case NOP:
-                break;
+            // In .asm files, we have following operations
+            // NOP --> The interpreter will consider it as 0b000 opcode without any operand. So, it will work as "No Operation".
+            // WAIT 0x1 --> The interpreter will consider it as 0b000 opcode with some operand. So, it will work as "Wait for 0.1ms" of time.
+
+            // But poz_cmdtable_interpreter.C doesn't directly read the .asm file. It will read the .fsm file, which is a binary file.
+            // And while converting from .asm to .fsm, both NOP and WAIT is read as 0b000
+
+            case WAIT:
+                {
+                    const uint32_t HW_DELAY = param * 100000; //0.1msec delay
+
+                    //Time delay calculataion
+                    //2000 clock cycles will give approx delay of 0.1ms
+                    const uint16_t factor = 2000;
+                    const uint32_t SIM_CYCLE_DELAY = param * factor; //
+
+                    if(param) //delay if some operand is passed
+                    {
+                        fapi2::ATTR_NAME_Type l_name;
+                        FAPI_TRY(FAPI_ATTR_GET_PRIVILEGED(ATTR_NAME, i_target, l_name));
+
+                        if ((l_name != fapi2::ENUM_ATTR_NAME_FLORENCE) &&
+                            (l_name != fapi2::ENUM_ATTR_NAME_NEXUS))
+                        {
+                            FAPI_ERR("%s:%d: WAIT is not supported for chip name: %02X", iv_type, ip, l_name);
+                            return FAPI2_RC_FALSE;
+                        }
+
+                        FAPI_TRY(fapi2::delay(HW_DELAY, SIM_CYCLE_DELAY));
+                    }
+
+                    //without any operand --> No Operation
+                    break;
+                }
 
             case CALL:
                 if (!iv_cust_executor)
@@ -325,7 +358,7 @@ fapi_try_exit:
 }
 
 ReturnCode poz_cmdtable_interpreter(
-    const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+    const Target<TARGET_TYPE_CHIPS>& i_target,
     const void* i_main_table, const size_t i_main_table_size,
     const void* i_cust_table, const size_t i_cust_table_size)
 {

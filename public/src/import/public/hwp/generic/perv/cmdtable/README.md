@@ -46,6 +46,9 @@ Either command table supports these instructions:
    Same as `cmpbeq` except the jump is taken if the data does _not_ match.
  * `b label` - Unconditionally jump to `label`.
  * `fail errcode` - Unconditionally abort and return `errcode`.
+ * `wait param` - Introduces hardware delay of param*0.1 ms.
+    wait 10 ---> wait for (10*0.1)ms = 1ms
+    Maximum delay we can give in WAIT statement is 1sec, i.e., the value of wait argument(/param) should be lesser(or equal to) 10000.
 
 # Building a command table
 

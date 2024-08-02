@@ -50,6 +50,6 @@
 /// @return  FAPI2_RC_INVALID_PARAMETER if either command table is malformed
 /// @return  FAPI error code  if another FAPI error occurred, such as a SCOM error
 DECLARE_HWP(poz_cmdtable_interpreter,
-            const fapi2::Target<fapi2::TARGET_TYPE_ANY_POZ_CHIP>& i_target,
+            const fapi2::Target<fapi2::TARGET_TYPE_CHIPS>& i_target,
             const void* i_main_table, const size_t i_main_table_size,
             const void* i_cust_table, const size_t i_cust_table_size);

@@ -36,7 +36,7 @@ class ParseError(Exception):
     pass
 
 class Opcode(IntEnum):
-    NOP     = 0b000
+    WAIT    = 0b000
     CALL    = 0b001
     RETURN  = 0b010
     PUTSCOM = 0b011
@@ -103,7 +103,8 @@ ScriptCommand = namedtuple("ScriptCommand", "op argtypes arg_handler")
 
 SCRIPT_COMMANDS = {
     # Basic instructions
-    "NOP":      ScriptCommand(Opcode.NOP,     "",     no_args),
+    "NOP":      ScriptCommand(Opcode.WAIT,    "",     no_args),
+    "WAIT":     ScriptCommand(Opcode.WAIT,    "t",    p_args),
     "RETURN":   ScriptCommand(Opcode.RETURN,  "",     no_args),
     "PUTSCOM":  ScriptCommand(Opcode.PUTSCOM, "add",  add_args),
     "TEST":     ScriptCommand(Opcode.TEST,    "addc", addx_args),
@@ -121,6 +122,7 @@ COMMAND_ARGTYPES = {
     "c": "error code",
     "d": "data",
     "l": "label",
+    "t": "delay_time",
 }
 
 def has_whitespace(text):
@@ -145,7 +147,7 @@ def parse_command_args(cmd, argtypes, args):
 
     for i, (argtype, arg) in enumerate(zip(argtypes, args)):
         try:
-            if argtype in "adc":
+            if argtype in "adct":
                 if argtype == "d":
                     arg = expand_hex_left(arg)
                 try:
@@ -155,6 +157,8 @@ def parse_command_args(cmd, argtypes, args):
                     raise ParseError("invalid %s (%s): %s" % (COMMAND_ARGTYPES[argtype], e.args[0], arg))
                 if argtype == "c" and arg and arg & 0xFFFFFF00 != 0x200:
                     raise ParseError("TEST/POLL error code must be 0x2xx or 0")
+                if argtype == "t" and arg and arg >10000:
+                    raise ParseError("Delay should be less than 1sec, maximum value of wait argument is 10000")
             elif argtype in "sl":
                 if has_whitespace(arg):
                     raise ParseError("%s must not contain whitespace: %s" % (COMMAND_ARGTYPES[argtype], arg))
@@ -389,6 +393,15 @@ def run_commands(main, cust, target, verbose=True):
                 target.putScom(cmd.address, new_value)
             else:
                 target.putScom(cmd.address, cmd.data)
+
+        # NOTE for WAIT OPERATION- In .asm file 1 unit in wait argument represents 0.1ms hardware delay as explained below
+        # wait 10 ---> wait for (10*0.1)ms = 1ms
+        # wait 50 ---> wait for (50*0.1)ms = 5ms
+        # Maximum delay we can give in WAIT statement is 1sec, i.e., the value of wait argument should be lesser(or equal to) 10000.
+        elif cmd.op == Opcode.WAIT:
+            delay = (cmd.param + 9) // 10
+            sim_cycles = 2000 * delay
+            target.delay(sim_cycles, delay)
 
         elif cmd.op in (Opcode.TEST, Opcode.POLL, Opcode.CMPBEQ, Opcode.CMPBNE):
             timeout = 10000
