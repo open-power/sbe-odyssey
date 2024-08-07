@@ -70,7 +70,7 @@ void stream_ody_dl_data(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_tar
             l_data = 0xDEADDEADDEADDEAD;
         }
 
-        o_ostream.put64(l_data);
+        custom_put(l_data, 64, o_ostream);
     }
 
     o_ostream.flush();
@@ -104,44 +104,45 @@ fapi2::ReturnCode ody_omi_unload(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHI
     // 4. Tx Hardware Regs (16bit reads, will pack them to 32b fifo entries)
     // 5. Rx Hardware Regs (16bit reads, will pack them to 32b fifo entries)
 
-    o_ostream.put8(c_REVISION);
-    o_ostream.put8(0x01);   // System number Ody = 0x01
-    o_ostream.put8(0);      // FBC Drawer
-    o_ostream.put8(0);      // FBC DCM
-    o_ostream.put8(0);      // FBC Chip
+    custom_put(c_REVISION, 8, o_ostream);
+    custom_put(0x01, 8, o_ostream);                 // System 0x00 = Z
+    custom_put(0, 8, o_ostream);                    // FBC Drawer
+    custom_put(0, 8, o_ostream);                    // FBC DCM
 
-    o_ostream.put8(0);      // Reserved
-    o_ostream.put16(0);     // Reserved
-    o_ostream.put32(i_chipunit_mask);
+    custom_put(0, 8, o_ostream);                    // FBC Chip
+    custom_put(0, 8, o_ostream);                    // Reserved
+    custom_put(0, 16, o_ostream);                   // Reserved
+    custom_put(i_chipunit_mask, 32, o_ostream);
+
     FAPI_TRY(fapi2::getScom(i_target, 0x00018000ull, l_ecid_data));
-    o_ostream.put64(l_ecid_data);
+    custom_put(l_ecid_data, 64, o_ostream);
     l_ecid_data.flush<0>();
     FAPI_TRY(fapi2::getScom(i_target, 0x00018001ull, l_ecid_data));
-    o_ostream.put64(l_ecid_data);
+    custom_put(l_ecid_data, 64, o_ostream);
     l_ecid_data.flush<0>();
     FAPI_TRY(fapi2::getScom(i_target, 0x00018002ull, l_ecid_data));
-    o_ostream.put64(l_ecid_data);
+    custom_put(l_ecid_data, 64, o_ostream);
     l_ecid_data.flush<0>();
 
     // 1. DL regs
     l_section_header = c_section_mark | (DL_Regs << c_section_number_shift) | PHY_ODY_OMI_BASE;
-    o_ostream.put64(l_section_header);
+    custom_put(l_section_header, 64, o_ostream);
     stream_ody_dl_data(i_target, o_ostream);
 
     // 2. Flat Scom Regs (64b reads): 18 * 2 = 36(32B)
     l_section_header = c_section_mark | (Flat_Scom_Regs << c_section_number_shift) | PHY_ODY_OMI_BASE;
-    o_ostream.put64(l_section_header);
+    custom_put(l_section_header, 64, o_ostream);
     stream_scom_data(i_target, o_ostream, PHY_ODY_OMI_BASE);
 
     // 3. Mem Regs (64b reads, only need the mem-regs sections)
     //  Image Regs (32B)
     l_section_header = c_section_mark | (Mem_Regs_Per_PPE << c_section_number_shift) | PHY_ODY_OMI_BASE;
-    o_ostream.put64(l_section_header);
+    custom_put(l_section_header, 64, o_ostream);
     // Stop the threads so it doesn't corrupt the data
     FAPI_TRY(l_ppe_common.stop_thread(i_target, PHY_ODY_NUM_THREADS, true));
     stream_mem_data_pp(i_target, PHY_ODY_OMI_BASE, o_ostream);
     l_section_header = c_section_mark | (Mem_Regs_Per_Thread << c_section_number_shift) | PHY_ODY_OMI_BASE;
-    o_ostream.put64(l_section_header);
+    custom_put(l_section_header, 64, o_ostream);
     stream_mem_data_pt(i_target, PHY_ODY_OMI_BASE, l_threads, o_ostream);
     // Restart the threads
     FAPI_TRY(l_ppe_common.stop_thread(i_target, PHY_ODY_NUM_THREADS, false));
@@ -156,19 +157,19 @@ fapi2::ReturnCode ody_omi_unload(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHI
     // Rx/Tx PL Regs
 
     l_section_header = c_section_mark | (Tx_Pl_Hw_Regs << c_section_number_shift) | PHY_ODY_OMI_BASE;
-    o_ostream.put64(l_section_header);
+    custom_put(l_section_header, 64, o_ostream);
     stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, l_lanes, true, true);
     l_section_header = c_section_mark | (Rx_Pl_Hw_Regs << c_section_number_shift) | PHY_ODY_OMI_BASE;
-    o_ostream.put64(l_section_header);
+    custom_put(l_section_header, 64, o_ostream);
     stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, l_lanes, false, true);
 
     // Rx/Tx PG Regs
     l_section_header = c_section_mark | (Tx_Pg_Hw_Regs << c_section_number_shift) | PHY_ODY_OMI_BASE;
-    o_ostream.put64(l_section_header);
+    custom_put(l_section_header, 64, o_ostream);
     stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, 1, true, false);
 
     l_section_header = c_section_mark | (Rx_Pg_Hw_Regs << c_section_number_shift) | PHY_ODY_OMI_BASE;
-    o_ostream.put64(l_section_header);
+    custom_put(l_section_header, 64, o_ostream);
     stream_hw_data(i_target, o_ostream, PHY_ODY_OMI_BASE, l_groups, 1, false, false);
 
 

@@ -47,6 +47,22 @@ enum UNLOAD_SHIFT_CONSTS
 };
 
 ///
+/// @brief Utility to put custom data through ostream and reset RC value so it resets the buffer pointer
+///         and all of the data (even if there's a bad scom) are streamed out.
+/// @param[in] i_data           Data being streamed out
+/// @param[in] i_length         Bit length of data being streamed out
+/// @param[in] o_ostream        Stream object
+///
+/// @return void function, as we want to continue in fail case.
+///
+void custom_put(uint64_t i_data, uint32_t i_length, fapi2::hwp_bit_ostream& o_ostream)
+{
+    fapi2::current_err = fapi2::FAPI2_RC_SUCCESS;
+    o_ostream.put(i_data, i_length);
+    return;
+}
+
+///
 /// @brief Utility to enable/disable auto increment mode.
 /// @param[in] i_target         Target Chip
 /// @param[in] i_base_addr      Target chip's base address
@@ -129,7 +145,7 @@ void stream_scom_data(const fapi2::Target<K, M, V>& i_target,
             l_data = 0xDEADDEADDEADDEAD;
         }
 
-        o_ostream.put64(l_data);
+        custom_put(l_data, 64, o_ostream);
     }
 
 }
@@ -169,7 +185,7 @@ void stream_mem_data_pp(const fapi2::Target<K, M, V>& i_target,
                 l_data = 0xDEADDEADDEADDEAD;
             }
 
-            o_ostream.put64(l_data);
+            custom_put(l_data, 64, o_ostream);
         }
     }
 
@@ -218,7 +234,7 @@ void stream_mem_data_pt(const fapi2::Target<K, M, V>& i_target,
                     l_data = 0xDEADDEADDEADDEAD;
                 }
 
-                o_ostream.put64(l_data);
+                custom_put(l_data, 64, o_ostream);
             }
         }
     }
@@ -298,7 +314,7 @@ void stream_hw_data(const fapi2::Target<K, M, V>& i_target,
             l_data = 0xDEADDEADDEADDEAD;
         }
 
-        o_ostream.put16(l_data);
+        custom_put(l_data, 16, o_ostream);
     }
 
 }
