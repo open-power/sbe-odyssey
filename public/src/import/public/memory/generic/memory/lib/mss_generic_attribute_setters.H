@@ -829,6 +829,7 @@ fapi_try_exit:
     return fapi2::current_err;
 }
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW00_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -846,7 +847,9 @@ inline fapi2::ReturnCode set_ddr5_rcw00_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW01_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -864,7 +867,9 @@ inline fapi2::ReturnCode set_ddr5_rcw01_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW05_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -882,7 +887,9 @@ inline fapi2::ReturnCode set_ddr5_rcw05_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW08_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -900,7 +907,9 @@ inline fapi2::ReturnCode set_ddr5_rcw08_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW09_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -918,7 +927,9 @@ inline fapi2::ReturnCode set_ddr5_rcw09_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0A_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -936,7 +947,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0a_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0C_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -954,7 +967,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0c_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0D_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -972,7 +987,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0d_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0E_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -990,7 +1007,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0e_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0F_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1008,7 +1027,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0f_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW40_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1026,7 +1047,9 @@ inline fapi2::ReturnCode set_ddr5_rcw40_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW41_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1044,7 +1067,9 @@ inline fapi2::ReturnCode set_ddr5_rcw41_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW42_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1062,7 +1087,9 @@ inline fapi2::ReturnCode set_ddr5_rcw42_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW43_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1080,7 +1107,9 @@ inline fapi2::ReturnCode set_ddr5_rcw43_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW44_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1098,7 +1127,9 @@ inline fapi2::ReturnCode set_ddr5_rcw44_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW45_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1116,7 +1147,9 @@ inline fapi2::ReturnCode set_ddr5_rcw45_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW46_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1134,7 +1167,9 @@ inline fapi2::ReturnCode set_ddr5_rcw46_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW47_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1152,7 +1187,9 @@ inline fapi2::ReturnCode set_ddr5_rcw47_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW48_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1170,7 +1207,9 @@ inline fapi2::ReturnCode set_ddr5_rcw48_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW49_CHA_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1188,7 +1227,9 @@ inline fapi2::ReturnCode set_ddr5_rcw49_cha_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW00_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1206,7 +1247,9 @@ inline fapi2::ReturnCode set_ddr5_rcw00_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW01_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1224,7 +1267,9 @@ inline fapi2::ReturnCode set_ddr5_rcw01_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW05_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1242,7 +1287,9 @@ inline fapi2::ReturnCode set_ddr5_rcw05_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW08_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1260,7 +1307,9 @@ inline fapi2::ReturnCode set_ddr5_rcw08_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW09_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1278,7 +1327,9 @@ inline fapi2::ReturnCode set_ddr5_rcw09_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0A_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1296,7 +1347,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0a_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0C_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1314,7 +1367,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0c_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0D_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1332,7 +1387,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0d_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0E_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1350,7 +1407,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0e_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0F_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1368,7 +1427,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0f_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW40_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1386,7 +1447,9 @@ inline fapi2::ReturnCode set_ddr5_rcw40_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW41_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1404,7 +1467,9 @@ inline fapi2::ReturnCode set_ddr5_rcw41_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW42_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1422,7 +1487,9 @@ inline fapi2::ReturnCode set_ddr5_rcw42_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW43_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1440,7 +1507,9 @@ inline fapi2::ReturnCode set_ddr5_rcw43_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW44_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1458,7 +1527,9 @@ inline fapi2::ReturnCode set_ddr5_rcw44_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW45_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1476,7 +1547,9 @@ inline fapi2::ReturnCode set_ddr5_rcw45_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW46_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1494,7 +1567,9 @@ inline fapi2::ReturnCode set_ddr5_rcw46_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW47_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1512,7 +1587,9 @@ inline fapi2::ReturnCode set_ddr5_rcw47_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW48_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1530,7 +1607,9 @@ inline fapi2::ReturnCode set_ddr5_rcw48_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW49_CHB_D0 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1548,7 +1627,9 @@ inline fapi2::ReturnCode set_ddr5_rcw49_chb_d0(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW00_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1566,7 +1647,9 @@ inline fapi2::ReturnCode set_ddr5_rcw00_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW01_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1584,7 +1667,9 @@ inline fapi2::ReturnCode set_ddr5_rcw01_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW05_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1602,7 +1687,9 @@ inline fapi2::ReturnCode set_ddr5_rcw05_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW08_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1620,7 +1707,9 @@ inline fapi2::ReturnCode set_ddr5_rcw08_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW09_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1638,7 +1727,9 @@ inline fapi2::ReturnCode set_ddr5_rcw09_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0A_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1656,7 +1747,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0a_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0C_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1674,7 +1767,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0c_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0D_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1692,7 +1787,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0d_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0E_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1710,7 +1807,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0e_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW0F_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1728,7 +1827,9 @@ inline fapi2::ReturnCode set_ddr5_rcw0f_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW40_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1746,7 +1847,9 @@ inline fapi2::ReturnCode set_ddr5_rcw40_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW41_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1764,7 +1867,9 @@ inline fapi2::ReturnCode set_ddr5_rcw41_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW42_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1782,7 +1887,9 @@ inline fapi2::ReturnCode set_ddr5_rcw42_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW43_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1800,7 +1907,9 @@ inline fapi2::ReturnCode set_ddr5_rcw43_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW44_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1818,7 +1927,9 @@ inline fapi2::ReturnCode set_ddr5_rcw44_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW45_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1836,7 +1947,9 @@ inline fapi2::ReturnCode set_ddr5_rcw45_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW46_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1854,7 +1967,9 @@ inline fapi2::ReturnCode set_ddr5_rcw46_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW47_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1872,7 +1987,9 @@ inline fapi2::ReturnCode set_ddr5_rcw47_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW48_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1890,7 +2007,9 @@ inline fapi2::ReturnCode set_ddr5_rcw48_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
+#ifndef __PPE__
 ///
 /// @brief ATTR_RCW49_CHB_D1 setter
 /// @param[in] const ref to the TARGET_TYPE_MEM_PORT
@@ -1908,6 +2027,7 @@ inline fapi2::ReturnCode set_ddr5_rcw49_chb_d1(const fapi2::Target<fapi2::TARGET
 fapi_try_exit:
     return fapi2::current_err;
 }
+#endif
 
 
 ///
