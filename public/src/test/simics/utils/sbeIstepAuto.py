@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2016,2024
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,9 +29,9 @@ from sim_commands import *
 import sbeSimUtils
 from istepArray import getIstepArray
 
-EXPDATA = [0xc0,0xde,0xa1,0x01,
-           0x0,0x0,0x0,0x0,
-           0x00,0x0,0x0,0x03];
+from sbePipeUtils import PIPE_PAIR_4_5, SimPipePairDriver
+from chipopexecuter import ChipopExecuter
+
 gIstepArray = getIstepArray()
 # MAIN Test Run Starts Here...
 #-------------------------------------------------
@@ -102,16 +103,19 @@ def sbe_istep_func( inum1:str, inum2:str, proc=0, node=0):
             print("Running:"+str(major)+"."+str(minor))
 
             try:
-                TESTDATA = [0,0,0,3,
-                             0,0,0xA1,0x01,
-                            0,major,0,minor ]
                 sbeSimUtils.runCycles( 10000000 )
-                sbeSimUtils.writeUsFifo( TESTDATA, i_fifoType, node, proc)
-                sbeSimUtils.writeEot( i_fifoType, node, proc)
-                sbeSimUtils.runCycles( 1000000 )
-                sbeSimUtils.readDsFifo( EXPDATA, i_fifoType, node, proc)
-                sbeSimUtils.runCycles( 1000000 )
-                sbeSimUtils.readEot( i_fifoType, node, proc)
+                chipop_obj = ChipopExecuter(0xA1, 0x01)
+                addr_bytes = [0x0, major, 0x0, minor]
+                chipop_obj.addRequestData(addr_bytes)
+
+                if(simenv.sbe_project_type == "pst") and (simenv.sbe_image_type == "hsbe"):
+                    #For HSBE, chip-op needs to be sent via pipes.
+                    driver = SimPipePairDriver(PIPE_PAIR_4_5, 50000000)
+                else:
+                    from simfifodriver import SimFifoDriver
+                    driver = SimFifoDriver()
+                chipop_obj.execute(driver)
+                chipop_obj.checkResult(0, 0)
 
             except:
                 print ("\nTest completed with error(s). Raise error")

@@ -34,6 +34,13 @@ def getIstepArray():
                     2:[14, 22], # istep 2.14 to 2.22 used for TAP.
                     3:[1, 14],  # istep 3.1 to 3.14 used for TAP.
                         }
+        elif(simenv.sbe_image_type == "hsbe"):
+            istepArray = {
+                    1:[],       # no istep 1 for Spinal SBE
+                    2:[16, 17], # istep 2.16 to 2.17 used for Spinal SBE
+                    3:[ 1, 20], # istep 3.01 to 3.20 used for Spinal SBE
+                    4:[ 1,  5], # istep 4.01 to 4.05 used for Spinal SBE
+                        }
         else:
             #TODO: Modify these as per the pst image type.
             istepArray = {
