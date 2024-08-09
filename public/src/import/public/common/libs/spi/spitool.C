@@ -195,7 +195,7 @@ int parse_args(int& argc, char**& argv)
     // Parse out all optional arguments
     TRY(ecmdCommandArgs(&argc, &argv), "Error calling ecmdCommandArgs.");
 
-    TRY(!ecmdParseOption(&argc, &argv, "--reset"), "The --reset option is no longer needed, please remove it");
+    TRY(ecmdParseOption(&argc, &argv, "--reset"), "The --reset option is no longer needed, please remove it");
 
     args.verify = !ecmdParseOption(&argc, &argv, "--noverify");
 
