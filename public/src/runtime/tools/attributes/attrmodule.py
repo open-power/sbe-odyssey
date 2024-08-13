@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -36,7 +36,7 @@ def set_attr(i_attrDb:AttributeStructure, io_image:bytearray, i_attr:str,\
         if not isinstance(attr, RealAttrFieldInfo):
             continue
         if((attr.name == i_attr.upper()) and (attr.sbe_targ_type == i_target)) :
-            if (i_instance >= attr.adj_num_targ_inst):
+            if (i_instance is not None and i_instance >= attr.adj_num_targ_inst):
                 raise ArgumentError("The instance [{0}] is not supported. The attribute "
                                     "{1} [{2}] supports [{3}] instance(s)".format(
                                     i_instance, i_attr, i_target, attr.adj_num_targ_inst))
@@ -86,4 +86,3 @@ def dump_attr(
         if isinstance(attr, RealAttrFieldInfo):
             attr.createDumpRecord(attr_list, i_image, image_base)
     return attr_list
-
