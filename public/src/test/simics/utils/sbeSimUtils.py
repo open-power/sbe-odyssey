@@ -7,6 +7,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2015,2024
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -162,9 +163,23 @@ def startCbs(procNr=0, nodeNr=0):
             ((simenv.sbe_image_type == "tsbe") or
              (simenv.sbe_image_type == "hsbe"))):
 
-        #TODO: Workaround till the new CBS logic is implemented in Simics.
         if (simenv.sbe_image_type == "tsbe"):
-            SIM_run_command("backplane0.mcm[0].tap[0].fsi2host_mbox->cbs_autostart = TRUE")
+            #Clearing the corresponding TAP bits to perform TAP CFAM reset
+            SIM_run_command("backplane0.mcm[0].spinal.lbus_map.write address = 0x2cd8 value = 0x00ff0000 size = 4 -b")
+            SIM_run_command("run-cycles 1000000")
+            #Setting the corresponding TAP bits to perform TAP CFAM release reset
+            SIM_run_command("backplane0.mcm[0].spinal.lbus_map.write address = 0x2c98 value = 0x00ff0000 size = 4 -b")
+            SIM_run_command("run-cycles 1000000")
+            #Setting byte0,1 of scratch16 to mark validity of scratch registers.
+            fsi2pib_write (0x50187, 0xFF000000 << 32)
+
+        if (simenv.sbe_image_type == "hsbe"):
+            #Trigerring Spinal CFAM reset
+            SIM_run_command("@conf.backplane0.mcm[0].c4_reset.iface.signal.signal_raise()")
+            SIM_run_command("run-cycles 1000000")
+            #Enabling Spinal CFAM voltage domain
+            SIM_run_command("@conf.backplane0.mcm[0].spinal.fsi2host_mbox.port.vdn_pgood.iface.signal.signal_raise()")
+            SIM_run_command("run-cycles 1000000")
 
         # CBS control register setting CBS_CS_START_BOOT_SEQUENCER and CBS_CS_OPTION_PREVENT_SBE_START bit
         chip.lbus_map.iface.memory_space.write(None, SBE_CBS_CONTROL_REG, (0x90, 0x00, 0x00, 0x00), 0x0)
