@@ -1392,7 +1392,9 @@
     <value>0x0</value>
     <value>0x0</value>
     <value>0x0</value>
-    <value>0x0</value>
+  <!-- Added that for unit tests, IPL/IML code will -->
+  <!-- overwrite this during the attribute sync step -->
+    <value>0x1</value>
     <value>0x0</value>
     <value>0x0</value>
     <value>0x0</value>
@@ -1661,8 +1663,10 @@
   <entry name="ATTR_ODY_DQS_TRACKING_COUNT_THRESHOLD">
     <value>3600</value>
   </entry>
+  <!-- Added that for unit tests, IPL/IML code will -->
+  <!-- overwrite this during the attribute sync step -->
   <entry name="ATTR_ODY_DQS_TRACKING_COUNT_SINCE_LAST_RECAL">
-    <value>0</value>
+    <value>3601</value>
   </entry>
   <entry name="ATTR_ODY_DQS_TRACKING_RECAL_COUNT">
     <value>0</value>
@@ -2732,7 +2736,7 @@
   </entry>
   <entry name="ATTR_ODY_SETUP_SAFEMODE_THROTTLES">
     <value>0</value>
-  </entry>  
+  </entry>
   <entry name="ATTR_SPI_BUS_DIV_REF">
     <value>0x0041</value>
   </entry>
