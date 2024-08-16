@@ -321,6 +321,7 @@ class FlashDevice : public SEEPROMDevice
         {
             DEV_MICRON_MT25Q = 1,
             DEV_MACRONIX_MX66,
+            DEV_MACRONIX_MX25,
         };
 
         static const uint32_t ERASE_BUFFER_SIZE = SMALLEST_ERASE_BLOCK_SIZE;
