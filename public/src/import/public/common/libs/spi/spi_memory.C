@@ -658,7 +658,7 @@ ReturnCode spi::FlashDevice::read_extended_status(uint32_t i_address, extended_s
             FAPI_TRY(iv_port.transaction(MT25Q_CMD_CLR_FLAG_STATUS_REG, 1, NULL, 0, NULL, 0));
         }
     }
-    else if (iv_devtype == DEV_MACRONIX_MX66)
+    else if ( (iv_devtype == DEV_MACRONIX_MX66) || (iv_devtype == DEV_MACRONIX_MX25) )
     {
         FAPI_TRY(iv_port.transaction(MX66_CMD_READ_SECURITY_REG, 1, NULL, 0, &dev_status, 1));
         o_status = static_cast<extended_status>(
@@ -720,6 +720,11 @@ static inline spi::FlashDevice::device_type get_mode_from_id(const uint8_t id[3]
         {
             FAPI_DBG("Detected Macronix MX66 type flash device");
             return spi::FlashDevice::DEV_MACRONIX_MX66;
+        }
+        else if (id[1] == 0x25)
+        {
+            FAPI_DBG("Detected Macronix MX25 type flash device");
+            return spi::FlashDevice::DEV_MACRONIX_MX25;
         }
     }
     else if (id[0] == 0x20)
