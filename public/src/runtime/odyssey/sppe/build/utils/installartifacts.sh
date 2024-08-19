@@ -69,6 +69,7 @@ cp ${MESON_SOURCE_ROOT}/public/src/tools/simics/pozsbeinitstandalone.simics \
    ${MESON_SOURCE_ROOT}/public/src/test/simics/utils/sbeIstepAuto.py \
    ${MESON_SOURCE_ROOT}/public/src/test/simics/utils/sbePipeUtils.py \
    ${MESON_SOURCE_ROOT}/public/src/test/simics/utils/chipopexecuter.py \
+   ${MESON_SOURCE_ROOT}/public/src/tools/debug/ffdcparser.py \
    ${MESON_BUILD_ROOT}/${SBE_PLATFORM}_debug_files_tools/simics/ || exit 1
 
 # Copy parser plugins on FSP based systems
