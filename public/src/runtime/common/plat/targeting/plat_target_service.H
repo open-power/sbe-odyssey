@@ -351,6 +351,16 @@ namespace fapi2
                                   const buffer<uint64_t> &i_enabled,
                                   const bool i_include_nonfunctional,
                                   std::vector<plat_target_sbe_handle> &o_children) const;
+
+        ///
+        /// @brief Function to get the system Target.
+        /// @return Handle of TARGET TYPE SYSTEM
+        ///
+        plat_target_sbe_handle plat_getSystemTarget()
+        {
+            return iv_targets[1];
+        }
+
         public:
         ///
         /// @brief Function to get the plat target handle of a perv target using chiplet id

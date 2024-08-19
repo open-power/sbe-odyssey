@@ -130,6 +130,10 @@ namespace fapi2
         {
             return g_platTarget->plat_getChipTargetPlatType();
         }
+        else if (T == TARGET_TYPE_SYSTEM)
+        {
+            return g_platTarget->plat_getSystemTarget();
+        }
         else if (T_NO_MCAST == TARGET_TYPE_PERV)
         {
             STATIC_CHECK((K_NO_MCAST & ~TARGET_TYPE_PERV_CHILDREN) == 0,
