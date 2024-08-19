@@ -361,6 +361,18 @@ namespace fapi2
             return iv_targets[1];
         }
 
+        ///
+        /// @brief Enumerate Non pervasive children of a specific type of multicast targets .
+        ///
+        /// @param [in] i_parent                Parent target handle of specific type
+        /// @param [in] i_enabled               Chiplet mask - 1 means include, 0 means exclude
+        /// @param [in] i_include_nonfunctional Return also targets that are not functional
+        /// @param [out] o_children             A vector of child target handles
+        ///
+        void getNonPervMulticastChildren(const plat_target_sbe_handle i_parent,
+                                         const buffer<uint64_t> &i_enabled,
+                                         const bool i_include_nonfunctional,
+                                         std::vector<plat_target_sbe_handle> &o_children) const;
         public:
         ///
         /// @brief Function to get the plat target handle of a perv target using chiplet id

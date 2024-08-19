@@ -45,6 +45,10 @@ namespace fapi2
 
     constexpr TargetType TARGET_TYPE_CORE_OTHEREND = TARGET_TYPE_L3CACHE;
     constexpr TargetType TARGET_TYPE_L3CACHE_OTHEREND = TARGET_TYPE_CORE;
+    constexpr TargetType TARGET_TYPE_MULTICAST_TARGETS = TARGET_TYPE_MULTICAST
+                                                         | TARGET_TYPE_PERV
+                                                         | TARGET_TYPE_L3CACHE
+                                                         | TARGET_TYPE_CORE;
 
     template<TargetType T>
     constexpr LogTargetType fapiTargetTypeToPlatTargetType()
@@ -220,6 +224,8 @@ namespace fapi2
 
         if ((K & TARGET_TYPE_MULTICAST) && (T == K_NO_MCAST))
         {
+            STATIC_CHECK((K & ~TARGET_TYPE_MULTICAST_TARGETS) == 0,
+                         "Invalid Multicast target");
             g_platTarget->getMulticastChildren(*this, l_include_nonfunctional, l_cast_children);
             return l_children;
         }
@@ -384,6 +390,34 @@ namespace fapi2
         return l_platTarget;
     }
 
+    ///
+    /// @brief Get a multicast target for a given chip
+    /// @tparam T The type of target to return; TARGET_TYPE_MULTICAST is added automatically
+    /// @tparam O The type of multicast read operation for the target; defaults to OR
+    /// @param[in] i_group The abstract multicast group the target should point to
+    /// @return The multicast target
+    ///
+    /// This method is only applicable to chip-level targets.
+    /// If the requested multicast group cannot be mapped to an available HW multicast
+    /// group, a platform specific error will be thrown.
+    ///
+    template< TargetType K, MulticastType M, typename V>
+    template< TargetType T, MulticastType O >
+    inline Target<T | TARGET_TYPE_MULTICAST, O, V>
+    Target<K, M, V>::getMulticast(const MulticastGroup i_group, const MulticastCoreSelect i_cores) const
+    {
+        STATIC_CHECK((T & (TARGET_TYPE_CORE | TARGET_TYPE_L3CACHE) ),
+                         "Requested target is not CORE | L3CACHE type");
+        check_getMulticast<T, O>();
+        plat_target_handle_t l_platTarget;
+        constexpr LogTargetType l_plat_type = fapiTargetTypeToPlatTargetType<T>();
+        l_platTarget.setIsMulticast(1);
+        l_platTarget.setMcastGroup(i_group);
+        l_platTarget.setCoreSelect(i_cores);
+        l_platTarget.setTargetType(l_plat_type);
+
+        return l_platTarget;
+    }
     ///
     /// @brief Is the target functional?
     /// @return true if target is functional, false if non-functional

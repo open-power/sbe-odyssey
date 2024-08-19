@@ -235,11 +235,12 @@ void sbe_target_service::getMulticastChildrenInternal(const uint64_t i_chiplet_m
 
     // If a real multicast target, loop over all targets in the chip
     // but filter for multicast group members.
-    uint64_t l_enabledTargets;
+    fapi2::buffer<uint64_t> l_enabledTargets;
     plat_target_sbe_handle l_tmpTarget(i_parent);
     l_tmpTarget.setIsMulticast(true);
     l_tmpTarget.setMcastType(MULTICAST_BITX);
-    getscom_abs_wrap(&l_tmpTarget, 0xF0001, &l_enabledTargets);
+    l_tmpTarget.setCoreSelect(0);
+    getscom_abs_wrap(&l_tmpTarget, 0xF0001, (uint64_t*)&l_enabledTargets);
 
     if ((i_parent.getTargetType() == LOG_TARGET_TYPE_PERV) )
     {
@@ -248,6 +249,13 @@ void sbe_target_service::getMulticastChildrenInternal(const uint64_t i_chiplet_m
                              l_enabledTargets & i_chiplet_mask,
                              i_include_nonfunctional,
                              o_children);
+    }
+    else
+    {
+        getNonPervMulticastChildren(i_parent,
+                                    l_enabledTargets & i_chiplet_mask,
+                                    i_include_nonfunctional,
+                                    o_children);
     }
     return;
 }
@@ -274,6 +282,45 @@ void sbe_target_service::loopTargetsByChiplet(const LogTargetType i_type,
             }
         }
         targetIndex += targetInfo.targetCnt;
+    }
+}
+
+// Fuction to return all non-pervasive multicast targets (CORE and L3Cache) in selected EQs.
+void sbe_target_service::getNonPervMulticastChildren(
+                                              const plat_target_sbe_handle i_parent,
+                                              const buffer<uint64_t> &i_enabled,
+                                              const bool i_include_nonfunctional,
+                                              std::vector<plat_target_sbe_handle> &o_children) const
+{
+    const uint8_t l_parentType = i_parent.getTargetType();
+    const uint8_t l_parentCoreSelect = i_parent.getCoreSelect();
+
+    std::vector<plat_target_sbe_handle > l_children;
+    getProcChildren(LOG_TARGET_TYPE_EQ, i_include_nonfunctional, l_children);
+
+    for (auto& child : l_children)
+    {
+        if(i_enabled.getBit(child.getChipletNumber()))
+        {
+            std::vector<plat_target_sbe_handle > l_child;
+            if(l_parentType == LOG_TARGET_TYPE_CORE)
+            {
+                getChipletChildren(LOG_TARGET_TYPE_CORE, child, i_include_nonfunctional, l_child);
+            }
+            else if(l_parentType == LOG_TARGET_TYPE_L3CACHE)
+            {
+                getChipletChildren(LOG_TARGET_TYPE_L3CACHE, child, i_include_nonfunctional, l_child);
+            }
+
+            for (auto& eqchild : l_child)
+            {
+                uint8_t l_instanceNumber = eqchild.getTargetInstance();
+                if((l_parentCoreSelect & (8 >> (l_instanceNumber & 3))))
+                {
+                    o_children.push_back(eqchild);
+                }
+            }
+        }
     }
 }
 

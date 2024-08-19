@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -67,12 +67,22 @@ namespace fapi2
     /*
      * plat_target_base_handle bit layout :
      * BIT VALUES FOR BIT-0 TO BIT-31:
-     *   Chiplet Number                 : 08 Bits => Chiplet Number          [ bit00 – bit7 ]
+     *   Chiplet Number
+     *      - For Non-Multicast Targets : 08 Bits => Chiplet Number          [ bit00 – bit7 ]
+     *      - For Multicast Targets
+     *                                  : 01 Bits => Reserve Bit             [ bit00 ]
+     *                                  : 01 Bits => Is Multicast Type       [ bit01 ]
+     *                                  : 03 Bits => Multicast Type          [ bit02 - bit04 ]
+     *                                  : 03 Bits => Multicast Group         [ bit05 - bit07 ]
      *   Type                           : 06 Bits => PPE target type         [ bit08 – bit13 ]
      *   Present                        : 01 Bit  => Target present or not   [ bit14 ]
      *   Functional                     : 01 Bit  => Target functional state [ bit15 ]
-     *   Instance number                : 08 Bits => Target instance number  [ bit16 - bit23 ]
-     *   Reserve                        : 08 Bits => Free Bits               [ bit24 – bit31 ]
+     *   Instance number
+     *      - For Non-Multicast Targets : 08 Bits => Target instance number  [ bit16 - bit23 ]
+     *      - For Multicast Targets
+     *                                  : 04 Bits => Core Select             [ bit16 - bit19 ]
+     *                                  : 04 Bits => Reserve Bits            [ bit20 - bit23 ]
+     *   Reserve                        : 08 Bits => Reserve Bits            [ bit24 – bit31 ]
      */
     class plat_target_base_handle {
 
@@ -126,9 +136,9 @@ namespace fapi2
 
             ///
             /// @brief Get the mcast_type for this target
-            /// @return mcast_type value
+            /// @return uint8 of mcast_type value
             ///
-            bool getMcastType() const
+            uint8_t getMcastType() const
             {
                 return static_cast<uint8_t>(iv_value.getBits<2, 3>());
             }
@@ -144,9 +154,9 @@ namespace fapi2
 
             ///
             /// @brief Get the mcast_group for this target
-            /// @return mcast_group value
+            /// @return uint8 of mcast_group value
             ///
-            bool getMcastGroup() const
+            uint8_t getMcastGroup() const
             {
                 return static_cast<uint8_t>(iv_value.getBits<5, 3>());
             }
@@ -265,6 +275,24 @@ namespace fapi2
             void setTargetInstance(const uint8_t i_value)
             {
                 iv_value.insertFromRight<16, 8>(i_value);
+            }
+
+            ///
+            /// @brief Get the core_select for this target
+            /// @return uint8 of core select value
+            ///
+            uint8_t getCoreSelect() const
+            {
+                return static_cast<uint8_t>(iv_value.getBits<16, 4>());
+            }
+
+            ///
+            /// @brief Set the core_select for this target
+            /// @param[in] i_value for core_select to set
+            ///
+            void setCoreSelect(uint8_t i_value)
+            {
+                iv_value.insertFromRight<16, 4>(i_value);
             }
     protected:
             ///
