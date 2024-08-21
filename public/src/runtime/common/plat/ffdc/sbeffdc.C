@@ -475,6 +475,7 @@ pozFfdcNode_t * pozFfdcCtrl_t::getLastNode()
  *
  * @return secondary RC
 */
+
 static uint32_t ffdcPlatCreateAndSendWithFullTrace (
                                     uint32_t &o_byteSent,
                                     uint16_t i_slidId,
@@ -1464,4 +1465,9 @@ void plat_FfdcInit (void)
     SBE_INFO ("plat_FfdcInit, Scratch full rc size: %d, addr: [0x%08X]", ffdcSizeScratchFullRc, node);
 #endif
 
+}
+
+void __attribute__((weak)) getCommitIdWrap(uint32_t &o_commitId)
+{
+    o_commitId = 0xDEADBEEF;
 }
