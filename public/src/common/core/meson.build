@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -35,3 +35,7 @@ abs_cmn_core_c_path = []
 foreach infile : infile_c
   abs_cmn_core_c_path += cmn_core_dir_path + infile
 endforeach
+
+# stackutils files
+abs_runtime_cmn_core_stackutils_c_files = files('stackutils.C',
+                                         )

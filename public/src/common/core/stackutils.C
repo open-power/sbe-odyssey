@@ -1,7 +1,7 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/stackutils.C $           */
+/* $Source: public/src/common/core/stackutils.C $                         */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
@@ -27,7 +27,9 @@
 #include "stackutils.H"
 #include "assert.h"
 #include "plat_error_scope.H"
+#ifdef MINIMUM_FFDC_RE
 #include "hwp_ffdc_classes.H"
+#endif
 
 uint8_t getStackUtilPercent(uint32_t stack_base, uint32_t stack_limit)
 {
@@ -81,12 +83,14 @@ inline void checkLimitAndAct(uint8_t i_threadId, uint8_t i_utilization)
 {
     assert( i_utilization < CRITICAL_STACK_LIMIT_PERCENT );
 
-    PLAT_FAPI_ASSERT_NOEXIT((i_utilization < THRESHOLD_STACK_LIMIT_PERCENT),
-                            fapi2::THRESHOLD_STACK_LIMIT_CROSSED(fapi2::FAPI2_ERRL_SEV_RECOVERED).
-                            set_THREAD_ID(i_threadId).
-                            set_THRESHOLD_PERCENTAGE(THRESHOLD_STACK_LIMIT_PERCENT).
-                            set_UTILIZATION_PERCENTAGE(i_utilization),
-                            "Thread [%d] stack usage crossed threshold limit", i_threadId);
+    #ifdef MINIMUM_FFDC_RE
+        PLAT_FAPI_ASSERT_NOEXIT((i_utilization < THRESHOLD_STACK_LIMIT_PERCENT),
+                                fapi2::THRESHOLD_STACK_LIMIT_CROSSED(fapi2::FAPI2_ERRL_SEV_RECOVERED).
+                                set_THREAD_ID(i_threadId).
+                                set_THRESHOLD_PERCENTAGE(THRESHOLD_STACK_LIMIT_PERCENT).
+                                set_UTILIZATION_PERCENTAGE(i_utilization),
+                                "Thread [%d] stack usage crossed threshold limit", i_threadId);
+    #endif
 }
 
 void checkCurThreadStackUsage()

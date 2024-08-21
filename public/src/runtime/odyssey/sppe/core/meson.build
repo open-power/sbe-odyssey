@@ -47,8 +47,7 @@ infile_c = ['main.C',
             'sbecmdgetmemtraindata.C',
             'poolglobal.C',
             'sbecmdhssody.C',
-            'exceptionhandler.C',
-            'stackutils.C'
+            'exceptionhandler.C'
           ]
 
 odyssey_abs_core_c_file_paths = []
@@ -85,7 +84,8 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     odyssey_abs_tgt_c_file_paths,
                                     odyssey_abs_attr_c_file_paths,
                                     abs_runtime_cmn_ring_c_path,
-                                    abs_runtime_cmn_checkmemorydevice_c_path
+                                    abs_runtime_cmn_checkmemorydevice_c_path,
+                                    abs_runtime_cmn_core_stackutils_c_files
                                 ]
 
 # List of image specific customize files

@@ -1,12 +1,11 @@
 /* IBM_PROLOG_BEGIN_TAG                                                   */
 /* This is an automatically generated prolog.                             */
 /*                                                                        */
-/* $Source: public/src/runtime/odyssey/sppe/core/stackutils.H $           */
+/* $Source: public/src/common/core/stackutils.H $                         */
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
 /* Contributors Listed Below - COPYRIGHT 2023,2024                        */
-/* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
 /* Licensed under the Apache License, Version 2.0 (the "License");        */
@@ -72,7 +71,7 @@ void checkKernelStackUsage();
 
 
 /**
- * @brief     This function calls getStackUtilPercent() to find the stack 
+ * @brief     This function calls getStackUtilPercent() to find the stack
  *            utilization of the given thread. If the utilization exceeds
  *            THRESHOLD_STACK_LIMIT_PERCENT --> create a RE
  *            CRITICAL_STACK_LIMIT_PERCENT  --> Assert
