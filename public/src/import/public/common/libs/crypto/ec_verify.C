@@ -1796,7 +1796,6 @@ int ec_derive_public_key(const unsigned char* privatept, unsigned char* publicxp
 
 
 //=====================================================  public function  ====
-asm(".globl .L.ec_verify");
 int ec_verify (const unsigned char* publicpt,    /* 2*EC_COORDBYTES */
                const unsigned char* hash,        /*   EC_HASHBYTES  */
                const unsigned char* signature)   /* 2*EC_COORDBYTES */
