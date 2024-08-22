@@ -6,6 +6,7 @@
 # OpenPOWER sbe Project
 #
 # Contributors Listed Below - COPYRIGHT 2024
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,6 +32,7 @@ PIPE_PAIR_4_5 = {
     'enque_base_addr'     : 0xB0510,
     'dequeue_base_addr'   : 0xB0600,
     'enqueue_eot_addr'    : 0xB0512,
+    'equeue_status_addr'  : 0xB0611,
     'dequeue_status_addr' : 0xB0601,
     'dequeue_ackeot_addr' : 0xB0605,
     'config_pibctrl'      : 0x2EE20000,
@@ -82,7 +84,8 @@ class SimPipePairDriver(FifoDriver):
         self.enqueu_addr = i_pipePairDict['enque_base_addr']
         self.dequeu_addr = i_pipePairDict['dequeue_base_addr']
         self.enqueue_eot_addr = i_pipePairDict['enqueue_eot_addr']
-        self.dequeue_stat_addr = i_pipePairDict['dequeue_status_addr']
+        self.equeue_status_addr = i_pipePairDict['equeue_status_addr']
+        self.dequeue_status_addr = i_pipePairDict['dequeue_status_addr']
         self.dequeue_ackeot_addr = i_pipePairDict['dequeue_ackeot_addr']
 
         self.cycles_to_run_after_request = i_cycles_to_run
@@ -102,25 +105,36 @@ class SimPipePairDriver(FifoDriver):
 
     def _recieveReply(self) -> bytearray:
         raw_replay = bytearray()
+        waitItrCount = 10
+        count = 0
 
         while True:
-            data, eot = self._dequeuWordAndCheckEot()
-            if(eot):
-                break
+            status = self._readWordReg(self.dequeue_status_addr)
+            fifoCount = ((status >> 16) & (0x0f)) # Bit 12th-15th gives FIFO entry Count
+            if(fifoCount > 0):
+                data, eot = self._dequeuWordAndCheckEot()
+                count = 0
+                if(eot):
+                    break
 
-            raw_replay.extend(int.to_bytes(data, 4, 'big'))
+                raw_replay.extend(int.to_bytes(data, 4, 'big'))
+            else:
+                count = count + 1
+                sbeSimUtils.runCycles(10000000)
+                # This will cause  test to fail
+                if(count > waitItrCount):
+                    raise Exception('Timeout. Empty FIFO');
+
 
         self._writeEot(self.dequeue_ackeot_addr)
         return raw_replay
 
     def _dequeuWordAndCheckEot(self) -> tuple[int,bool]:
-        # TODO PFSBE-1006 : wait untill data available pipe-queue
         data = self._readWordReg(self.dequeu_addr)
         return (data, self._checkIfEot())
 
     def _checkIfEot(self) -> None:
-        status = self._readWordReg(self.dequeue_stat_addr)
-
+        status = self._readWordReg(self.dequeue_status_addr)
         if(status & (1 << (31 - 8))):
             # dequeue the eot word
             self._readWordReg(self.dequeu_addr)
@@ -140,18 +154,25 @@ class SimPipePairDriver(FifoDriver):
         self._writeWordReg(addr, eot_data)
 
     def _sendToUsFifo(self, i_data: int) -> None:
+        waitItrCount = 10
+        count = 0
         if((len(i_data) % 4) != 0):
             raise Exception('Invalid request length')
-
         word_aligned_offset = 0
         while True:
-            # TODO PFSBE-1006 : wait untill pipe-queue is empty
-
-            slice = i_data[word_aligned_offset:(word_aligned_offset + 4)]
-            data = int.from_bytes(slice, 'big')
-
-            self._writeWordReg(self.enqueu_addr, data)
-
-            word_aligned_offset += 4
-            if(word_aligned_offset >= len(i_data)):
-                break
+            status = self._readWordReg(self.equeue_status_addr)
+            fifoFull = ((status >> 21) & 1) #10th bit set means Fifo is full
+            if(not fifoFull):
+                count = 0
+                slice = i_data[word_aligned_offset:(word_aligned_offset + 4)]
+                data = int.from_bytes(slice, 'big')
+                sbeSimUtils.runCycles(100000)
+                self._writeWordReg(self.enqueu_addr, data) 
+                word_aligned_offset += 4
+                if(word_aligned_offset >= len(i_data)):
+                    break
+            else:
+                count = count + 1
+                sbeSimUtils.runCycles(10000000)
+                if(count > waitItrCount):
+                    raise Exception('Timeout. FIFO is FULL!');
