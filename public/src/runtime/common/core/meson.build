@@ -84,3 +84,5 @@ abs_runtime_cmn_core_infra_ffdc_c_files = files('sbecmdgenericffdc.C',
                                   )
 # Exception handler files.
 exception_handler_cmn_core_infra_c_path = files('sbeexceptionhandler.C')
+# sbeFifoMsgUtils files
+abs_runtime_cmn_core_infra_sbefifomsgutils_c_files = files('sbeFifoMsgUtils.C')

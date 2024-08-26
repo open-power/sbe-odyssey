@@ -693,7 +693,7 @@ uint32_t sbeHandleDsPipeCnfg (const sbeFifoType  i_usPipe)
         if ( !( (dsPipeAccess.wr_open) &&
                   ( !dsPipeAccess.wr_use_ctlr_id ||
                     (dsPipeAccess.wr_use_ctlr_id  &&
-                      (dsPipeCtlrId.writeend == PIB_CTLR_SPPE)
+                      (dsPipeCtlrId.writeend == SBE_GLOBAL->pibCtrlId)
                     )
                   )
               )
@@ -702,7 +702,7 @@ uint32_t sbeHandleDsPipeCnfg (const sbeFifoType  i_usPipe)
             updateDsConfig = true;
             dsPipeAccess.wr_open = 1;
             dsPipeAccess.wr_use_ctlr_id = 1;
-            dsPipeCtlrId.writeend = PIB_CTLR_SPPE;
+            dsPipeCtlrId.writeend = SBE_GLOBAL->pibCtrlId;
         }
         // Check and config downstream pipe READ config if not done
         if ( !( (dsPipeAccess.rd_open) &&
