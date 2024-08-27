@@ -53,7 +53,6 @@ using namespace fapi2;
 fapi2::ReturnCode prepSpiAccess(uint32_t*& l_imgBufScratchArea, uint8_t boot_side, spi::AbstractMemoryDevice *& gMemHandle, sbeRespGenHdr_t& respHdr)
 {
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
-
     //////////////////////////////////////////////////////
     //Allocate scratch space based on the SEEPROM img length in bytes
     l_imgBufScratchArea =
@@ -106,7 +105,6 @@ uint32_t sbeSpiWriteWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
 {
     #define SBE_FUNC " spiWrite "
     SBE_ENTER(SBE_FUNC);
-
     uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
     sbeSpiWriteMsgHdr_t l_reqMsg = sbeSpiWriteMsgHdr_t();
     sbeRespGenHdr_t respHdr;
@@ -114,35 +112,26 @@ uint32_t sbeSpiWriteWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
     sbeResponseFfdc_t ffdc;
     uint32_t len = 0;
     uint32_t* l_imgBufScratchArea = NULL;
-
+    uint8_t byte_pattern = 0;
+    uint32_t imgLenWords;
     spi::AbstractMemoryDevice *gMemHandle = NULL;
-
     do
     {
         // Dequeue seeprom_id and start_addr
         uint32_t len2dequeue = sizeof(l_reqMsg)/sizeof(uint32_t);
+
         // EoT not expected
         l_rc = i_getStream.get(len2dequeue, (uint32_t *)&l_reqMsg, false);
-
         // If FIFO access failure
         if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
         {
             // Let command processor routine to handle the RC.
             break;
         }
-
-        // Get the length of img
         // Length is not part of chipop. So take length from total length
         len = SBE_GLOBAL->sbeFifoCmdHdr.len -
-                        sizeof(SBE_GLOBAL->sbeFifoCmdHdr)/sizeof(uint32_t);
-
-        // Get the length for SEEPROM img in words
-        uint32_t imgLenWords = len -
-                        sizeof(sbeSpiWriteMsgHdr_t)/sizeof(uint32_t);
-        SBE_INFO(SBE_FUNC" imgLen in words: [0x%08X] in bytes: [0x%08X]",
-                        imgLenWords, WORD_TO_BYTES(imgLenWords));
-
-        //////////////////////////////////////////////////////
+            sizeof(SBE_GLOBAL->sbeFifoCmdHdr)/sizeof(uint32_t);
+         //////////////////////////////////////////////////////
         //Allocoate scratch space based on the SEEPROM img length in bytes & get mem dev handle
         l_rc = prepSpiAccess(l_imgBufScratchArea, l_reqMsg.boot_side, gMemHandle, respHdr);
         if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
@@ -153,45 +142,67 @@ uint32_t sbeSpiWriteWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
             break;
         }
 
-        //////////////////////////////////////////////////////
-        // Pull and write the SEEPROM img
+        if (!l_reqMsg.pattern_dwords_length){ 
+            SBE_INFO(SBE_FUNC" performing data bytes write..");
+            // Get the length of img
+            // Get the length for SEEPROM img in words
+            imgLenWords = len -
+                        sizeof(sbeSpiWriteMsgHdr_t)/sizeof(uint32_t);
+            SBE_INFO(SBE_FUNC" imgLen in words: [0x%08X] in bytes: [0x%08X]",
+                        imgLenWords, WORD_TO_BYTES(imgLenWords));
+        }
+        else
+        {  
+            SBE_INFO(SBE_FUNC"Performing byte pattern write  operation..");
+            //flush the fifo and acknowledge EOT as data payload is not expected for byte pattern write operation.
+            l_rc = i_getStream.get(0, NULL, true, true);
+            //if fifo access failure
+            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
+            //byte pattern length in words.
+            imgLenWords = (l_reqMsg.pattern_dwords_length)*2 ;
+            //byte pattern.
+            byte_pattern = l_reqMsg.byte_pattern;
+            SBE_INFO(SBE_FUNC" byte pattern: [0x%02X]", byte_pattern);
+            //intialising the l_imgBufScratchArea with byte pattern.
+            memset(l_imgBufScratchArea, byte_pattern, MAX_BUFFER_SIZE); 
+            SBE_INFO(SBE_FUNC" byte pattern length: in words - [0x%04X], in bytes - [0x%04X]", imgLenWords, WORD_TO_BYTES(imgLenWords));
+        }
 
-        // The received image would be updated in chunks of maxSpiWriteInWords
-        // or less depending on the image size in a loop
+        //////////////////////////////////////////////////////
+        //write the SEEPROM
+        // The received image or pattern bytes would be updated in chunks of maxSpiWriteInWords
+        // or less depending on the image or pattern bytes size in a loop
         uint32_t l_writeWordsLen = 0;
         uint32_t l_maxSpiWriteInWords = BYTES_TO_WORDS(MAX_BUFFER_SIZE);
         bool l_eotFlag  = false;
-
         // Offset at which to begin writing
         uint32_t l_imageStartAddr = l_reqMsg.start_addr;
-
+        SBE_INFO(SBE_FUNC" l_imageStartAddr: [0x%02X],imgLenWords: [0x%04X]", l_imageStartAddr, imgLenWords);
         FAPI_TRY(gMemHandle->write_begin(l_imageStartAddr, WORD_TO_BYTES(imgLenWords)));
-
         for (uint32_t l_len = imgLenWords; l_len > 0; l_len -= l_writeWordsLen)
         {
             l_writeWordsLen = (l_len > l_maxSpiWriteInWords ? l_maxSpiWriteInWords : l_len);
 
-            // Will attempt to dequeue entries based on the size passed above plus
-            // the expected EOT entry at the end
             SBE_INFO(SBE_FUNC "Loop: WriteLen(bytes):[0x%08X] withECC(bytes):[0x%08X]",
                 WORD_TO_BYTES(l_writeWordsLen), WITH_ECC(WORD_TO_BYTES(l_writeWordsLen)));
+            if (!l_reqMsg.pattern_dwords_length){
+                // Will attempt to dequeue entries based on the size passed above plus
+                // the expected EOT entry at the end
+                if (l_len == l_writeWordsLen)
+                {
+                    // last set of data with EOT set
+                        l_eotFlag = true;
+                }
 
-            // For next write to fifo to get next set of data
-            if (l_len == l_writeWordsLen)
-            {
-                // last set of data with EOT set
-                l_eotFlag = true;
+                // Dequeing fifo along with EOT ack, set to true in last loop
+                // false otherwise
+                l_rc = i_getStream.get(l_writeWordsLen, (uint32_t *)l_imgBufScratchArea, l_eotFlag);
+
+                // If FIFO access failure
+                CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
             }
-
-            // Dequeing fifo along with EOT ack, set to true in last loop
-            // false otherwise
-            l_rc = i_getStream.get(l_writeWordsLen, (uint32_t *)l_imgBufScratchArea, l_eotFlag);
-
-            // If FIFO access failure
-            CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_rc);
-
             // Perform device write
-            SBE_INFO(SBE_FUNC "Write data...");
+            SBE_INFO(SBE_FUNC "Write to device...");
             l_rc = gMemHandle->write_data(l_imgBufScratchArea, WORD_TO_BYTES(l_writeWordsLen));
 
             if(l_rc != FAPI2_RC_SUCCESS)
@@ -208,11 +219,8 @@ uint32_t sbeSpiWriteWrap ( fapi2::sbefifo_hwp_data_istream& i_getStream,
             l_imageStartAddr += WORD_TO_BYTES(l_writeWordsLen);
 
         } //end of for-loop
-
         FAPI_TRY(gMemHandle->write_end());
-
     } while(false);
-
 fapi_try_exit:
 
     //////////////////////////////////////////////////////
@@ -351,3 +359,5 @@ fapi_try_exit:
     return l_rc;
     #undef SBE_FUNC
 }
+
+

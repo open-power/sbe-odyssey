@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -64,8 +64,8 @@ uint32_t sbeSpiWriteWrap(fapi2::sbefifo_hwp_data_istream& i_getStream,
 
 typedef struct
 {
-    uint16_t reserved1;
-    uint8_t reserved2;
+    uint16_t pattern_dwords_length;
+    uint8_t byte_pattern;
     uint8_t boot_side;
     uint32_t start_addr; // start_addr into SEEPROM to begin writing
 } sbeSpiWriteMsgHdr_t;
