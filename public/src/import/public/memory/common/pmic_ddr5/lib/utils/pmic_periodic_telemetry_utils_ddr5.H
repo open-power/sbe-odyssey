@@ -88,6 +88,7 @@ inline fapi2::ReturnCode host_configure_phy_scom_access(const fapi2::Target<fapi
         const mss::states i_state,
         const bool i_runtime)
 {
+
     {
         static const uint64_t DWC_DDRPHYA_APBONLY0_MICROCONTMUXSEL = 0x800D00000801303Full;
         static const uint32_t DWC_DDRPHYA_APBONLY0_MICROCONTMUXSEL_MICROCONTMUXSEL = 63;
@@ -182,8 +183,9 @@ inline fapi2::ReturnCode suspend_dqs_track(const fapi2::Target<fapi2::TARGET_TYP
     FAPI_TRY(send_dqs_track_helper(i_target, l_tsns_period_ms, DISABLE_POLLING_DQS_PERIOD));
 
 
-    // Wait two polling cycles to ensure any currently-running recal is complete
-    fapi2::delay(l_tsns_period_ms * l_dqs_period * mss::DELAY_1MS * 2, 200);
+    // Wait for few polling cycles to ensure any currently-running recal is complete
+    // Found this delay via experimentation. This value had the best chance of avoiding contention
+    fapi2::delay((l_tsns_period_ms * l_dqs_period * mss::DELAY_1MS) / 2, 200);
 
 fapi_try_exit:
     return fapi2::current_err;
