@@ -115,10 +115,10 @@ static void print_bist_params(const bist_params& i_params)
 
     for (uint8_t chiplet_id = 0; chiplet_id < 64; chiplet_id++)
     {
-        if (i_params.chiplets_regions[chiplet_id])
+        if (i_params.cplt_regions[chiplet_id])
         {
-            FAPI_DBG("chiplets_regions[%d] = 0x%04x",
-                     chiplet_id, i_params.chiplets_regions[chiplet_id]);
+            FAPI_DBG("cplt_regions[%d] = 0x%04x",
+                     chiplet_id, i_params.cplt_regions[chiplet_id]);
         }
     }
 
@@ -186,6 +186,31 @@ static ReturnCode poz_bist_execute(
     {
         FAPI_INF("Setup all SCOM registers");
 
+        CPLT_CTRL1_t CPLT_CTRL1;
+        CLK_REGION_t CLK_REGION;
+
+        // Generic SCOM setup
+        for (auto& cplt : i_chiplets_uc)
+        {
+            auto i = cplt.getChipletNumber();
+            uint16_t cplt_drop_fences = i_params.cplt_drop_fences[i];
+
+            if (cplt_drop_fences)
+            {
+                CPLT_CTRL1 = 0;
+                CPLT_CTRL1.insertFromRight<CPLT_CTRL1_REGION0_FENCE, 16>(cplt_drop_fences);
+                FAPI_TRY(CPLT_CTRL1.putScom_CLEAR(cplt));
+            }
+        }
+
+        CLK_REGION.set_SUPPRESS_FIRST_EVEN_CLK(i_params.flags & i_params.bist_flags::SKIP_FIRST_CLOCK);
+        CLK_REGION.set_SUPPRESS_LAST_ODD_CLK(i_params.flags & i_params.bist_flags::SKIP_LAST_CLOCK);
+
+        if (CLK_REGION != 0)
+        {
+            FAPI_TRY(CLK_REGION.putScom(i_chiplets_target));
+        }
+
         if (i_params.flags & i_params.bist_flags::ABIST_NOT_LBIST)
         {
             FAPI_TRY(mod_abist_setup(i_chiplets_target,
@@ -193,9 +218,7 @@ static ReturnCode poz_bist_execute(
                                      i_params.opcg_count,
                                      0,
                                      i_params.idle_count,
-                                     i_params.chiplets_regions,
-                                     i_params.flags & i_params.bist_flags::SKIP_FIRST_CLOCK,
-                                     i_params.flags & i_params.bist_flags::SKIP_LAST_CLOCK));
+                                     i_params.cplt_regions));
 
             if (i_params.linear_stagger || i_params.zigzag_stagger)
             {
@@ -407,9 +430,9 @@ ReturnCode poz_bist(
             {
                 l_is_tp_bist = true;
 
-                if (i_params.chiplets_regions[1])
+                if (i_params.cplt_regions[1])
                 {
-                    l_tp_regions = i_params.chiplets_regions[1];
+                    l_tp_regions = i_params.cplt_regions[1];
                 }
 
                 l_all_active_regions = (clock_region)l_tp_regions;
@@ -536,27 +559,30 @@ ReturnCode poz_bist(
     {
         FAPI_INF("Do an arrayinit");
 
-        // Scan load standard RTG
-        FAPI_TRY(putRing(i_target, ring_id::chiplet_rtg));
-        FAPI_TRY(putRing(i_target, ring_id::core_rtg));
-        FAPI_TRY(putRing(i_target, ring_id::sh_rtg));
+        FAPI_ASSERT((i_params.scan0_types & SCAN_TYPE_RTG) == SCAN_TYPE_RTG,
+                    BAD_BIST_PARAMS_VALUE(),
+                    "Arrayinit would scan0 RTG which isn't uniformly in scan0_types 0x%04x",
+                    i_params.scan0_types);
 
-        // Scan load RTG optimizations for ABIST
-        FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_chiplet_rtg));
-        FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_core_rtg));
-        FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_sh_rtg));
+        // Only attempt scan loads on Cronus if we otherwise believe it will work
+        if (!is_platform<PLAT_CRONUS>() ||
+            i_params.stages & (i_params.bist_stages::RING_SETUP | i_params.bist_stages::RING_PATCH))
+        {
+            // Scan load standard RTG
+            FAPI_TRY(putRing(i_target, ring_id::chiplet_rtg));
+            FAPI_TRY(putRing(i_target, ring_id::core_rtg));
+            FAPI_TRY(putRing(i_target, ring_id::sh_rtg));
 
-        // Do the arrayinit
+            // Scan load RTG optimizations for ABIST
+            FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_chiplet_rtg));
+            FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_core_rtg));
+            FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_sh_rtg));
+        }
+
+        // Do the arrayinit and clean up rings
         FAPI_TRY(mod_arrayinit(l_chiplets_target, l_all_active_regions, ARRAYINIT_RUNN_CYCLES, false,
                                ARRAYINIT_LINEAR_STAGGER));
-
-        // Restore standard RTG minus repr
         FAPI_TRY(mod_scan0(l_chiplets_target, l_all_active_regions, SCAN_TYPE_RTG | i_params.scan0_types,
-                           i_params.flags & i_params.bist_flags::SCAN0_ARY_FILL));
-        FAPI_TRY(putRing(i_target, ring_id::chiplet_rtg));
-        FAPI_TRY(putRing(i_target, ring_id::core_rtg));
-        FAPI_TRY(putRing(i_target, ring_id::sh_rtg));
-        FAPI_TRY(mod_scan0(l_chiplets_target, l_all_active_regions, SCAN_TYPE_REPR,
                            i_params.flags & i_params.bist_flags::SCAN0_ARY_FILL));
 
         o_diags.completed_stages |= i_params.bist_stages::ARRAYINIT;
@@ -569,7 +595,41 @@ ReturnCode poz_bist(
     {
         FAPI_INF("Scan load BIST programming");
 
-        // Load base image if it exists
+        // First, load RTG settings as requested
+        if (i_params.flags & i_params.bist_flags::RTG_LOAD_MASK)
+        {
+            uint16_t l_rtg_scan0_types = SCAN_TYPE_RTG;
+
+            if (i_params.flags & i_params.bist_flags::RTG_LOAD_R)
+            {
+                l_rtg_scan0_types &= ~SCAN_TYPE_REPR;
+            }
+
+            if (i_params.flags & i_params.bist_flags::RTG_LOAD_T)
+            {
+                l_rtg_scan0_types &= ~SCAN_TYPE_TIME;
+            }
+
+            if (i_params.flags & i_params.bist_flags::RTG_LOAD_G)
+            {
+                l_rtg_scan0_types &= ~SCAN_TYPE_GPTR;
+            }
+
+            FAPI_ASSERT((i_params.scan0_types & l_rtg_scan0_types) == l_rtg_scan0_types,
+                        BAD_BIST_PARAMS_VALUE(),
+                        "RTG loading would scan0 0x%04x which isn't uniformly in scan0_types 0x%04x",
+                        l_rtg_scan0_types,
+                        i_params.scan0_types);
+
+            FAPI_TRY(putRing(i_target, ring_id::chiplet_rtg));
+            FAPI_TRY(putRing(i_target, ring_id::core_rtg));
+            FAPI_TRY(putRing(i_target, ring_id::sh_rtg));
+
+            FAPI_TRY(mod_scan0(l_chiplets_target, l_all_active_regions, l_rtg_scan0_types,
+                               i_params.flags & i_params.bist_flags::SCAN0_ARY_FILL));
+        }
+
+        // Second, load base image if it exists
         strcpy(l_load_path, l_load_dir);
         strcat(l_load_path, "base_image_0");
         // The compare hash file's third to last byte indicates which base image to use
@@ -577,7 +637,7 @@ ReturnCode poz_bist(
         FAPI_DBG("Attempting to load base BIST image");
         FAPI_TRY(putRing(l_chiplets_target, l_load_path));
 
-        // Load program image
+        // Third, load program image
         strcpy(l_load_path, l_load_dir);
         strcat(l_load_path, l_program);
         FAPI_DBG("Attempting to load overlay BIST image");
@@ -671,7 +731,25 @@ ReturnCode poz_bist(
     if (i_params.stages & i_params.bist_stages::REG_CLEANUP)
     {
         FAPI_INF("Cleanup all SCOM registers");
+
+        CPLT_CTRL1_t CPLT_CTRL1;
+
+        // Generic SCOM setup
+        for (auto& cplt : l_chiplets_uc)
+        {
+            auto i = cplt.getChipletNumber();
+            uint16_t cplt_drop_fences = i_params.cplt_drop_fences[i];
+
+            if (cplt_drop_fences)
+            {
+                CPLT_CTRL1 = 0;
+                CPLT_CTRL1.insertFromRight<CPLT_CTRL1_REGION0_FENCE, 16>(cplt_drop_fences);
+                FAPI_TRY(CPLT_CTRL1.putScom_SET(cplt));
+            }
+        }
+
         FAPI_TRY(mod_bist_reg_cleanup(l_chiplets_target, l_is_tp_bist));
+
         o_diags.completed_stages |= i_params.bist_stages::REG_CLEANUP;
     }
 

@@ -36,7 +36,7 @@
 #include <hwp_data_stream.H>
 #include <poz_tlv_utils.H>
 
-static const uint16_t BIST_PARAMS_CURRENT_VERSION = 13;
+static const uint16_t BIST_PARAMS_CURRENT_VERSION = 14;
 static const uint16_t BIST_CHIPOP_ID = 0xF101;
 
 struct bist_params
@@ -76,6 +76,10 @@ struct bist_params
         SCAN0_ARY_FILL       = 0x00400000,
         SYS_BIST_PAK         = 0x00200000,
         TESTER_HANDSHAKE     = 0x00100000,
+        RTG_LOAD_MASK        = 0x000E0000,
+        RTG_LOAD_R           = 0x00080000,
+        RTG_LOAD_T           = 0x00040000,
+        RTG_LOAD_G           = 0x00020000,
 
         /// Multi bit flags
         /// PCB mux switching
@@ -121,16 +125,17 @@ struct bist_params
     ////////////////////////////////////////////////////////////////
     // 16-bit constituents
     ////////////////////////////////////////////////////////////////
-    uint16_t scan0_types;          ///< Mask of ring scan types to dictate what we will scan0
-    uint16_t lbist_scan_types;     ///< Mask of ring scan types to dictate what we will lbist
+    uint16_t scan0_types;               ///< Mask of ring scan types to dictate what we will scan0
+    uint16_t lbist_scan_types;          ///< Mask of ring scan types to dictate what we will lbist
     /// First, multicast write base_regions as clock / BIST regions to everything in chiplets.
-    /// Next, for each chiplet in chiplets, inspect the entry in chiplets_regions indexed by chiplet ID.
+    /// Next, for each chiplet in chiplets, inspect the entry in cplt_regions indexed by chiplet ID.
     /// If the entry is zero, pass; else, overwrite base_regions with the entry for that respective chiplet.
     uint16_t base_regions;
-    uint16_t padding;              ///< Padding bits to enforce data alignment within struct
-    uint16_t chiplets_regions[64];
-    uint16_t outer_loop_mask;      ///< Mask of outer loop BIST iterations to run
-    uint16_t inner_loop_mask;      ///< Mask of inner loop BIST iterations to run
+    uint16_t padding;                   ///< Padding bits to enforce data alignment within struct
+    uint16_t cplt_regions[64];
+    uint16_t cplt_drop_fences[64];
+    uint16_t outer_loop_mask;           ///< Mask of outer loop BIST iterations to run
+    uint16_t inner_loop_mask;           ///< Mask of inner loop BIST iterations to run
 
     ////////////////////////////////////////////////////////////////
     // 8-bit constituents

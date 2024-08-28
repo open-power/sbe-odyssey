@@ -86,8 +86,6 @@ bool runn_triggers_opcg_infinite(const uint64_t i_runn_cycles);
 /// @param[in]   i_abist_start_at          Idle count value to set in OPCG_REG1
 /// @param[in]   i_chiplets_regions        Array of custom regions per chiplet in i_target indexed by chiplet ID
 ///                                        If zero for an index, pass; else, overwrite i_regions on that chiplet
-/// @param[in]   i_skip_first_clock        OPCG will skip the first clock (EVEN) and starts with the ODD clock
-/// @param[in]   i_skip_last_clock         OPCG will skip the last clock (ODD) and stops earlier with an EVEN clock
 ///
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 fapi2::ReturnCode mod_abist_setup(
@@ -96,9 +94,7 @@ fapi2::ReturnCode mod_abist_setup(
     uint64_t i_runn_cycles = poz_perv_mod_chiplet_clocking::DEFAULT_RUNN_CYCLES,
     uint64_t i_abist_start_stagger = poz_perv_mod_chiplet_clocking::DEFAULT_STAGGER,
     uint64_t i_abist_start_at = poz_perv_mod_chiplet_clocking::DEFAULT_ABIST_START_AT,
-    const uint16_t* i_chiplets_regions = NULL,
-    const bool i_skip_first_clock = false,
-    const bool i_skip_last_clock = false);
+    const uint16_t* i_chiplets_regions = NULL);
 
 /// @brief Poll for OPCG DONE.
 ///

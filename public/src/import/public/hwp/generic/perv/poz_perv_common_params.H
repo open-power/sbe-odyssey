@@ -296,7 +296,6 @@ enum scan_type
     SCAN_TYPE_ALL  = 0xFFF,
     SCAN_TYPE_RTG  = 0x230,  // repr+time+gptr
     SCAN_TYPE_NOT_RTG = 0xDCF,
-    SCAN_TYPE_NOT_REPR = 0xFDF,
 };
 };
 

@@ -359,9 +359,9 @@ ReturnCode mod_lbist_setup(
 
     // If we know there are custom regions by chiplet, unicast them
     FAPI_TRY(apply_regions_by_chiplet(l_chiplets_uc, CLK_REGION, CLK_REGION.addr,
-                                      CLK_REGION_CLOCK_REGION_PERV, i_params.chiplets_regions));
+                                      CLK_REGION_CLOCK_REGION_PERV, i_params.cplt_regions));
     FAPI_TRY(apply_regions_by_chiplet(l_chiplets_uc, SCAN_REGION_TYPE, SCAN_REGION_TYPE.addr,
-                                      SCAN_REGION_TYPE_SCAN_REGION_PERV, i_params.chiplets_regions));
+                                      SCAN_REGION_TYPE_SCAN_REGION_PERV, i_params.cplt_regions));
 
     // OPCG_ALIGN
     OPCG_ALIGN = i_params.lbist_opcg_align;

@@ -36,6 +36,11 @@
     </hwpError>
     <hwpError>
       <sbeError/>
+      <rc>RC_BAD_BIST_PARAMS_VALUE</rc>
+      <description>bist_params does not have valid value</description>
+    </hwpError>
+    <hwpError>
+      <sbeError/>
       <rc>RC_DONE_HALT_NOT_SET</rc>
       <description>DONE / HALT not measured by end of polling</description>
       <ffdc>PERV_CPLT_STAT0</ffdc>

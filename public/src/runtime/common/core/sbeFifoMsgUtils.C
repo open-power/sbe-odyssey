@@ -785,6 +785,9 @@ uint8_t getTestSbeSecStatusForRc(const uint32_t i_rc)
         case RC_BAD_BIST_PARAMS_FORMAT:
             return SBE_SEC_INVALID_PARAMS;
 
+        case RC_BAD_BIST_PARAMS_VALUE:
+            return SBE_SEC_INVALID_PARAMS;
+
         case RC_MIXED_TP_CHIPLET_BIST_REQUESTED:
             return SBE_SEC_INVALID_PARAMS;
 
