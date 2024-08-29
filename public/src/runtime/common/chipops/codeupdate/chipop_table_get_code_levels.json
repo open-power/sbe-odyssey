@@ -1,0 +1,13 @@
+{
+    "chipoptable":[
+    {
+        "cmdClass":"AE",
+        "command":"0x01",
+        "function":"sbeGetCodeLevels",
+        "fences":["SBE_FENCE_AT_CONTINUOUS_IPL"],
+        "headerFile":"sbecmdcodeupdate.H"
+    }
+    ]
+}
+
+

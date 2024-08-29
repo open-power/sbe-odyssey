@@ -68,7 +68,6 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     abs_runtime_cmn_plat_attribute_c_path,
                                     abs_runtime_cmn_hwpf_c_path,
                                     abs_runtime_cmn_utils_c_path,
-                                    abs_runtime_cmn_code_update_c_path,
                                     abs_runtime_cmn_attributes_c_path,
                                     odyssey_abs_plat_security_c_file_paths,
                                     abs_runtime_cmn_stopclock_c_path,
@@ -85,7 +84,9 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     odyssey_abs_attr_c_file_paths,
                                     abs_runtime_cmn_ring_c_path,
                                     abs_runtime_cmn_checkmemorydevice_c_path,
-                                    abs_runtime_cmn_core_stackutils_c_files
+                                    abs_runtime_cmn_core_stackutils_c_files,
+                                    abs_runtime_cmn_ptbl_c_path,
+                                    abs_runtime_cmn_cmd_code_update_c_path
                                 ]
 
 # List of image specific customize files
@@ -103,7 +104,6 @@ ODYSSEY_CHIPOPS_JSON = files('chipop_table.json')
 
 ody_cmn_chipop_json_list = [
                     COMMON_CHIPOPS_JSON,
-                    CMN_CODE_UPDATE_CHIPOPS_JSON,
                     CMN_STOP_CLOCK_CHIPOPS_JSON,
                     CMN_FAST_ARRAY_CHIPOPS_JSON,
                     CMN_GETCAPABILITY_CHIPOPS_JSON,
@@ -112,7 +112,8 @@ ody_cmn_chipop_json_list = [
                     CMN_ATTRIBUTES_CHIPOPS_JSON,
                     CMN_EXC_HWP_CHIPOPS_JSON,
                     CMN_RING_ACCESS_CHIPOPS_JSON,
-                    CMN_CHECKMEMORYDEVICE_CHIPOPS_JSON
+                    CMN_CHECKMEMORYDEVICE_CHIPOPS_JSON,
+                    CMN_GET_CODE_LEVELS_CHIPOPS_JSON
                 ]
 
 ody_chipop_json_list = [ody_cmn_chipop_json_list,
@@ -123,7 +124,9 @@ if platform == 'odysseylab'
   subdir_done()
 endif
 
-ody_abs_chipop_json_list = [ody_chipop_json_list, CMN_COLLECT_DUMP_CHIPOPS_JSON]
+ody_abs_chipop_json_list = [ody_chipop_json_list, CMN_COLLECT_DUMP_CHIPOPS_JSON,
+                              CMN_CODE_UPDATE_CHIPOPS_JSON]
+odyssey_abs_core_c_file_paths += abs_runtime_cmn_code_update_c_path
 
 ############### Chip-op table generation ############
 result_chipoptablegen = run_command(chipoptablegen,

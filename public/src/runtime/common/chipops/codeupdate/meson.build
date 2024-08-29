@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -23,18 +23,12 @@
 #
 # IBM_PROLOG_END_TAG
 
-CMN_CODE_UPDATE_CHIPOPS_JSON = files('chipop_table.json')
+CMN_CODE_UPDATE_CHIPOPS_JSON = files('chipop_table_code_update.json')
+CMN_GET_CODE_LEVELS_CHIPOPS_JSON = files('chipop_table_get_code_levels.json')
 
-runtime_cmn_code_update_dir_path = meson.global_source_root() + '/public/src/runtime/common/chipops/codeupdate/'
+abs_runtime_cmn_code_update_c_path = files('sbeupdateimage.C',
+                                    'sbesyncside.C')
 
-infile_c = ['sbecmdcodeupdate.C',
-            'sbeupdateimage.C',
-            'ptbl.C',
-            'sbesyncside.C',
-           ]
+abs_runtime_cmn_cmd_code_update_c_path = files('sbecmdcodeupdate.C')
 
-abs_runtime_cmn_code_update_c_path = []
-
-foreach infile : infile_c
-  abs_runtime_cmn_code_update_c_path += runtime_cmn_code_update_dir_path + infile
-endforeach
+abs_runtime_cmn_ptbl_c_path = files('ptbl.C')
