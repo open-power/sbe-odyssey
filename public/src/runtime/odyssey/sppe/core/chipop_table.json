@@ -10,6 +10,15 @@
       "headerFile":"sbetspollctrl.H"
     },
     {
+      "cmdClass":"AC",
+      "command":"0x03",
+      "function":"sbeHalfDimmDqsDrifTrack",
+      "fences":[
+        "SBE_FENCE_AT_CONTINUOUS_IPL"
+      ],
+      "headerFile":"sbehalfdimmdqsdrifttrack.H"
+    },
+    {
       "cmdClass":"A8",
       "command":"0x04",
       "function":"sbeGetMemTrainData",

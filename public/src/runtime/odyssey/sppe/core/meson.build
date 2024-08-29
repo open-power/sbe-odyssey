@@ -47,7 +47,8 @@ infile_c = ['main.C',
             'sbecmdgetmemtraindata.C',
             'poolglobal.C',
             'sbecmdhssody.C',
-            'exceptionhandler.C'
+            'exceptionhandler.C',
+            'sbehalfdimmdqsdrifttrack.C'
           ]
 
 odyssey_abs_core_c_file_paths = []
