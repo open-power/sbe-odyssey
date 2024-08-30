@@ -215,6 +215,9 @@ EOF
 
     CROSS_FILES+=" --cross-file $SBEROOT/.user_cross_file.txt"
 
+    if [ -n "$DFT_BUILD" ]; then
+        CROSS_FILES+=" --cross-file $SBEROOT_PUB/src/build/mesonutils/common/cross_file_dft.txt"
+    fi
 
 
     #Append internal cross file paths if any

@@ -1,0 +1,5 @@
+[properties]
+
+gcc_defs_dft = [
+    '-DDFT_IMAGE_SIZE_REDUCTION',
+    ]
