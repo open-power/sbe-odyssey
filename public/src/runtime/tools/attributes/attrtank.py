@@ -197,7 +197,10 @@ class RealAttrFieldInfo(AttrFieldInfo):
             values = self.targ_entry.values[0xFF] * self.adj_num_targ_inst
         else:
             for i in range(self.adj_num_targ_inst):
-                values += self.targ_entry.values[i]
+                if i in self.targ_entry.values.keys():
+                    values += self.targ_entry.values[i]
+                else:
+                    values += [0]
 
         vprint("values:", values)
 
