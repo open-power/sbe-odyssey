@@ -78,6 +78,8 @@ ReturnCode pz_rcs_switch(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
     fapi2::ATTR_CP_REFCLOCK_SELECT_Type l_refclock_select = 0;
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CP_REFCLOCK_SELECT, i_target, l_refclock_select));
 
+    FAPI_TRY(print_debug_info(i_target, l_refclock_select));
+
     // Clear Auto block switch over
     FAPI_INF("Clear auto block switchover");
     FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
@@ -89,7 +91,6 @@ ReturnCode pz_rcs_switch(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
     fapi2::delay(WAIT_1US, WAIT_100KCYC);
 
     FAPI_INF("Checking block switchover");
-    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
     FAPI_TRY(l_root_ctrl5.getScom(i_target));
 
     // If either switch over is blocked, skip switchover
@@ -138,16 +139,6 @@ ReturnCode pz_rcs_switch(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
         }
     }
 
-    FAPI_TRY(rcs_check_errors(i_target, l_refclock_select));
-    // Validate side
-    l_sns1lth.getScom(i_target);
-    FAPI_INF("SWITCHED %d", l_sns1lth.get_SWITCHED());
-
-    if(l_sns1lth.get_SWITCHED() == 1)
-    {
-        FAPI_TRY(rcs_verify_clean_state(i_target, l_refclock_select));
-    }
-
     // Clear Auto block switch over
     FAPI_INF("Clear auto block switchover");
     FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
@@ -157,6 +148,10 @@ ReturnCode pz_rcs_switch(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
     l_rcs_ctrl1.clearBit<CTRL1_BLOCK_SWO_AUTO_CLR>();
     l_rcs_ctrl1.putScom(i_target);
     fapi2::delay(WAIT_1US, WAIT_100KCYC);
+
+    FAPI_TRY(rcs_check_errors(i_target, l_refclock_select));
+    // Validate state
+    FAPI_TRY(rcs_verify_clean_state(i_target, l_refclock_select));
 
 fapi_try_exit:
     FAPI_INF("End RCS Switch");

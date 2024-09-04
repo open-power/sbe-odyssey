@@ -82,6 +82,8 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHI
     fapi2::ATTR_CP_REFCLOCK_SELECT_Type l_refclock_select = 0;
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CP_REFCLOCK_SELECT, i_target, l_refclock_select));
 
+    FAPI_TRY(print_debug_info(i_target, l_refclock_select));
+
     // Sanity check
     if (!(l_refclock_select == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_BOTH_OSC0
           || l_refclock_select == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_BOTH_OSC1))
@@ -157,7 +159,10 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHI
     l_root_ctrl5.putScom(i_target);
     fapi2::delay(WAIT_1US, WAIT_100KCYC);
 
+    // Validate state
+    FAPI_INF("Verifing state");
     FAPI_TRY(rcs_check_errors(i_target, l_refclock_select));
+    FAPI_TRY(rcs_verify_clean_state(i_target, l_refclock_select));
 
     l_rcs_ctrl1.getScom(i_target);
     l_root_ctrl5.getScom(i_target);

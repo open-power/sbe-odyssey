@@ -75,6 +75,75 @@ enum PZ_RCS_SETUP_Private_Constants
     WAIT_5MCYC   = 5000000,
 };
 
+ReturnCode print_debug_info(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
+                            const fapi2::ATTR_CP_REFCLOCK_SELECT_Type& i_refclk_select)
+{
+    FSXCOMP_FSXLOG_SNS1LTH_t l_sns1lth;
+    FSXCOMP_FSXLOG_SNS2LTH_t l_sns2lth;
+    FSXCOMP_FSXLOG_RCS_CTRL1_t l_rcs_ctrl1;
+    FSXCOMP_FSXLOG_ROOT_CTRL3_t l_root_ctrl3;
+    FSXCOMP_FSXLOG_ROOT_CTRL5_t l_root_ctrl5;
+
+    FAPI_TRY(l_sns1lth.getScom(i_target));
+    FAPI_TRY(l_sns2lth.getScom(i_target));
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    FAPI_TRY(l_root_ctrl3.getScom(i_target));
+    FAPI_TRY(l_root_ctrl5.getScom(i_target));
+
+    FAPI_INF("REFCLKSEL: 0x%02X", i_refclk_select);
+    FAPI_INF("SNS1: 0x%08X", l_sns1lth);
+    FAPI_INF("SNS2: 0x%08X", l_sns2lth);
+    FAPI_INF("RCS CTRL1: 0x%08X", l_rcs_ctrl1);
+    FAPI_INF("ROOT CTRL3: 0x%08X", l_root_ctrl3);
+    FAPI_INF("ROOT CTRL5: 0x%08X", l_root_ctrl5);
+
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode pz_rcs_pdown(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
+{
+    FAPI_INF("RCS Power Down");
+
+    FSXCOMP_FSXLOG_ROOT_CTRL3_t l_root_ctrl3;
+    FSXCOMP_FSXLOG_ROOT_CTRL5_t l_root_ctrl5;
+
+    // RCS
+    FAPI_TRY(l_root_ctrl5.getScom(i_target));
+
+    // set RESET
+    l_root_ctrl5.set_RCS_RESET(1);
+    // set BYPASS
+    l_root_ctrl5.set_RCS_BYPASS(1);
+    // set CLK_ERR_A/B hi
+    l_root_ctrl5.set_CLEAR_CLK_ERROR_A(1);
+    l_root_ctrl5.set_CLEAR_CLK_ERROR_B(1);
+    // clear EN_REFCLK
+    l_root_ctrl5.set_EN_REFCLK(0);
+    // clear ASYNC_OUT
+    l_root_ctrl5.set_EN_ASYNC_OUT(0);
+
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
+
+    // both PLLs
+    FAPI_TRY(l_root_ctrl3.getScom(i_target));
+
+    // set BYPASS hi
+    l_root_ctrl3.set_PLLCLKSW1_BYPASS_EN(1);
+    l_root_ctrl3.set_PLLCLKSW2_BYPASS_EN(1);
+    // set test_en low
+    l_root_ctrl3.set_PLLCLKSW1_TEST_EN(0);
+    l_root_ctrl3.set_PLLCLKSW2_TEST_EN(0);
+    // set RESET hi
+    l_root_ctrl3.set_PLLCLKSW1_RESET(1);
+    l_root_ctrl3.set_PLLCLKSW2_RESET(1);
+
+    FAPI_TRY(l_root_ctrl3.putScom(i_target));
+
+fapi_try_exit:
+    return current_err;
+}
+
 ReturnCode rcs_verify_clean_state(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
                                   const fapi2::ATTR_CP_REFCLOCK_SELECT_Type& i_refclk_select)
 {

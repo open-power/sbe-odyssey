@@ -36,6 +36,18 @@
 #include <fapi2.H>
 using namespace fapi2;
 
+/// @brief Print the RCS registers
+/// @param[in]   i_target           Reference to TARGET_TYPE_PROC/HUB_CHIP
+/// @param[in]   i_refclk_select    The current refclock being used
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+ReturnCode print_debug_info(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
+                            const fapi2::ATTR_CP_REFCLOCK_SELECT_Type& i_refclk_select);
+
+/// @brief
+/// @param[in]   i_target     Reference to TARGET_TYPE_PROC/HUB_CHIP
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+ReturnCode pz_rcs_pdown(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target);
+
 /// @brief Switch RCS oscillators
 /// @param[in]   i_target     Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @return  FAPI2_RC_SUCCESS if success, else error code.

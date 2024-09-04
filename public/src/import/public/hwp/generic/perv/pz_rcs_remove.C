@@ -79,6 +79,8 @@ ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
     fapi2::ATTR_CP_REFCLOCK_SELECT_Type l_refclock_select;
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CP_REFCLOCK_SELECT, i_target, l_refclock_select));
 
+    FAPI_TRY(print_debug_info(i_target, l_refclock_select));
+
     l_root_ctrl3.getScom(i_target);
 
     if (l_root_ctrl3.get_PLLCLKSW1_ALTREF_SEL() || l_root_ctrl3.get_PLLCLKSW2_ALTREF_SEL())
@@ -152,16 +154,10 @@ ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
     l_root_ctrl5.setBit<ROOT_CTRL5_BLOCK_SWO>();
     l_root_ctrl5.putScom(i_target);
 
+    // Validate state
+    FAPI_INF("Verifing state");
     FAPI_TRY(rcs_check_errors(i_target, l_refclock_select));
-    // Validate side
-    l_sns1lth.getScom(i_target);
-    FAPI_INF("SWITCHED %d", l_sns1lth.get_SWITCHED());
-
-    if(l_sns1lth.get_SWITCHED() == 1)
-    {
-        FAPI_INF("Verifing switch");
-        FAPI_TRY(rcs_verify_clean_state(i_target, l_refclock_select));
-    }
+    FAPI_TRY(rcs_verify_clean_state(i_target, l_refclock_select));
 
 fapi_try_exit:
     FAPI_INF("End RCS Remove");
