@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -44,6 +44,5 @@ ReturnCode poz_bist_repr_initf(const Target<TARGET_TYPE_ANY_POZ_CHIP>& i_target)
 {
 
 
-fapi_try_exit:
     return current_err;
 }

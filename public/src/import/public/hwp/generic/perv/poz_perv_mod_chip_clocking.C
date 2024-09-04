@@ -120,8 +120,4 @@ ReturnCode mod_poll_pll_lock_fsi2pib(
 {
     FAPI_DBG("Entering ...");
     return _mod_poll_pll_lock(i_target, FSXCOMP_FSXLOG_MIRR_FSI2PIB_STAT, ((uint64_t)i_pll_mask << 36));
-
-fapi_try_exit:
-    FAPI_DBG("Exiting ...");
-    return current_err;
 }
