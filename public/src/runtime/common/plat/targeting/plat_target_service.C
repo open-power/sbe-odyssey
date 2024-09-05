@@ -242,7 +242,8 @@ void sbe_target_service::getMulticastChildrenInternal(const uint64_t i_chiplet_m
     l_tmpTarget.setCoreSelect(0);
     getscom_abs_wrap(&l_tmpTarget, 0xF0001, (uint64_t*)&l_enabledTargets);
 
-    if ((i_parent.getTargetType() == LOG_TARGET_TYPE_PERV) )
+    if ((i_parent.getTargetType() == LOG_TARGET_TYPE_PERV)
+        || (i_parent.getTargetType() == LOG_TARGET_TYPE_EQ))
     {
         // Non-core (i.e. chiplet) target -> loop over all PERV targets, match chiplet ID
         loopTargetsByChiplet(i_parent.getTargetType(),
@@ -252,10 +253,10 @@ void sbe_target_service::getMulticastChildrenInternal(const uint64_t i_chiplet_m
     }
     else
     {
-        getNonPervMulticastChildren(i_parent,
-                                    l_enabledTargets & i_chiplet_mask,
-                                    i_include_nonfunctional,
-                                    o_children);
+        getMulticasetChildrenWithCoreSelect(i_parent,
+                                            l_enabledTargets & i_chiplet_mask,
+                                            i_include_nonfunctional,
+                                            o_children);
     }
     return;
 }
@@ -286,11 +287,11 @@ void sbe_target_service::loopTargetsByChiplet(const LogTargetType i_type,
 }
 
 // Fuction to return all non-pervasive multicast targets (CORE and L3Cache) in selected EQs.
-void sbe_target_service::getNonPervMulticastChildren(
-                                              const plat_target_sbe_handle i_parent,
-                                              const buffer<uint64_t> &i_enabled,
-                                              const bool i_include_nonfunctional,
-                                              std::vector<plat_target_sbe_handle> &o_children) const
+void sbe_target_service::getMulticasetChildrenWithCoreSelect(
+                                                      const plat_target_sbe_handle i_parent,
+                                                      const buffer<uint64_t> &i_enabled,
+                                                      const bool i_include_nonfunctional,
+                                                      std::vector<plat_target_sbe_handle> &o_children) const
 {
     const uint8_t l_parentType = i_parent.getTargetType();
     const uint8_t l_parentCoreSelect = i_parent.getCoreSelect();

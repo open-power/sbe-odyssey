@@ -380,12 +380,12 @@ namespace fapi2
         /// @param [in] i_include_nonfunctional Return also targets that are not functional
         /// @param [out] o_children             A vector of child target handles
         ///
-        void getNonPervMulticastChildren(const plat_target_sbe_handle i_parent,
-                                         const buffer<uint64_t> &i_enabled,
-                                         const bool i_include_nonfunctional,
-                                         std::vector<plat_target_sbe_handle> &o_children) const;
+        void getMulticasetChildrenWithCoreSelect(const plat_target_sbe_handle i_parent,
+                                                 const buffer<uint64_t> &i_enabled,
+                                                 const bool i_include_nonfunctional,
+                                                 std::vector<plat_target_sbe_handle> &o_children) const;
 
-	///
+        ///
         /// @brief Function to get number of children of a parent for a specfic child type.
         /// @param [in]  i_child_type Children target type
         /// @param [in]  i_parent_type Parent target type

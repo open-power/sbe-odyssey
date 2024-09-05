@@ -50,6 +50,7 @@ namespace fapi2
     constexpr TargetType TARGET_TYPE_L3CACHE_OTHEREND = TARGET_TYPE_CORE;
     constexpr TargetType TARGET_TYPE_MULTICAST_TARGETS = TARGET_TYPE_MULTICAST
                                                          | TARGET_TYPE_PERV
+                                                         | TARGET_TYPE_EQ
                                                          | TARGET_TYPE_L3CACHE
                                                          | TARGET_TYPE_CORE;
     constexpr TargetType TARGET_TYPE_TBUSC_CHILDREN = TARGET_TYPE_TBUSL;
