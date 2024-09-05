@@ -269,6 +269,16 @@ def cmd_genhwp(args):
     generate("ody_generate_attribute_generated.C")
     generate("ody_apply_attribute_generated.C")
 
+def cmd_genovrd(args):
+    attr_db : AttributeStructure = pickle.load(open(args.dbfile, "rb"))
+    try:
+        chipType=Fapi2.ChipType['CHIP_TYPE_ANY']
+        attr_ovrd = AttributeUpdateFileGenerator(chipType, args.infile,attr_db).generateAttributeFile(chipType)
+        open(args.outfile, "wb").write(attr_ovrd)
+    except Exception as e:
+        print(e)
+        sys.exit(1)
+
 def img_standard_parms(parser):
     #parser.add_argument("-b", "--base", type=hexint, default=None, help="Base address (hex) of the image file, defaults to an autodetected value")
     parser.add_argument("-v", "--verbose", action="store_true", help="Increase verbosity")
@@ -351,6 +361,13 @@ if __name__ == "__main__":
     sub.add_argument("-o", "--outdir", help="Output directory for the generated source",required=True)
     sub.add_argument("-v", "--verbose", action="store_true", help="Increase verbosity")
     sub.set_defaults(func=cmd_genhwp)
+
+    sub = subparsers.add_parser("genovrd", help="Generate attribute override binary file from the json file")
+    sub.add_argument("infile", help="Input attribute override text file in json format.")
+    sub.add_argument("dbfile", help="Name of the attributes database")
+    sub.add_argument("-o", "--outfile", help="Output attribute override binary file",required=True)
+    sub.add_argument("-v", "--verbose", action="store_true", help="Increase verbosity")
+    sub.set_defaults(func=cmd_genovrd)
 
     args = parser.parse_args()
     if not hasattr(args, "func"):

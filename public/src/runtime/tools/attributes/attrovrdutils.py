@@ -215,6 +215,67 @@ class AttributeFileGenerator(AttributeFile):
         '''
         pass
 
+def validateAttrOvrd(attrOvrd:dict,i_attr_db)->bool:
+    import attrdatatype
+
+    if (i_attr_db is None):
+        return True
+
+    attr_db_dict = {attr.name: attr for attr in i_attr_db.field_list if attr.has_storage}
+
+    for target,attributes in attrOvrd.items():
+        log_target_name = Fapi2.TargetType(target.targ_type).name
+        target_name     = log_target_name[4:]
+        target_inst     = target.targ_inst
+
+        if (target_name not in i_attr_db.target_types):
+            print(f"The target type [{target_name}] is not supported by this instance of self boot engine.")
+            return False
+
+        if (target_inst >= i_attr_db.target_types[target_name].ntargets):
+            print(f"The target instance [{target_inst}] is not valid for the target type [{target_name}].")
+            return False
+
+        for attribute in attributes:
+            attr_name = attribute.attr_inf.id
+            if (attr_name not in attr_db_dict.keys()):
+                print(f"The attribute name [{attr_name}] is not supported by this instance of self boot engine.")
+                return False
+
+            attr_list = [attrs.name for attrs in i_attr_db.field_list
+                                    if attrs.has_storage and attrs.name == attr_name and attrs.sbe_targ_type == target_name]
+            if (len(attr_list) == 0):
+                print(f"The attribute name [{attr_name}] is not supported for the target type [{target_name}] by this "
+                        f"instance of self boot engine.")
+                return False
+
+            # Remove _t for lookup in the attrdatatype.VALUE_TYPES
+            value_type = attr_db_dict[attr_name].value_type[:-2].lower()
+            value_size = attrdatatype.VALUE_TYPES[value_type].size
+            if (attribute.attr_inf.size != value_size):
+                print(f"The attribute size [{attribute.attr_inf.size}] as specified in the attribute override file does not "
+                      f"match with the size [{value_size}] specified in the attribute definition xml.")
+                return False
+
+            array_dims = attr_db_dict[attr_name].array_dims
+            if (len(array_dims) == 0 and attribute.attr_inf.index != [255,255,255]):
+                print(f"The attribute [{attr_name}] is not an array attribute as per the attribute definition xml. So, the "
+                      f"index must be [255,255,255]")
+                return False
+
+            if (len(array_dims) != 0 and len(array_dims) != len(attribute.attr_inf.index)):
+                print(
+                  f"The attribute [{attr_name}] is {array_dims} dimension(s) as per the attribute definition xml. But, you "
+                  f"have specified [{len(attribute.attr_inf.index)}] dimension(s) having value {attribute.attr_inf.index}")
+                return False
+
+            if (len(array_dims) > 0):
+                for i in range(0,len(array_dims)):
+                    if (attribute.attr_inf.index[i] >= array_dims[i]):
+                        print(f"The attribute [{attr_name}] index {attribute.attr_inf.index} exceeds the array "
+                              f"dimension {array_dims} specified in the attribute definition xml.")
+                        return False
+    return True
 
 class AttributeUpdateFileGenerator(AttributeFileGenerator):
     '''
@@ -270,7 +331,7 @@ class AttributeUpdateFileGenerator(AttributeFileGenerator):
             if(isinstance(size,str)):
                 size = int(size, 16)
             attrInfo = AttributeFile.AttributeInfo(
-                                                Utils._getAttrHash(kwarg['id']),
+                                                kwarg['id'],
                                                 index, size)
             value = [int(i, 16) if isinstance(i, str) \
                     else i for i in kwarg['value']]
@@ -298,7 +359,8 @@ class AttributeUpdateFileGenerator(AttributeFileGenerator):
     def __init__(
         self,
         i_chip_type : Fapi2.ChipType,
-        i_attr_list):
+        i_attr_list,
+        i_attr_db = None ):
 
         self.iv_file_type = Fapi2.FileType.OVERRIDE
         self.iv_chip_type= i_chip_type
@@ -308,13 +370,18 @@ class AttributeUpdateFileGenerator(AttributeFileGenerator):
                 self.iv_attr_list = AttributeUpdateFileGenerator.fromAttrJson(i_attr_list)
             else:
                 raise Exception("{} is not a valid file path".format(i_attr_list))
+
+            if (i_attr_db is not None):
+                validOvrd = validateAttrOvrd(self.iv_attr_list,i_attr_db)
+                if (validOvrd == False):
+                    raise Exception(f"Validation of attribute override file [{i_attr_list}] failed. Please also check "
+                            "whether you have passed the correct attribute database file.")
         else:
             for target, attrovrdlist in i_attr_list.items():
                 newAttrOvrd = []
                 for attrovrd in attrovrdlist:
-                    attr_hash28bits = Utils._getAttrHash(attrovrd.attr_inf.id)
                     attrovrd = AttributeFile.AttributeOverride(
-                        AttributeFile.AttributeInfo(attr_hash28bits,
+                        AttributeFile.AttributeInfo(attrovrd.attr_inf.id,
                         attrovrd.attr_inf.index, attrovrd.attr_inf.size), attrovrd.value)
                     newAttrOvrd.append(attrovrd)
                 self.iv_attr_list[target] = newAttrOvrd
@@ -357,7 +424,8 @@ class AttributeUpdateFileGenerator(AttributeFileGenerator):
                             target.targ_inst, len(attrovrdlist))
             for attrovrd in attrovrdlist:
                 attr_inf = attrovrd.attr_inf
-                self.writeAttribute(attr_inf.id,
+                attr_hash28bits = Utils._getAttrHash(attr_inf.id)
+                self.writeAttribute(attr_hash28bits,
                                     attr_inf.size, attr_inf.index,
                 attrovrd.value)
         return self.byte_buffer

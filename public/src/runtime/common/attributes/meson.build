@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2023
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -29,3 +29,5 @@ abs_runtime_cmn_attributes_c_path = files('attribute_list_service.C',
                                           'attribute_override_service.C',
                                           'sbecmdlistattr.C',
                                           'sbecmdupdateattr.C')
+
+abs_runtime_cmn_attr_ovrd_c_path  = files('attribute_override_service.C')
