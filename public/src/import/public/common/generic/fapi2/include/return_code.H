@@ -213,7 +213,7 @@ class ReturnCode : public FirstFailureData<ReturnCode>
         ///        variable iv_rc.
         /// @return The current value of iv_rc.
         ///
-        inline uint32_t getRC(void)
+        inline uint32_t getRC(void) const
         {
             return iv_rc;
         }
@@ -236,7 +236,7 @@ class ReturnCode : public FirstFailureData<ReturnCode>
         ///        variable iv_data_ptr.
         /// @return The current value of iv_data_ptr.
         ///
-        inline uint32_t getDataPtr(void)
+        inline uint32_t getDataPtr(void) const
         {
             return iv_data_ptr;
         }
