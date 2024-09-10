@@ -85,7 +85,6 @@ odyssey_abs_core_c_file_paths += [ abs_pak_c_path,
                                     odyssey_abs_tgt_c_file_paths,
                                     odyssey_abs_attr_c_file_paths,
                                     abs_runtime_cmn_ring_c_path,
-                                    abs_runtime_cmn_checkmemorydevice_c_path,
                                     abs_runtime_cmn_core_stackutils_c_files,
                                     abs_runtime_cmn_ptbl_c_path,
                                     abs_runtime_cmn_cmd_code_update_c_path
@@ -116,7 +115,6 @@ ody_cmn_chipop_json_list = [
                     CMN_ATTRIBUTES_CHIPOPS_JSON,
                     CMN_EXC_HWP_CHIPOPS_JSON,
                     CMN_RING_ACCESS_CHIPOPS_JSON,
-                    CMN_CHECKMEMORYDEVICE_CHIPOPS_JSON,
                     CMN_GET_CODE_LEVELS_CHIPOPS_JSON
                 ]
 
@@ -128,9 +126,15 @@ if platform == 'odysseylab'
   subdir_done()
 endif
 
-ody_abs_chipop_json_list = [ody_cmn_chipop_json_list, CMN_COLLECT_DUMP_CHIPOPS_JSON,
-                              CMN_CODE_UPDATE_CHIPOPS_JSON, ODYSSEY_CHIPOPS_JSON, ODYSSEY_CODE_UPDATE_ALL_CHIPOPS_JSON]
-odyssey_abs_core_c_file_paths += abs_runtime_cmn_code_update_c_path
+ody_abs_chipop_json_list = [ody_cmn_chipop_json_list,
+                            CMN_COLLECT_DUMP_CHIPOPS_JSON,
+                            CMN_CODE_UPDATE_CHIPOPS_JSON,
+                            CMN_CHECKMEMORYDEVICE_CHIPOPS_JSON,
+                            ODYSSEY_CHIPOPS_JSON,
+                            ODYSSEY_CODE_UPDATE_ALL_CHIPOPS_JSON]
+
+odyssey_abs_core_c_file_paths += [ abs_runtime_cmn_code_update_c_path,
+                                    abs_runtime_cmn_checkmemorydevice_c_path ]
 
 ############### Chip-op table generation ############
 result_chipoptablegen = run_command(chipoptablegen,
