@@ -30,13 +30,14 @@
 // *HWP HWP Owner: Geetha Pisapati <geetha.pisapati@ibm.com>
 // *HWP HWP Backup: Louis Stermole <stermole@us.ibm.com>
 // *HWP Team: Memory
-// *HWP Level: 1
+// *HWP Level: 3
 // *HWP Consumed by: SBE
 
 #ifndef _ODY_HALF_DIMM_DQS_TRACK_
 #define _ODY_HALF_DIMM_DQS_TRACK_
 
 #include <fapi2.H>
+#include <ody_half_dimm_dqs_track_utils.H>
 
 typedef fapi2::ReturnCode (*ody_half_dimm_dqs_track_FP_t) (const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&);
 

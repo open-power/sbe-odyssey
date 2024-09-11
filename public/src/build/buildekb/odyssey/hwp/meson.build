@@ -136,6 +136,7 @@ infile_c = [
             '/memory/odyssey/hwp/lib/workarounds/ody_ccs_des_insert_workaround.C',
             '/memory/odyssey/hwp/lib/workarounds/ody_temp_sensor_workarounds.C',
             '/memory/odyssey/hwp/ody_half_dimm_dqs_track.C',
+            '/memory/odyssey/hwp/lib/ody_half_dimm_dqs_track_utils.C',
             ]
 
 #Create abs path for input files before creating .o
