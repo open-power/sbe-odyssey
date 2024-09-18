@@ -324,6 +324,24 @@ class FlashDevice : public SEEPROMDevice
             DEV_MACRONIX_MX25,
         };
 
+        enum flash_device_commands
+        {
+            X25_CMD_READ_ID = 0x9F,
+            X25_CMD_RESET1 = 0x66,
+            X25_CMD_RESET2 = 0x99,
+            MT25Q_CMD_READ_FLAG_STATUS_REG = 0x70,
+            MT25Q_CMD_CLR_FLAG_STATUS_REG = 0x50,
+            MX66_CMD_READ_SECURITY_REG = 0x2B,
+
+            // Commands with 24-bit address
+            X25_CMD_ERASE_64K = 0xD8000000,
+            X25_CMD_ERASE_32K = 0x52000000,
+            X25_CMD_ERASE_4K = 0x20000000,
+
+            // Commands used for device Macronix
+            MX25_CMD_GANG_UNLOCK = 0x98,
+        };
+
         static const uint32_t ERASE_BUFFER_SIZE = SMALLEST_ERASE_BLOCK_SIZE;
 
         /**
@@ -417,6 +435,11 @@ class FlashDevice : public SEEPROMDevice
          * @brief Read the extended status of the device and raise an error if the device reports a problem
          */
         fapi2::ReturnCode check_extended_status(uint32_t i_address, uint32_t i_length) const;
+
+        /**
+         * @brief Set the gang block unlock
+         */
+        fapi2::ReturnCode write_gang_unlock() const;
 
 }; //class FlashDevice
 
