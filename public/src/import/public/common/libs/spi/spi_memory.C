@@ -49,21 +49,6 @@ enum spi_memory_constants
     ERASE_TIMEOUT_MS = 3000,
 };
 
-enum flash_device_commands
-{
-    X25_CMD_READ_ID = 0x9F,
-    X25_CMD_RESET1 = 0x66,
-    X25_CMD_RESET2 = 0x99,
-    MT25Q_CMD_READ_FLAG_STATUS_REG = 0x70,
-    MT25Q_CMD_CLR_FLAG_STATUS_REG = 0x50,
-    MX66_CMD_READ_SECURITY_REG = 0x2B,
-
-    // Commands with 24-bit address
-    X25_CMD_ERASE_64K = 0xD8000000,
-    X25_CMD_ERASE_32K = 0x52000000,
-    X25_CMD_ERASE_4K = 0x20000000,
-};
-
 ReturnCode spi::SEEPROMDevice::check_start_and_length(uint32_t i_start, uint32_t i_length) const
 {
     const uint32_t raw_start = ecc_correct(i_start);
@@ -386,6 +371,18 @@ ReturnCode spi::FlashDevice::write_begin(uint32_t i_start, uint32_t i_length)
     // Save the ECC mode now so we can restore it even on an error
     const ecc_mode saved_ecc_mode = iv_ecc_mode;
 
+    // For Macronix, once the device is into Advanced Sector Protection mode,
+    // each block can individually protected by their own SPB (sector protection
+    // bits) or DPB(dynamic protection bits). On power-up, all blocks are write
+    // protected by DPB by default. To enable erase/write into sectors other
+    // than the sectors that are not permanently locked (i.e. SPB frozen) we
+    // need to issue Gang Block lock/unlock command to set/clear all DPB bits
+    // at once i.e. globally cleared/set.
+    if ( (iv_devtype == DEV_MACRONIX_MX66) || (iv_devtype == DEV_MACRONIX_MX25) )
+    {
+        FAPI_TRY(write_gang_unlock());
+    }
+
     // First defer to the superclass for basic initialization & ECC correction
     FAPI_TRY(SEEPROMDevice::write_begin(i_start, i_length));
 
@@ -475,9 +472,9 @@ struct erase_mode_t
 // Erase modes sorted from large to small blocks
 static const struct erase_mode_t ERASE_MODES[] =
 {
-    { 0xFFFF, 65536, X25_CMD_ERASE_64K },
-    { 0x7FFF, 32768, X25_CMD_ERASE_32K },
-    { 0x0FFF,  4096, X25_CMD_ERASE_4K  },
+    { 0xFFFF, 65536, spi::FlashDevice::X25_CMD_ERASE_64K },
+    { 0x7FFF, 32768, spi::FlashDevice::X25_CMD_ERASE_32K },
+    { 0x0FFF,  4096, spi::FlashDevice::X25_CMD_ERASE_4K  },
 };
 
 ReturnCode spi::FlashDevice::flush_page_buf(bool i_final_write)
@@ -768,6 +765,15 @@ ReturnCode spi::FlashDevice::soft_reset()
 {
     FAPI_TRY(iv_port.transaction(X25_CMD_RESET1, 1, NULL, 0, NULL, 0));
     FAPI_TRY(iv_port.transaction(X25_CMD_RESET2, 1, NULL, 0, NULL, 0));
+
+fapi_try_exit:
+    return current_err;
+}
+
+ReturnCode spi::FlashDevice::write_gang_unlock() const
+{
+    FAPI_TRY(write_enable());
+    FAPI_TRY(iv_port.transaction(MX25_CMD_GANG_UNLOCK, 1, NULL, 0, NULL, 0));
 
 fapi_try_exit:
     return current_err;
