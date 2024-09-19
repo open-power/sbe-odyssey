@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -229,59 +229,5 @@ uint32_t sbeSyncSide(uint8_t *i_pArg);
  */
 bool checkImageHashMismatch(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
                             sbeRespGenHdr_t *o_hdr);
-
-/*
- * @brief performEraseInDevice : This API can be used to perform erase in device
- *                               by calling the plat specific API underneath
- *
- * @param[in] i_handle : SPI controller
- * @param[in] i_codeUpdateCtrlStruct struct used to contains various
- *            parameters needed for code-update
- *
- * @return fapiRc
- */
-fapi2::ReturnCode performEraseInDevice(SpiControlHandle& i_handle,
-                                       codeUpdateCtrlStruct_t &i_codeUpdateReqStruct);
-
-
-/*
- * @brief performWriteInDevice : This API can be used to perform write in device
- *                               by calling the plat specific API underneath
- *
- * @param[in] i_handle : SPI controller handle
- * @param[in] i_codeUpdateCtrlStruct struct used to contains various
- *            parameters needed for code-update
- * @param[in] i_writeLength : Length of data to write to device
- * @param[in] i_buffer : buffer containing data
- * @param[in] : i_ecc : true/false : write data with/wo ecc included
- *
- * @return fapiRc
- */
-fapi2::ReturnCode performWriteInDevice(SpiControlHandle& i_handle,
-                                       codeUpdateCtrlStruct_t &i_codeUpdateReqStruct,
-                                       uint32_t i_writeLength,
-                                       void *i_buffAddr,
-                                       bool i_ecc);
-
-
-/* @brief performReadFromDevice:  This API can be used to perform read from
- *                                device by calling the plat specific API
- *                                underneath
- *
- * @param[in] : i_handle : SPI controller handle
- * @param[in] : i_readAddress : Address to read data from device
- * @param[in] : i_readLength : length of data to read from device
- * @param[in] : i_eccStatus :  read data with ECC byte(RAW_BYTE_ACCESS,
- *                             STANDARD_ECC_ACCESS,DISCARD_ECC_ACCESS)
- * @param[out] : o_buffer : buffer to store the data after read
- *
- * @return : fapiRc
- */
-fapi2::ReturnCode performReadFromDevice(SpiControlHandle& i_handle,
-                                        const uint32_t i_readAddress,
-                                        const uint32_t i_readLength,
-                                        const SPI_ECC_CONTROL_STATUS i_eccStatus,
-                                        void *o_buffer
-                                       );
 
 #endif //SBE_CMD_CODE_UPDATE_H

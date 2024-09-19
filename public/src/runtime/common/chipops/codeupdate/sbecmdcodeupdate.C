@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -368,72 +368,3 @@ bool checkImageHashMismatch(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
    #undef SBE_FUNC
 
 }
-
-fapi2::ReturnCode performEraseInDevice(SpiControlHandle& i_handle,
-                                       codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct)
-{
-    #define SBE_FUNC " performEraseInDevice "
-
-    // Note: both start and end address for erase operation
-    // must be 4K aligned with ECC byte included
-    // Note: Would need to have alignment check for start address but it may
-    // not work for bootloader today as its not aligned. As we dont expect any
-    // frequent changes in partition table in Odyssey (also its frozen) so we
-    // can defer to check for alignment and raise error if any, for later.
-    // TODO:JIRA:PFSBE-387
-    uint32_t eraseStartAddress = WITH_ECC(i_codeUpdateCtrlStruct.imageStartAddr) &
-                                 i_codeUpdateCtrlStruct.storageDevStruct.storageSectorBoundaryAlign;
-
-    // Erase end address may not be aligned to the sector boundary as its dependent
-    // on the incoming image size. Erase API accept the last byte of the sector as the
-    // end address so finding the last byte of the sector contaning this. This logic
-    // would not cross to the next image as the image always starts at sector boundary
-    uint32_t eraseEndAddress = WITH_ECC(i_codeUpdateCtrlStruct.imageStartAddr +
-                               WORD_TO_BYTES(i_codeUpdateCtrlStruct.imageSizeInWords) - 1);
-
-    if (((eraseEndAddress + 1 ) & i_codeUpdateCtrlStruct.storageDevStruct.storageSubSectorCheckMask) != 0)
-    {
-        // Find the start address of this sector
-        eraseEndAddress &= i_codeUpdateCtrlStruct.storageDevStruct.storageSectorBoundaryAlign;
-        // Find the start address of the next sector
-        eraseEndAddress = eraseEndAddress + i_codeUpdateCtrlStruct.storageDevStruct.storageSubSectorSize;
-        // Find the last address of this sector
-        eraseEndAddress -= 1;
-    }
-
-    SBE_INFO(SBE_FUNC "Perform erase opreration: Start address:[0x%08x] End address:[0x%08X].",
-                      eraseStartAddress, eraseEndAddress);
-
-    return deviceErase(i_handle, eraseStartAddress, eraseEndAddress);
-    #undef SBE_FUNC
-}
-
-
-fapi2::ReturnCode performWriteInDevice(SpiControlHandle& i_handle,
-                                       codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct,
-                                       uint32_t i_writeLength,
-                                       void *i_bufferAddr,
-                                       bool i_ecc)
-{
-    return deviceWrite(i_handle,
-                       i_codeUpdateCtrlStruct.imageStartAddr,
-                       i_writeLength,
-                       (void *)i_bufferAddr,
-                       i_ecc);
-}
-
-fapi2::ReturnCode performReadFromDevice(SpiControlHandle& i_handle,
-                                        const uint32_t i_readAddress,
-                                        const uint32_t i_readLength,
-                                        const SPI_ECC_CONTROL_STATUS i_eccStatus,
-                                        void *o_buffer
-                                       )
-{
-    return deviceRead(i_handle,
-                      i_readAddress,
-                      i_readLength,
-                      i_eccStatus,
-                      (void *)o_buffer
-                      );
-}
-
