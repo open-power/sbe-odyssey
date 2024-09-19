@@ -394,53 +394,6 @@ void freeMemoryDeviceRAS(spi::AbstractMemoryDevice *i_mem_device)
     Heap::get_instance().scratch_free(l_memblock);
 }
 
-fapi2::ReturnCode deviceErase(SpiControlHandle& i_handle,
-                              uint32_t i_eraseStartAddress,
-                              uint32_t i_eraseEndAddress)
-{
-    return spi_erase_and_no_preserve(i_handle,
-                                     i_eraseStartAddress,
-                                     i_eraseEndAddress);
-}
-
-
-fapi2::ReturnCode deviceWrite(SpiControlHandle& i_handle,
-                              uint32_t i_writeAddress,
-                              uint32_t i_writeLength,
-                              void *i_buffer,
-                              bool i_ecc)
-{
-    if (i_ecc == true)
-    {
-        return spi_write_ecc(i_handle,
-                             i_writeAddress,
-                             i_writeLength,
-                             (uint8_t *)i_buffer,
-                             i_ecc);
-    }
-    else
-    {
-        return spi_write(i_handle,
-                         i_writeAddress,
-                         i_writeLength,
-                         (uint8_t *)i_buffer);
-    }
-}
-
-fapi2::ReturnCode deviceRead(SpiControlHandle& i_handle,
-                             const uint32_t i_readAddress,
-                             const uint32_t i_readLength,
-                             const SPI_ECC_CONTROL_STATUS i_eccStatus,
-                             void *o_buffer
-                            )
-{
-    return spi_read(i_handle,
-                    i_readAddress,
-                    i_readLength,
-                    i_eccStatus,
-                    (uint8_t *)o_buffer);
-}
-
 uint32_t checkSignature(const CU_IMAGES i_imageType,
 			void *i_pakStartAddrInPibMem,
 			codeUpdateCtrlStruct_t &i_codeUpdateCtrlStruct)

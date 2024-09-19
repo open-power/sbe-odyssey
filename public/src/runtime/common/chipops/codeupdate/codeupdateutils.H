@@ -257,62 +257,6 @@ void getSideAddress(const uint8_t i_side,
 void getCodeUpdateParams(codeUpdateCtrlStruct_t &io_codeUpdateCtrlStruct);
 
 
-/* @brief : This API is used to perform erase in device
- *
- * @param[in] : i_handle : SPI controller handle
- * @param[in] : i_eraseStartAddress : erase start address in device.
- *              This is physical address incl ECC.
- * @param[in] : i_eraseEndAddress : erase end address
- *              This is physical address incl ECC.
- *
- * @return : fapiRc
- */
-fapi2::ReturnCode deviceErase(SpiControlHandle& i_handle,
-                              uint32_t i_eraseStartAddress,
-                              uint32_t i_eraseEndAddress);
-
-
-/* @brief : This API is used to perform write in device
- *
- * @param[in] : i_handle : SPI controller handle
- * @param[in] : i_writeLength : Length of data to write to device
- * @param[in] : i_buffer : buffer containing data
- * @param[in] : i_writeAddress : address to write buffer data in device.
- *              -This function when used to write raw data (no ecc byte
- *               calculated and included by driver) the address passed should
- *               be phyical address and i_ecc should be set to false.
- *              -This function when used to write plain data (with ecc
- *               byte calculated and included by driver) the address passed
- *               should be logical address and i_ecc should be set to true.
- * @param[in] : i_ecc : true/false : write data with/wo ecc byte included
- *              as explained in i_writeAddress above
- *
- * @return : fapiRc
- */
-fapi2::ReturnCode deviceWrite(SpiControlHandle& i_handle,
-                              uint32_t i_writeAddress,
-                              uint32_t i_writeLength,
-                              void *i_buffer,
-                              bool i_ecc);
-
-/* @brief : This API is used to perform read from device
- *
- * @param[in] : i_handle : SPI controller handle
- * @param[in] : i_readAddress : Address to read data from device
- * @param[in] : i_readLength : Length of data to read from device
- * @param[in] : i_eccStatus :  ECC byte(RAW_BYTE_ACCESS, STANDARD_ECC_ACCESS,
- *                                      DISCARD_ECC_ACCESS)
- * @param[out] : o_buffer : buffer to store the data after read
- *
- * @return : fapiRc
- */
-fapi2::ReturnCode deviceRead(SpiControlHandle& i_handle,
-                             const uint32_t i_readAddress,
-                             const uint32_t i_readLength,
-                             const SPI_ECC_CONTROL_STATUS i_eccStatus,
-                             void *o_buffer
-                            );
-
 /*
  * @brief checkSignature : Check signature of partition (by looking at hash.list and secure.hdr)
  *
