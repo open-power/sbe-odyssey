@@ -34,6 +34,7 @@
 #pragma once
 
 #include <fapi2.H>
+#include "pz_rcs_common.H"
 
 /// @brief Remove oscillator from RCS(Redundant clock switch) path
 /// @param[in]   i_target     Reference to TARGET_TYPE_PROC/HUB_CHIP

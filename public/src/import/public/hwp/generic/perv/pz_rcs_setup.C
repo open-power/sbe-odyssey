@@ -49,48 +49,6 @@ SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL5;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_SNS1LTH;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_SNS2LTH;
 
-enum PZ_RCS_SETUP_Private_Constants
-{
-    CTRL1_ENABLE_19P5_DLL = 10,
-    CTRL1_LOCK_19P5_DLL_CODE = 11,
-    CTRL1_EN_AUTO_BLOCK_SWITCHOVER = 21,
-    CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER = 22,
-    CTRL1_PPM_FASTA_ERR_INJ = 23,
-    CTRL1_PPM_FASTB_ERR_INJ = 24,
-    CTRL1_PPM_RESET = 25,
-    CTRL1_PPM_OUTMUX_SEL0 = 26,
-    CTRL1_PPM_OUTMUX_SEL1 = 27,
-    CTRL1_PPM_OUTMUX_SEL2 = 28,
-    CTRL1_PPM_INMUX_SEL0 = 29,
-    CTRL1_PPM_INMUX_SEL1 = 30,
-    CTRL1_FORCE_ERROR_HIGH = 31,
-
-    SNS1LTH_19P5_ERROR_A = 17,
-    SNS1LTH_19P5_ERROR_B = 18,
-    SNS1LTH_19P5_CNT_0 = 25,
-    SNS1LTH_19P5_CNT_1 = 26,
-
-    SNS2LTH_19P5_CNT_3 = 14,
-    SNS2LTH_19P5_CNT_4 = 24,
-    SNS2LTH_19P5_CNT_5 = 25,
-    SNS2LTH_19P5_CNT_6 = 26,
-    SNS2LTH_PPM_FAIL = 27,
-    SNS2LTH_PPM_FASTA_OUT = 28,
-    SNS2LTH_PPM_FASTB_OUT = 29,
-    SNS2LTH_PPM_FASTAB_ERR = 30,
-
-    WAIT_20NS =       20,
-    WAIT_1US  =     1000,
-    WAIT_10US =    10000,
-    WAIT_1MS  =  1000000,
-    WAIT_5MS  =  5000000,
-    WAIT_20MS = 20000000,
-    WAIT_1500CYC = 1500,
-
-    WAIT_100KCYC =  100000,
-    WAIT_5MCYC   = 5000000,
-};
-
 static ReturnCode rcs_ppm_watchdog_test(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
 {
 
@@ -98,57 +56,18 @@ static ReturnCode rcs_ppm_watchdog_test(const Target < TARGET_TYPE_PROC_CHIP | T
     FSXCOMP_FSXLOG_SNS2LTH_t l_sns2lth;
 
     // Release Reset
-    l_rcs_ctrl1.getScom(i_target);
-    l_rcs_ctrl1.clearBit<CTRL1_PPM_RESET>();
-    l_rcs_ctrl1.putScom(i_target);
-    fapi2::delay(WAIT_10US, WAIT_1500CYC);
-
-    // l_sns2lth.getScom(i_target);
-    // FAPI_ASSERT(((l_sns2lth.getBit(SNS2LTH_PPM_FASTA_OUT) == 1) | (l_sns2lth.getBit(SNS2LTH_PPM_FASTB_OUT) == 1)),
-    //             fapi2::POZ_PPM_ERROR().set_PROC_TARGET(i_target),
-    //             "RCS PPM Watchdog First Check Failed.");
-
-
-    // // Inject FAST A
-    // l_rcs_ctrl1.writeBit(1, CTRL1_PPM_FASTA_ERR_INJ);
-    // l_rcs_ctrl1.writeBit(0, CTRL1_PPM_FASTB_ERR_INJ);
-    // l_rcs_ctrl1.putScom(i_target);
-    // fapi2::delay(WAIT_10US, WAIT_1500CYC);
-    // l_sns2lth.getScom(i_target);
-    // FAPI_ASSERT(l_sns2lth.getBit(SNS2LTH_PPM_FASTA_OUT) == 1,
-    //             fapi2::POZ_PPM_ERROR().set_PROC_TARGET(i_target),
-    //             "RCS PPM Watchdog Inject A -- FASTA Failed.");
-    // FAPI_ASSERT(l_sns2lth.getBit(SNS2LTH_PPM_FASTB_OUT) == 0,
-    //             fapi2::POZ_PPM_ERROR().set_PROC_TARGET(i_target),
-    //             "RCS PPM Watchdog Inject A -- FASTB Failed.");
-
-    // // Inject FAST B
-    // l_rcs_ctrl1.writeBit(0, CTRL1_PPM_FASTA_ERR_INJ);
-    // l_rcs_ctrl1.writeBit(1, CTRL1_PPM_FASTB_ERR_INJ);
-    // l_rcs_ctrl1.putScom(i_target);
-    // fapi2::delay(WAIT_10US, WAIT_1500CYC);
-    // l_sns2lth.getScom(i_target);
-    // FAPI_ASSERT(l_sns2lth.getBit(SNS2LTH_PPM_FASTA_OUT) == 0,
-    //             fapi2::POZ_PPM_ERROR().set_PROC_TARGET(i_target),
-    //             "RCS PPM Watchdog Inject B -- FASTA Failed.");
-    // FAPI_ASSERT(l_sns2lth.getBit(SNS2LTH_PPM_FASTB_OUT) == 1,
-    //             fapi2::POZ_PPM_ERROR().set_PROC_TARGET(i_target),
-    //             "RCS PPM Watchdog Inject B -- FASTB Failed.");
-
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_PPM_RESET>();
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_10US, RCS_CONSTS::WAIT_1500CYC);
 
     // Setup Functional Mode
-    l_rcs_ctrl1.clearBit<CTRL1_PPM_FASTA_ERR_INJ>();
-    l_rcs_ctrl1.clearBit<CTRL1_PPM_FASTB_ERR_INJ>();
-    l_rcs_ctrl1.putScom(i_target);
-    fapi2::delay(WAIT_10US, WAIT_1500CYC);
-    l_sns2lth.getScom(i_target);
-    // FAPI_ASSERT(l_sns2lth.getBit(SNS2LTH_PPM_FASTA_OUT) == 0,
-    //             fapi2::POZ_PPM_ERROR().set_PROC_TARGET(i_target),
-    //             "RCS PPM Watchdog Func Mode -- FASTA Failed.");
-    // FAPI_ASSERT(l_sns2lth.getBit(SNS2LTH_PPM_FASTB_OUT) == 0,
-    //             fapi2::POZ_PPM_ERROR().set_PROC_TARGET(i_target),
-    //             "RCS PPM Watchdog Func Mode -- FASTB Failed.");
-    FAPI_ASSERT(l_sns2lth.getBit(SNS2LTH_PPM_FAIL) == 0,
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_PPM_FASTA_ERR_INJ>();
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_PPM_FASTB_ERR_INJ>();
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_10US, RCS_CONSTS::WAIT_1500CYC);
+    FAPI_TRY(l_sns2lth.getScom(i_target));
+    FAPI_ASSERT(l_sns2lth.getBit(RCS_CONSTS::SNS2LTH_PPM_FAIL) == 0,
                 fapi2::POZ_PPM_ERROR().set_PROC_TARGET(i_target),
                 "RCS PPM Watchdog Func Mode -- PPM Failed.");
 
@@ -165,13 +84,13 @@ static ReturnCode rcs_simple_clock_test(
     FSXCOMP_FSXLOG_SNS1LTH_t l_sns1lth;
 
     // Simple Clock Test 0/1 -- Expect 1s/0s
-    l_root_ctrl5.getScom(i_target);
+    FAPI_TRY(l_root_ctrl5.getScom(i_target));
     l_root_ctrl5.set_RCS_CLK_TEST_IN(i_test);
-    l_root_ctrl5.putScom(i_target);
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
 
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
 
-    l_sns1lth.getScom(i_target);
+    FAPI_TRY(l_sns1lth.getScom(i_target));
 
     if ((i_refclk_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_BOTH_OSC0) ||
         ((i_refclk_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1) == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC0))
@@ -190,7 +109,7 @@ static ReturnCode rcs_simple_clock_test(
     }
 
     l_root_ctrl5.set_RCS_CLK_TEST_IN(0);
-    l_root_ctrl5.putScom(i_target);
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
 
 fapi_try_exit:
     return current_err;
@@ -202,7 +121,7 @@ static ReturnCode rcs_lock_fplls(
 {
     FSXCOMP_FSXLOG_ROOT_CTRL3_t l_root_ctrl3;
 
-    l_root_ctrl3.getScom(i_target);
+    FAPI_TRY(l_root_ctrl3.getScom(i_target));
     l_root_ctrl3.set_PLLCLKSW1_ALTREF_SEL(0);
     l_root_ctrl3.set_PLLCLKSW2_ALTREF_SEL(0);
 
@@ -226,12 +145,12 @@ static ReturnCode rcs_lock_fplls(
     // Release Reset, allow the FPLLs to attempt to lock
     l_root_ctrl3.set_PLLCLKSW1_RESET(1);
     l_root_ctrl3.set_PLLCLKSW2_RESET(1);
-    l_root_ctrl3.putScom(i_target);
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
+    FAPI_TRY(l_root_ctrl3.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
     l_root_ctrl3.set_PLLCLKSW1_RESET(0);
     l_root_ctrl3.set_PLLCLKSW2_RESET(0);
-    l_root_ctrl3.putScom(i_target);
-    fapi2::delay(WAIT_5MS, WAIT_100KCYC);
+    FAPI_TRY(l_root_ctrl3.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_5MS, RCS_CONSTS::WAIT_100KCYC);
 
     FAPI_TRY(mod_poll_pll_lock_fsi2pib(i_target, pll::PZ_PERV_PLLCLKSWA));
     FAPI_TRY(mod_poll_pll_lock_fsi2pib(i_target, pll::PZ_PERV_PLLCLKSWB));
@@ -239,7 +158,7 @@ static ReturnCode rcs_lock_fplls(
     // Now that the FPLLs are locked, release bypass
     l_root_ctrl3.set_PLLCLKSW1_BYPASS_EN(0);
     l_root_ctrl3.set_PLLCLKSW2_BYPASS_EN(0);
-    l_root_ctrl3.putScom(i_target);
+    FAPI_TRY(l_root_ctrl3.putScom(i_target));
 fapi_try_exit:
     return current_err;
 }
@@ -288,30 +207,30 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_C
     l_root_ctrl5.set_OVRBIT(0);
     l_root_ctrl5.set_EN_REFCLK(1);
     l_root_ctrl5.set_EN_ASYNC_OUT(0);
-    l_root_ctrl5.putScom(i_target);
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
 
     l_rcs_ctrl1 = 0;
     l_rcs_ctrl1.set_DESKEW_SEL_A(0);
     l_rcs_ctrl1.set_DESKEW_SEL_B(0);
-    l_rcs_ctrl1.setBit<CTRL1_ENABLE_19P5_DLL>();
-    l_rcs_ctrl1.clearBit<CTRL1_LOCK_19P5_DLL_CODE>();
+    l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_ENABLE_19P5_DLL>();
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_LOCK_19P5_DLL_CODE>();
     l_rcs_ctrl1.set_DESKEW_AUTO_EN(1);
     l_rcs_ctrl1.set_DESKEW_AUTO_LOCK(0);
     l_rcs_ctrl1.set_DESKEW_AUTO_FILT(0);
     l_rcs_ctrl1.set_TESTOUT_SEL(0);
     l_rcs_ctrl1.set_TESTOUT_EN(0);
-    l_rcs_ctrl1.clearBit<CTRL1_EN_AUTO_BLOCK_SWITCHOVER>(); // Leaving this at zero for now until a later point
-    l_rcs_ctrl1.clearBit<CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
-    l_rcs_ctrl1.clearBit<CTRL1_PPM_FASTA_ERR_INJ>();
-    l_rcs_ctrl1.clearBit<CTRL1_PPM_FASTB_ERR_INJ>();
-    l_rcs_ctrl1.setBit<CTRL1_PPM_RESET>();
-    l_rcs_ctrl1.clearBit<CTRL1_PPM_OUTMUX_SEL0>();
-    l_rcs_ctrl1.clearBit<CTRL1_PPM_OUTMUX_SEL1>();
-    l_rcs_ctrl1.setBit<CTRL1_PPM_OUTMUX_SEL2>();
-    l_rcs_ctrl1.clearBit<CTRL1_PPM_INMUX_SEL0>();
-    l_rcs_ctrl1.setBit<CTRL1_PPM_INMUX_SEL1>();
-    l_rcs_ctrl1.clearBit<CTRL1_FORCE_ERROR_HIGH>();
-    l_rcs_ctrl1.putScom(i_target);
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_EN_AUTO_BLOCK_SWITCHOVER>(); // Leaving this at zero for now until a later point
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_PPM_FASTA_ERR_INJ>();
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_PPM_FASTB_ERR_INJ>();
+    l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_PPM_RESET>();
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_PPM_OUTMUX_SEL0>();
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_PPM_OUTMUX_SEL1>();
+    l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_PPM_OUTMUX_SEL2>();
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_PPM_INMUX_SEL0>();
+    l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_PPM_INMUX_SEL1>();
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_FORCE_ERROR_HIGH>();
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
 
     // Simple Clock Check
     FAPI_INF("RCS Simple Clock Check.");
@@ -323,64 +242,64 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_C
     FAPI_TRY(rcs_lock_fplls(i_target, l_refclock_select));
 
     // Wait for good clocks to propagate
-    fapi2::delay(WAIT_1US, WAIT_100KCYC); // Need the RCS Reset to high for at least 1uS
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC); // Need the RCS Reset to high for at least 1uS
 
     // Release RCS Reset
     FAPI_INF("RCS Release Reset");
     l_root_ctrl5.set_RCS_RESET(0);
-    l_root_ctrl5.putScom(i_target);
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
 
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
 
     // Deskew Calibration
     l_rcs_ctrl1.set_DESKEW_AUTO_LOCK(1);
-    l_rcs_ctrl1.putScom(i_target);
-    l_sns1lth.getScom(i_target);
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+    FAPI_TRY(l_sns1lth.getScom(i_target));
     FAPI_INF("RCS Auto Deskew A %d.", l_sns1lth.get_DESKEW_QOUT_A());
     FAPI_INF("RCS Auto Deskew B %d.", l_sns1lth.get_DESKEW_QOUT_B());
 
-    fapi2::delay(WAIT_1MS, WAIT_100KCYC); // Need at least 1ms of stability for the DLL to lock
+    fapi2::delay(RCS_CONSTS::WAIT_1MS, RCS_CONSTS::WAIT_100KCYC); // Need at least 1ms of stability for the DLL to lock
 
     // Lock the 19.5ps DLL
     FAPI_INF("RCS Locking 19.5ps DLL.");
-    l_rcs_ctrl1.setBit<CTRL1_LOCK_19P5_DLL_CODE>();
-    l_rcs_ctrl1.putScom(i_target);
+    l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_LOCK_19P5_DLL_CODE>();
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
 
     // Clear Errors -- Wait for Errors to propagate
     FAPI_INF("RCS Clearing Errors.");
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
     l_root_ctrl5.set_CLEAR_CLK_ERROR_A(1);
     l_root_ctrl5.set_CLEAR_CLK_ERROR_B(1);
-    l_root_ctrl5.putScom(i_target);
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
     l_root_ctrl5.set_CLEAR_CLK_ERROR_A(0);
     l_root_ctrl5.set_CLEAR_CLK_ERROR_B(0);
-    l_root_ctrl5.putScom(i_target);
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
 
     FAPI_INF("RCS Set BLOCK_SWO = 0.");
     l_root_ctrl5.set_BLOCK_SWO(0);
-    l_root_ctrl5.putScom(i_target);
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
 
     // Clear the Auto Block Switchover Signal
     FAPI_INF("RCS Clearing Block Switchover.");
-    l_rcs_ctrl1.getScom(i_target);
-    l_rcs_ctrl1.setBit<CTRL1_EN_AUTO_BLOCK_SWITCHOVER>();
-    l_rcs_ctrl1.setBit<CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
-    l_rcs_ctrl1.putScom(i_target);
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
-    l_rcs_ctrl1.clearBit<CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
-    l_rcs_ctrl1.putScom(i_target);
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_EN_AUTO_BLOCK_SWITCHOVER>();
+    l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
 
-    l_sns1lth.getScom(i_target);
+    FAPI_TRY(l_sns1lth.getScom(i_target));
     FAPI_INF("RCS Sense1 Register(0x2944): 0x%08X.", l_sns1lth);
-    l_sns2lth.getScom(i_target);
+    FAPI_TRY(l_sns2lth.getScom(i_target));
     FAPI_INF("RCS Sense2 Register(0x2945): 0x%08X.", l_sns2lth);
 
     FAPI_INF("RCS Verifying Correct Side.");
-    l_sns2lth.getScom(i_target);
+    FAPI_TRY(l_sns2lth.getScom(i_target));
 
     if ((l_refclock_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1) == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC0)
     {
@@ -401,29 +320,29 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_C
     }
 
     // Release RCS Bypass
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
     FAPI_INF("RCS Release Bypass.");
     l_root_ctrl5.set_RCS_BYPASS(0);
-    l_root_ctrl5.putScom(i_target);
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
 
     // Wait at least 10us to allow the unlock detectors to settle
-    fapi2::delay(WAIT_10US, WAIT_100KCYC);
+    fapi2::delay(RCS_CONSTS::WAIT_10US, RCS_CONSTS::WAIT_100KCYC);
 
     // Clear Errors -- Wait for Errors to propagate
     FAPI_INF("Clearing Errors.");
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
     l_root_ctrl5.set_CLEAR_CLK_ERROR_A(1);
     l_root_ctrl5.set_CLEAR_CLK_ERROR_B(1);
-    l_root_ctrl5.putScom(i_target);
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
     l_root_ctrl5.set_CLEAR_CLK_ERROR_A(0);
     l_root_ctrl5.set_CLEAR_CLK_ERROR_B(0);
-    l_root_ctrl5.putScom(i_target);
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
 
     if ((l_refclock_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_BOTH_OSC0) == 0x0)
     {
         l_root_ctrl5.set_BLOCK_SWO(1);
-        l_root_ctrl5.putScom(i_target);
+        FAPI_TRY(l_root_ctrl5.putScom(i_target));
         goto fapi_try_exit;
     }
 

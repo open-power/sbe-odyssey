@@ -32,7 +32,6 @@
 //------------------------------------------------------------------------------
 
 #include "pz_rcs_remove.H"
-#include "pz_rcs_common.H"
 #include "poz_perv_common_params.H"
 #include "poz_perv_mod_chip_clocking.H"
 #include <poz_scom_perv.H>
@@ -47,23 +46,6 @@ SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL3;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL5;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_SNS1LTH;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_SNS2LTH;
-
-enum PZ_RCS_SETUP_Private_Constants
-{
-    CTRL1_BLOCK_SWO_AUTO = 21,
-    ROOT_CTRL5_BLOCK_SWO = 5,
-
-    WAIT_20NS =       20,
-    WAIT_1US  =     1000,
-    WAIT_10US =    10000,
-    WAIT_1MS  =  1000000,
-    WAIT_5MS  =  5000000,
-    WAIT_20MS = 20000000,
-    WAIT_1500CYC = 1500,
-
-    WAIT_100KCYC =  100000,
-    WAIT_5MCYC   = 5000000,
-};
 
 ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
 {
@@ -81,7 +63,12 @@ ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
 
     FAPI_TRY(print_debug_info(i_target, l_refclock_select));
 
-    l_root_ctrl3.getScom(i_target);
+    // Set PPM WD Reset
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_PPM_RESET>();
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+
+    FAPI_TRY(l_root_ctrl3.getScom(i_target));
 
     if (l_root_ctrl3.get_PLLCLKSW1_ALTREF_SEL() || l_root_ctrl3.get_PLLCLKSW2_ALTREF_SEL())
     {
@@ -89,8 +76,8 @@ ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
         goto fapi_try_exit;
     }
 
-    l_root_ctrl3.set_PLLCLKSW1_ALTREF_SEL(0);
-    l_root_ctrl3.set_PLLCLKSW2_ALTREF_SEL(0);
+    l_root_ctrl3.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW1_ALTREF_SEL>();
+    l_root_ctrl3.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW2_ALTREF_SEL>();
 
     // Remove OSC0
     if (l_refclock_select == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1)
@@ -109,9 +96,9 @@ ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
 
         // Set altrefclk on FPLLA
         FAPI_INF("Driving RCS FPLLA from OSC1 (Alt Refclk)");
-        l_root_ctrl3.set_PLLCLKSW1_ALTREF_SEL(1); // Drive RCS FPLL1 with Alt Refclk from OSC1
+        l_root_ctrl3.setBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW1_ALTREF_SEL>(); // Drive RCS FPLL1 with Alt Refclk from OSC1
 
-        l_root_ctrl3.putScom(i_target);
+        FAPI_TRY(l_root_ctrl3.putScom(i_target));
 
         // Lock the FPLL
         FAPI_TRY(rcs_lock_fplla(i_target));
@@ -133,9 +120,9 @@ ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
 
         // Set altrefclk on FPLLB
         FAPI_INF("Driving RCS FPLLB from OSC0 (Alt Refclk)");
-        l_root_ctrl3.set_PLLCLKSW2_ALTREF_SEL(1); // Drive RCS FPLL2 with Alt Refclk from OSC0
+        l_root_ctrl3.setBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW2_ALTREF_SEL>(); // Drive RCS FPLL2 with Alt Refclk from OSC0
 
-        l_root_ctrl3.putScom(i_target);
+        FAPI_TRY(l_root_ctrl3.putScom(i_target));
 
         // Lock the FPLL
         FAPI_TRY(rcs_lock_fpllb(i_target));
@@ -146,18 +133,17 @@ ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
     }
 
     // Block switchover
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
-    l_rcs_ctrl1.getScom(i_target);
-    l_rcs_ctrl1.setBit<CTRL1_BLOCK_SWO_AUTO>();
-    l_rcs_ctrl1.putScom(i_target);
-    l_root_ctrl5.getScom(i_target);
-    l_root_ctrl5.setBit<ROOT_CTRL5_BLOCK_SWO>();
-    l_root_ctrl5.putScom(i_target);
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
+    FAPI_TRY(l_root_ctrl5.getScom(i_target));
+    l_root_ctrl5.setBit<FSXCOMP_FSXLOG_ROOT_CTRL5_BLOCK_SWO>();
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
 
     // Validate state
     FAPI_INF("Verifing state");
     FAPI_TRY(rcs_check_errors(i_target, l_refclock_select));
     FAPI_TRY(rcs_verify_clean_state(i_target, l_refclock_select));
+
+    FAPI_TRY(print_debug_info(i_target, l_refclock_select));
 
 fapi_try_exit:
     FAPI_INF("End RCS Remove");

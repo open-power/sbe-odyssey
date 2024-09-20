@@ -34,7 +34,54 @@
 #pragma once
 
 #include <fapi2.H>
+
 using namespace fapi2;
+
+namespace RCS_CONSTS
+{
+
+enum PZ_RCS_Private_Constants
+{
+    CTRL1_ENABLE_19P5_DLL = 10,
+    CTRL1_LOCK_19P5_DLL_CODE = 11,
+    CTRL1_EN_AUTO_BLOCK_SWITCHOVER = 21,
+    CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER = 22,
+    CTRL1_PPM_FASTA_ERR_INJ = 23,
+    CTRL1_PPM_FASTB_ERR_INJ = 24,
+    CTRL1_PPM_RESET = 25,
+    CTRL1_PPM_OUTMUX_SEL0 = 26,
+    CTRL1_PPM_OUTMUX_SEL1 = 27,
+    CTRL1_PPM_OUTMUX_SEL2 = 28,
+    CTRL1_PPM_INMUX_SEL0 = 29,
+    CTRL1_PPM_INMUX_SEL1 = 30,
+    CTRL1_FORCE_ERROR_HIGH = 31,
+
+    SNS1LTH_19P5_ERROR_A = 17,
+    SNS1LTH_19P5_ERROR_B = 18,
+    SNS1LTH_19P5_CNT_0 = 25,
+    SNS1LTH_19P5_CNT_1 = 26,
+
+    SNS2LTH_19P5_CNT_3 = 14,
+    SNS2LTH_19P5_CNT_4 = 24,
+    SNS2LTH_19P5_CNT_5 = 25,
+    SNS2LTH_19P5_CNT_6 = 26,
+    SNS2LTH_PPM_FAIL = 27,
+    SNS2LTH_PPM_FASTA_OUT = 28,
+    SNS2LTH_PPM_FASTB_OUT = 29,
+    SNS2LTH_PPM_FASTAB_ERR = 30,
+
+    WAIT_20NS =       20,
+    WAIT_1US  =     1000,
+    WAIT_10US =    10000,
+    WAIT_1MS  =  1000000,
+    WAIT_5MS  =  5000000,
+    WAIT_20MS = 20000000,
+    WAIT_1500CYC = 1500,
+
+    WAIT_100KCYC =  100000,
+    WAIT_5MCYC   = 5000000,
+};
+}
 
 /// @brief Print the RCS registers
 /// @param[in]   i_target           Reference to TARGET_TYPE_PROC/HUB_CHIP
@@ -42,6 +89,12 @@ using namespace fapi2;
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 ReturnCode print_debug_info(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
                             const fapi2::ATTR_CP_REFCLOCK_SELECT_Type& i_refclk_select);
+
+/// @brief Clear the write protection on CFAM regs before running other RCS operations
+/// @param[in]   i_target           Reference to TARGET_TYPE_PROC/HUB_CHIP
+/// @param[in]   io_write_protect   Value to read out/write to from the write protect reg
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+ReturnCode clear_cfam_write_protect(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target);
 
 /// @brief
 /// @param[in]   i_target     Reference to TARGET_TYPE_PROC/HUB_CHIP
@@ -67,7 +120,12 @@ ReturnCode rcs_verify_clean_state(const Target < TARGET_TYPE_PROC_CHIP | TARGET_
 ReturnCode rcs_check_errors(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
                             fapi2::ATTR_CP_REFCLOCK_SELECT_Type i_refclock_select);
 
-// TODO
+/// @brief Lock FPLL A
+/// @param[in]   i_target           Reference to TARGET_TYPE_PROC/HUB_CHIP
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
 ReturnCode rcs_lock_fplla( const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target);
-// TODO
+
+/// @brief Lock FPLL B
+/// @param[in]   i_target           Reference to TARGET_TYPE_PROC/HUB_CHIP
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
 ReturnCode rcs_lock_fpllb( const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target);

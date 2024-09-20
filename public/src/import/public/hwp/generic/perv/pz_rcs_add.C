@@ -32,7 +32,6 @@
 //------------------------------------------------------------------------------
 
 #include "pz_rcs_add.H"
-#include "pz_rcs_common.H"
 #include "poz_perv_common_params.H"
 #include "poz_perv_mod_chip_clocking.H"
 #include <poz_scom_perv.H>
@@ -47,24 +46,6 @@ SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL3;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL5;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_SNS1LTH;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_SNS2LTH;
-
-enum PZ_RCS_SETUP_Private_Constants
-{
-    CTRL1_BLOCK_SWO_AUTO = 21,
-    CTRL1_CLR_BLOCK_SWO_AUTO = 22,
-    ROOT_CTRL5_BLOCK_SWO = 5,
-
-    WAIT_20NS =       20,
-    WAIT_1US  =     1000,
-    WAIT_10US =    10000,
-    WAIT_1MS  =  1000000,
-    WAIT_5MS  =  5000000,
-    WAIT_20MS = 20000000,
-    WAIT_1500CYC = 1500,
-
-    WAIT_100KCYC =  100000,
-    WAIT_5MCYC   = 5000000,
-};
 
 // Pre-requisite: RCS Bypass / Clksel are setup for the correct clock
 //   if redundant clocks are not needed
@@ -92,90 +73,106 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHI
         goto fapi_try_exit;
     }
 
+    // Set PPM WD Reset
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_PPM_RESET>();
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+
     // Check Alt ref clk for FPLLs
-    l_root_ctrl3.getScom(i_target);
+    FAPI_TRY(l_root_ctrl3.getScom(i_target));
 
     if (l_root_ctrl3.get_PLLCLKSW1_ALTREF_SEL())
     {
         FAPI_INF("Setting PLL CLK Sw 1 to 0");
+
+        l_root_ctrl3.setBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW1_RESET>();
+        FAPI_TRY(l_root_ctrl3.putScom(i_target));
+        fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
+
         // Reset val to 0
-        l_root_ctrl3.set_PLLCLKSW1_ALTREF_SEL(0); // Drive RCS FPLL1 with Refclk from OSC0
+        l_root_ctrl3.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW1_ALTREF_SEL>(); // Drive RCS FPLL1 with Refclk from OSC0
+        FAPI_TRY(l_root_ctrl3.putScom(i_target));
+
+        fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
 
         // Release Reset, allow the FPLLs to attempt to lock
-        l_root_ctrl3.set_PLLCLKSW1_RESET(1);
-        l_root_ctrl3.putScom(i_target);
-        fapi2::delay(WAIT_1US, WAIT_100KCYC);
-        l_root_ctrl3.set_PLLCLKSW1_RESET(0);
-        l_root_ctrl3.putScom(i_target);
-        fapi2::delay(WAIT_5MS, WAIT_100KCYC);
+        l_root_ctrl3.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW1_RESET>();
+        FAPI_TRY(l_root_ctrl3.putScom(i_target));
+        fapi2::delay(RCS_CONSTS::WAIT_5MS, RCS_CONSTS::WAIT_100KCYC);
 
         FAPI_TRY(mod_poll_pll_lock_fsi2pib(i_target, pll::PZ_PERV_PLLCLKSWA));
 
         // Now that the FPLLs are locked, release bypass
-        l_root_ctrl3.set_PLLCLKSW1_BYPASS_EN(0);
+        l_root_ctrl3.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW1_BYPASS_EN>();
     }
 
     if (l_root_ctrl3.get_PLLCLKSW2_ALTREF_SEL())
     {
         FAPI_INF("Setting PLL CLK Sw 2 to 0");
+
+        l_root_ctrl3.setBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW2_RESET>();
+        FAPI_TRY(l_root_ctrl3.putScom(i_target));
+        fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
+
         // Reset val to 0
-        l_root_ctrl3.set_PLLCLKSW2_ALTREF_SEL(0); // Drive RCS FPLL2 with Refclk from OSC1
+        l_root_ctrl3.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW2_ALTREF_SEL>(); // Drive RCS FPLL2 with Refclk from OSC1
+        FAPI_TRY(l_root_ctrl3.putScom(i_target));
+        fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
 
         // Release Reset, allow the FPLLs to attempt to lock
-        l_root_ctrl3.set_PLLCLKSW2_RESET(1);
-        l_root_ctrl3.putScom(i_target);
-        fapi2::delay(WAIT_1US, WAIT_100KCYC);
-        l_root_ctrl3.set_PLLCLKSW2_RESET(0);
-        l_root_ctrl3.putScom(i_target);
-        fapi2::delay(WAIT_5MS, WAIT_100KCYC);
+        l_root_ctrl3.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW2_RESET>();
+        FAPI_TRY(l_root_ctrl3.putScom(i_target));
+        fapi2::delay(RCS_CONSTS::WAIT_5MS, RCS_CONSTS::WAIT_100KCYC);
 
         FAPI_TRY(mod_poll_pll_lock_fsi2pib(i_target, pll::PZ_PERV_PLLCLKSWB));
 
         // Now that the FPLLs are locked, release bypass
-        l_root_ctrl3.set_PLLCLKSW2_BYPASS_EN(0);
+        l_root_ctrl3.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW2_BYPASS_EN>();
     }
 
-    l_root_ctrl3.putScom(i_target);
+    FAPI_TRY(l_root_ctrl3.putScom(i_target));
 
     // Deskew Calibration
-    l_rcs_ctrl1.getScom(i_target);
-    l_rcs_ctrl1.set_DESKEW_AUTO_LOCK(0);
-    l_rcs_ctrl1.putScom(i_target);
-    fapi2::delay(WAIT_1MS, WAIT_100KCYC);
-    l_rcs_ctrl1.set_DESKEW_AUTO_LOCK(1);
-    l_rcs_ctrl1.putScom(i_target);
-    l_sns1lth.getScom(i_target);
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    l_rcs_ctrl1.clearBit<FSXCOMP_FSXLOG_RCS_CTRL1_DESKEW_AUTO_LOCK>();
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1MS, RCS_CONSTS::WAIT_100KCYC);
+    l_rcs_ctrl1.setBit<FSXCOMP_FSXLOG_RCS_CTRL1_DESKEW_AUTO_LOCK>();
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+    FAPI_TRY(l_sns1lth.getScom(i_target));
     FAPI_INF("RCS Auto Deskew A %d.", l_sns1lth.get_DESKEW_QOUT_A());
     FAPI_INF("RCS Auto Deskew B %d.", l_sns1lth.get_DESKEW_QOUT_B());
 
     // Set the clear clock errors to 0
-    l_root_ctrl5.getScom(i_target);
-    l_root_ctrl5.set_CLEAR_CLK_ERROR_A(1);
-    l_root_ctrl5.set_CLEAR_CLK_ERROR_B(1);
-    l_root_ctrl5.putScom(i_target);
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
-    l_root_ctrl5.set_CLEAR_CLK_ERROR_A(0);
-    l_root_ctrl5.set_CLEAR_CLK_ERROR_B(0);
-    l_root_ctrl5.putScom(i_target);
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
+    FAPI_TRY(l_root_ctrl5.getScom(i_target));
+    l_root_ctrl5.setBit<FSXCOMP_FSXLOG_ROOT_CTRL5_CLEAR_CLK_ERROR_A>();
+    l_root_ctrl5.setBit<FSXCOMP_FSXLOG_ROOT_CTRL5_CLEAR_CLK_ERROR_B>();
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
+    l_root_ctrl5.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL5_CLEAR_CLK_ERROR_A>();
+    l_root_ctrl5.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL5_CLEAR_CLK_ERROR_B>();
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
 
     // Validate state
     FAPI_INF("Verifing state");
     FAPI_TRY(rcs_check_errors(i_target, l_refclock_select));
     FAPI_TRY(rcs_verify_clean_state(i_target, l_refclock_select));
 
-    l_rcs_ctrl1.getScom(i_target);
-    l_root_ctrl5.getScom(i_target);
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    FAPI_TRY(l_root_ctrl5.getScom(i_target));
 
     FAPI_INF("Unblocking switchover");
     // Unblock switchover
-    l_rcs_ctrl1.getScom(i_target);
-    l_rcs_ctrl1.clearBit<CTRL1_BLOCK_SWO_AUTO>();
-    l_rcs_ctrl1.putScom(i_target);
-    l_root_ctrl5.getScom(i_target);
-    l_root_ctrl5.clearBit<ROOT_CTRL5_BLOCK_SWO>();
-    l_root_ctrl5.putScom(i_target);
-    fapi2::delay(WAIT_1US, WAIT_100KCYC);
+    FAPI_TRY(l_root_ctrl5.getScom(i_target));
+    l_root_ctrl5.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL5_BLOCK_SWO>();
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
+
+    // Clear PPM WD Reset
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_PPM_RESET>();
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
 
 fapi_try_exit:
     FAPI_INF("End RCS Add");
