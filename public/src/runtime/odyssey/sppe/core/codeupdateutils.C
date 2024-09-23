@@ -118,6 +118,10 @@ void getCodeUpdateParams(codeUpdateCtrlStruct_t &io_codeUpdateCtrlStruct)
     getSideInfo(io_codeUpdateCtrlStruct.runSideIndex,
                 io_codeUpdateCtrlStruct.nonRunSideIndex);
 
+    // Initialize return codes for both sides in golden
+    io_codeUpdateCtrlStruct.goldenStruct.returnCodeSide[0] = SBE_SEC_OPERATION_SUCCESSFUL;
+    io_codeUpdateCtrlStruct.goldenStruct.returnCodeSide[1] = SBE_SEC_OPERATION_SUCCESSFUL;
+
     SBE_INFO(SBE_FUNC "RunSide:[%d] NonRunSide:[%d] MaxBuf:[0x%08x]",
              io_codeUpdateCtrlStruct.runSideIndex,
              io_codeUpdateCtrlStruct.nonRunSideIndex,
@@ -192,9 +196,9 @@ uint32_t createMemoryDevice(
 
     do
     {
-        if ((i_boot_side != SIDE_0_INDEX) && (i_boot_side != SIDE_1_INDEX))
+        if ((i_boot_side > 2))
         {
-            // Fail if i_boot_side is any value other than 0 & 1 (excl. golden)
+            // Fail if i_boot_side is any value other than 0-2
             SBE_ERROR(SBE_FUNC "Invalid boot side:[%d]", i_boot_side);
             l_rc = SBE_SEC_CU_INVALID_BOOT_SIDE;
             break;
