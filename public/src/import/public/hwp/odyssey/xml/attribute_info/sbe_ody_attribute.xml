@@ -2743,4 +2743,22 @@
   <entry name="ATTR_SPI_BUS_DIV_REF">
     <value>0x0041</value>
   </entry>
+  <entry name="ATTR_MSS_MRW_MIN_DOMAIN_REDUCTION_TIME_FOR_POWER_CONTROL_OFF">
+    <value>64</value>
+  </entry>
+  <entry name="ATTR_MSS_MRW_MIN_DOMAIN_REDUCTION_TIME">
+    <value>4</value>
+  </entry>
+  <entry name="ATTR_MSS_MRW_ENTER_STR_TIME">
+    <value>8</value>
+  </entry>
+  <entry name="ATTR_MSS_MRW_IDLE_PSMODE_MIN_DOMAIN_REDUCTION_TIME">
+    <value>1</value>
+  </entry>
+  <entry name="ATTR_MSS_MRW_IDLE_PSMODE_ENTER_STR_TIME">
+    <value>4</value>
+  </entry>
+  <entry name="ATTR_MSS_MRW_IDLE_POWER_CONTROL_REQUESTED">
+    <value>0x00</value>
+  </entry>
 </entries>
