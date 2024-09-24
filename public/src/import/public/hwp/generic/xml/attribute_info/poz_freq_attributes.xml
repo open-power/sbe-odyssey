@@ -38,7 +38,7 @@
     32000 = 32000,
     38400 = 38400
   </enum>
-<default>21460</default>
+<default>25600</default>
   <platInit/>
   <writeable/>
 </attribute>
