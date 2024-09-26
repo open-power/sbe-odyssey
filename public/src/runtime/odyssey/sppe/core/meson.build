@@ -48,7 +48,8 @@ infile_c = ['main.C',
             'poolglobal.C',
             'sbecmdhssody.C',
             'exceptionhandler.C',
-            'sbehalfdimmdqsdrifttrack.C'
+            'sbehalfdimmdqsdrifttrack.C',
+            'sbecmdcodeupdateall.C'
           ]
 
 odyssey_abs_core_c_file_paths = []
@@ -103,6 +104,8 @@ odyssey_img_cust_c_file = files('atefw.C','sbecollectdumpwrap.C')
 
 ODYSSEY_CHIPOPS_JSON = files('chipop_table.json')
 
+ODYSSEY_CODE_UPDATE_ALL_CHIPOPS_JSON = files('chipop_table_code_update_all.json')
+
 ody_cmn_chipop_json_list = [
                     COMMON_CHIPOPS_JSON,
                     CMN_STOP_CLOCK_CHIPOPS_JSON,
@@ -125,8 +128,8 @@ if platform == 'odysseylab'
   subdir_done()
 endif
 
-ody_abs_chipop_json_list = [ody_chipop_json_list, CMN_COLLECT_DUMP_CHIPOPS_JSON,
-                              CMN_CODE_UPDATE_CHIPOPS_JSON]
+ody_abs_chipop_json_list = [ody_cmn_chipop_json_list, CMN_COLLECT_DUMP_CHIPOPS_JSON,
+                              CMN_CODE_UPDATE_CHIPOPS_JSON, ODYSSEY_CHIPOPS_JSON, ODYSSEY_CODE_UPDATE_ALL_CHIPOPS_JSON]
 odyssey_abs_core_c_file_paths += abs_runtime_cmn_code_update_c_path
 
 ############### Chip-op table generation ############
