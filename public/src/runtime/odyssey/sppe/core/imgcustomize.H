@@ -58,3 +58,12 @@ void sbePakSearchStartOffset(void);
  * @return - Return success/ failure
  */
 fapi2::ReturnCode sbeRuntimePopulateMetadataWrap(uint32_t i_metadata_ptr);
+
+/*@brief - sbeUpdateImageAll : Implement SBE Update Image Chipop (0xAE02)
+ *         to support update to all sides (incl golden)
+ *
+ * @param[in] - i_pArg Buffer to be passed to the function
+ *
+ * @return - RC from the FIFO access utility
+ */
+uint32_t sbeUpdateImageAll(uint8_t *i_pArg);
