@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -54,7 +54,9 @@ RING_ID(chiplet_rtg);
 RING_ID(chiplet_initf);
 RING_ID(cced_override);
 RING_ID(cced_saverestore);
-RING_ID(clockstop);
+RING_ID(chiplet_clockstop);
+RING_ID(core_clockstop);
+RING_ID(sh_clockstop);
 RING_ID(abist_chiplet_rtg);
 RING_ID(abist_core_rtg);
 RING_ID(abist_sh_rtg);
