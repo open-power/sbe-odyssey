@@ -2764,4 +2764,7 @@
   <entry name="ATTR_MSS_MRW_IDLE_POWER_CONTROL_REQUESTED">
     <value>0x00</value>
   </entry>
+   <entry name="ATTR_ODY_DISABLE_DRAM_WITH_BAD_DQ0">
+    <value>0</value>
+  </entry>
 </entries>
