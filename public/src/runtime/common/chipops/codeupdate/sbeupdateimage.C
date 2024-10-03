@@ -194,6 +194,10 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
                               l_updateImgCtrlStruct.imageStartAddr,\
                               WORD_TO_BYTES(l_updateImgCtrlStruct.imageSizeInWords));
 
+                    // Logging ffdc
+                    logFatalError(l_fapiRc);
+                    CLEAR_FAPI2_CURRENT_ERROR();
+
                     o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
                                       SBE_SEC_CU_WRITE_BEGIN_IMAGE_FAILURE );
                     break;
@@ -218,7 +222,12 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
                     // restoring the tail end of a partially written erase block so
                     // it's crucial to finish the write operation to ensure we don't lose
                     // data outside of the partition we're writing
-                    l_memHandle->write_end();
+                    l_fapiRc = l_memHandle->write_end();
+                    if(l_fapiRc != FAPI2_RC_SUCCESS)
+                    {
+                        logFatalError(l_fapiRc);
+                        CLEAR_FAPI2_CURRENT_ERROR();
+                    }
                     break;
                 }
             }
@@ -231,11 +240,21 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
                           l_updateImgCtrlStruct.imageStartAddr,\
                           WORD_TO_BYTES(l_writeWordsLen));
 
+                // Logging ffdc
+                logFatalError(l_fapiRc);
+                CLEAR_FAPI2_CURRENT_ERROR();
+
                 o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
                                   SBE_SEC_CU_WRITE_DATA_IMAGE_FAILURE );
 
-                // Explanation as per LN:204-207
-                l_memHandle->write_end();
+                // Explanation as per LN:221-224
+                l_fapiRc = l_memHandle->write_end();
+                if(l_fapiRc != FAPI2_RC_SUCCESS)
+                {
+                    // Logging ffdc
+                    logFatalError(l_fapiRc);
+                    CLEAR_FAPI2_CURRENT_ERROR();
+                }
                 break;
             }
 
@@ -248,6 +267,10 @@ fapi2::ReturnCode updateImage(const CU::updateImageCmdMsg_t *i_msg,
                     SBE_ERROR(SBE_FUNC "Write end to device failed, Addr:0x%08X Size:0x%08X",\
                               l_updateImgCtrlStruct.imageStartAddr,\
                               WORD_TO_BYTES(l_writeWordsLen));
+
+                    // Logging ffdc
+                    logFatalError(l_fapiRc);
+                    CLEAR_FAPI2_CURRENT_ERROR();
 
                     o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
                                       SBE_SEC_CU_WRITE_END_IMAGE_FAILURE );

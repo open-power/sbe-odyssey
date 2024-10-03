@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -298,6 +298,10 @@ fapi2::ReturnCode syncImage(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
 
                o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
                                  SBE_SEC_CU_WRITE_BEGIN_IMAGE_FAILURE );
+
+               // Logging ffdc
+               logFatalError(l_fapiRc);
+               CLEAR_FAPI2_CURRENT_ERROR();
                break;
             }
             l_preDataReadFlag = false;
@@ -316,11 +320,21 @@ fapi2::ReturnCode syncImage(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
             o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
                               SBE_SEC_CU_READ_DATA_IMAGE_FAILURE );
 
+            // Logging ffdc
+            logFatalError(l_fapiRc);
+            CLEAR_FAPI2_CURRENT_ERROR();
+
             // Clean-up by calling write functions to clear error states and
             // restoring the tail end of a partially written erase block so
             // it's crucial to finish the write operation to ensure we don't lose
             // data outside of the partition we're writing
-            l_memHandle->write_end();
+            l_fapiRc = l_memHandle->write_end();
+            if(l_fapiRc != FAPI2_RC_SUCCESS)
+            {
+               // Logging ffdc
+               logFatalError(l_fapiRc);
+               CLEAR_FAPI2_CURRENT_ERROR();
+            }
             break;
          }
 
@@ -335,8 +349,18 @@ fapi2::ReturnCode syncImage(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
             o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
                               SBE_SEC_CU_WRITE_DATA_IMAGE_FAILURE );
 
-            // Explanation as per LN:318-321
-            l_memHandle->write_end();
+            // Logging ffdc
+            logFatalError(l_fapiRc);
+            CLEAR_FAPI2_CURRENT_ERROR();
+
+            // Explanation as per LN:327-330
+            l_fapiRc = l_memHandle->write_end();
+            if(l_fapiRc != FAPI2_RC_SUCCESS)
+            {
+               // Logging ffdc
+               logFatalError(l_fapiRc);
+               CLEAR_FAPI2_CURRENT_ERROR();
+            }
             break;
          }
 
@@ -352,6 +376,10 @@ fapi2::ReturnCode syncImage(codeUpdateCtrlStruct_t &i_syncSideCtrlStruct,
 
                o_hdr->setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE,
                                  SBE_SEC_CU_WRITE_END_IMAGE_FAILURE );
+
+               // Logging ffdc
+               logFatalError(l_fapiRc);
+               CLEAR_FAPI2_CURRENT_ERROR();
                break;
             }
          }

@@ -255,6 +255,10 @@ uint32_t createMemoryDevice(
             {
                 SBE_ERROR(SBE_FUNC "Unknown device, id=[0x%08x]", l_dev_type);
                 l_rc = SBE_SEC_CU_UNKNOWN_DEVICE;
+
+                // Logging ffdc
+                logFatalError(l_fapiRc);
+                CLEAR_FAPI2_CURRENT_ERROR();
                 break;
             }
             SBE_INFO(SBE_FUNC "Device type:[%d]", l_dev_type);
@@ -351,6 +355,10 @@ uint32_t createMemoryDeviceRAS(
             {
                 SBE_ERROR(SBE_FUNC "Unknown device, id=[0x%08x]", l_dev_type);
                 l_rc = SBE_SEC_CU_UNKNOWN_DEVICE;
+
+                // Logging ffdc
+                logFatalError(l_fapiRc);
+                CLEAR_FAPI2_CURRENT_ERROR();
                 break;
             }
             SBE_INFO(SBE_FUNC "Device type:[%d]", l_dev_type);
@@ -658,7 +666,7 @@ static uint32_t pseudoSync(const uint32_t i_sourceAddress,
 
         if (l_fapiRc != FAPI2_RC_SUCCESS)
         {
-            // Commit the ffdc
+            // Logging the ffdc
             logError(l_fapiRc, fapi2::FAPI2_ERRL_SEV_PREDICTIVE);
             CLEAR_FAPI2_CURRENT_ERROR();
         }
@@ -676,7 +684,7 @@ static uint32_t pseudoSync(const uint32_t i_sourceAddress,
 
     if (l_fapiRc != FAPI2_RC_SUCCESS)
     {
-        // Commit the ffdc
+        // Logging ffdc
         logError(l_fapiRc, fapi2::FAPI2_ERRL_SEV_PREDICTIVE);
         CLEAR_FAPI2_CURRENT_ERROR();
     }
