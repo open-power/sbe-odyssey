@@ -40,7 +40,7 @@
 
 #include <generic/memory/lib/utils/shared/mss_generic_consts.H>
 #include <ody_dqs_track_utils.H>
-#include <lib/ody_half_dimm_dqs_track_utils.H>
+#include <ody_half_dimm_dqs_track_utils.H>
 #include <lib/dimm/ody_rank.H>
 #include <ody_scom_ody_odc.H>
 #include <lib/shared/ody_consts.H>
@@ -582,6 +582,14 @@ fapi2::ReturnCode ody_half_dimm_dqs_track(const fapi2::Target<fapi2::TARGET_TYPE
     return fapi2::FAPI2_RC_SUCCESS;
 
 fapi_try_exit:
+
+    // Clear SRQ LFIR[28] to avoid a false quiesce state later
+    // If the scom fails, eat the bad RC since we're already in a fail state
+    // and we need to set the fail FIR and attribute
+    {
+        mss::fir::reg2<scomt::ody::ODC_SRQ_LFIR_RW_WCLEAR> l_fir(i_target);
+        l_fir.clear<scomt::ody::ODC_SRQ_LFIR_IN28>();
+    }
 
     // Handles the DQS track errors
     return handle_dqs_track_error(i_target);
