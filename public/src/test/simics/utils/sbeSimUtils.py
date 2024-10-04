@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2015,2024
+# Contributors Listed Below - COPYRIGHT 2024
 # [+] International Business Machines Corp.
 #
 #
@@ -23,6 +23,7 @@
 # permissions and limitations under the License.
 #
 # IBM_PROLOG_END_TAG
+
 import time
 import conf
 from sim_commands import *
@@ -159,41 +160,66 @@ def startCbs(procNr=0, nodeNr=0):
 
     chip = getChip(procNr)
 
-    if((simenv.sbe_project_type == "pst") and
-            ((simenv.sbe_image_type == "tsbe") or
-             (simenv.sbe_image_type == "hsbe"))):
+    if(simenv.sbe_project_type == "pst"):
+
+        # Triggering Spinal CFAM reset - reset using c4_reset pin
+        conf.backplane0.mcm[0].c4_reset.iface.signal.signal_raise()
+        runCycles(1000000)
 
         if (simenv.sbe_image_type == "tsbe"):
+            # Reset TAP CFAM by Toggling reset bit
             #Clearing the corresponding TAP bits to perform TAP CFAM reset
-            SIM_run_command("backplane0.mcm[0].spinal.lbus_map.write address = 0x2cd8 value = 0x00ff0000 size = 4 -b")
-            SIM_run_command("run-cycles 1000000")
+            simTargets.spinal[0].lbus_map.iface.memory_space.write(None, 0x2cd8, (0x00, 0xff, 0x00, 0x00), 0x0)
+            runCycles(1000000)
             #Setting the corresponding TAP bits to perform TAP CFAM release reset
-            SIM_run_command("backplane0.mcm[0].spinal.lbus_map.write address = 0x2c98 value = 0x00ff0000 size = 4 -b")
-            SIM_run_command("run-cycles 1000000")
+            simTargets.spinal[0].lbus_map.iface.memory_space.write(None, 0x2c98, (0x00, 0xff, 0x00, 0x00), 0x0)
+            runCycles(1000000)
             #Setting byte0,1 of scratch16 to mark validity of scratch registers.
             fsi2pib_write (0x50187, 0xFF000000 << 32)
 
-        if (simenv.sbe_image_type == "hsbe"):
-            #Trigerring Spinal CFAM reset
-            SIM_run_command("@conf.backplane0.mcm[0].c4_reset.iface.signal.signal_raise()")
-            SIM_run_command("run-cycles 1000000")
-            #Enabling Spinal CFAM voltage domain
-            SIM_run_command("@conf.backplane0.mcm[0].spinal.fsi2host_mbox.port.vdn_pgood.iface.signal.signal_raise()")
-            SIM_run_command("run-cycles 1000000")
-
-        # CBS control register setting CBS_CS_START_BOOT_SEQUENCER and CBS_CS_OPTION_PREVENT_SBE_START bit
-        chip.lbus_map.iface.memory_space.write(None, SBE_CBS_CONTROL_REG, (0x90, 0x00, 0x00, 0x00), 0x0)
-
-        # HARD Restart by writing 0x60000000 to XCR register
-        fsi2pib_write (SBE_XCR_REG, 0x60000000 << 32)
-
-        # Resume by writing 0x20000000 to XCR register
-        fsi2pib_write (SBE_XCR_REG, 0x20000000 << 32)
-
-    else:
-        # Set PG-Good
+        # Enabling Spinal CFAM voltage domain
         chip.fsi2host_mbox.port.vdn_pgood.iface.signal.signal_raise()
-        SIM_run_command("run-cycles 1000")
+        runCycles(1000000)
+        runCycles(1000000)
+
+        # CBS control register setting CBS_CS_START_BOOT_SEQUENCER bit
+        fsxcomp_cbs = chip.lbus_map.iface.memory_space.read(None, SBE_CBS_CONTROL_REG, 4, 0x0)
+        data = list(fsxcomp_cbs)
+        # * Seeprom and SROM images will set default vector address by setting CBS_CS_START_BOOT_SEQUENCER
+        # CBS_CS_START_BOOT_SEQUENCER and CBS_CS_OPTION_PREVENT_SBE_START: (prevent the SBE to boot)
+        #   * sppe and bldr have to change the default vector address to PIBMEM by ramming
+        #   * tsbe and hsbe have to reset via XCR reg will set default vector address
+        data[0] = data[0] | 0x80 if ((simenv.sbe_image_type == "seeprom") or (simenv.sbe_image_type == "srom")) else 0x90
+        chip.lbus_map.iface.memory_space.write(None, (0x00002804), (*data,), 4)
+
+        # TAP/HUB SBE writing to XCR will reset the IAR, IVPR to default value
+        if (simenv.sbe_image_type == "tsbe") or (simenv.sbe_image_type == "hsbe"):
+            # HARD Restart by writing 0x60000000 to XCR register
+            fsi2pib_write (SBE_XCR_REG, 0x60000000 << 32)
+            # Resume by writing 0x20000000 to XCR register
+            fsi2pib_write (SBE_XCR_REG, 0x20000000 << 32)
+        elif (simenv.sbe_image_type == "sppe") or (simenv.sbe_image_type == "bldr"):
+            # For SPPE / BLDR manually change the default vector address by ramming
+            waitAndExecuteRamming(chip)
+    else:
+        if(simenv.machine_name == "pst_standalone") and (simenv.sbe_project_type == "odyssey"):
+            # PST Standalone reset OCMB CFAM via spinal CFAM ROOT CTRL REG 0
+            # ROOT CTRL 0 - Clearing the bits 28-29 to perform Odyssey CFAM reset
+            simTargets.spinal[0].lbus_map.iface.memory_space.write(None, 0x2cc0, (0x00, 0x00, 0x00, 0x0c), 0x0)
+            runCycles(10000000)
+            # ROOT CTRL 0 - Setting the bit 28-29 to perform Odyssey CFAM reset
+            simTargets.spinal[0].lbus_map.iface.memory_space.write(None, 0x2c80, (0x00, 0x00, 0x00, 0x0c), 0x0)
+            runCycles(10000000)
+
+        # Workaround - SIMICS ECC check bug - Disable ECC bits for odyssey OTPROM
+        if(simenv.sbe_project_type == "odyssey"):
+            for target in simTargets.odysseys:
+                target.pib.iface.memory_space.write(None, 0x100080, (0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00), False)
+            runCycles( 100000000 )
+
+        # Enabling Spinal CFAM voltage domain
+        chip.fsi2host_mbox.port.vdn_pgood.iface.signal.signal_raise()
+        runCycles(1000000)
         # command to read 8 bytes from 0x00002804
         fsxcomp_cbs = chip.lbus_map.iface.memory_space.read(None, (0x00002804), 4, 0x0)
         # updating bit 0 to 1 in the read register
@@ -206,7 +232,7 @@ def startCbs(procNr=0, nodeNr=0):
             data[0] = data[0]|0x80
         chip.lbus_map.iface.memory_space.write(None, (0x00002804), (*data,), 4)
 
-        if (simenv.sbe_image_type == 'sppe' ): # TODO have to do same as TSBE
+        if (simenv.sbe_image_type == 'sppe' ):
             waitAndExecuteRamming(chip)
 
 def getLbus( node = 0, proc=0):
@@ -228,7 +254,7 @@ def fsi2pib_write (address: int, data: int, node=0, proc=0) -> None:
 
     Example:
     fsi2pib_write(0x50009, 0x123)
-    """ 
+    """
     data_bytes = tuple(int.to_bytes(data, 8, 'big'))
     higherval = data_bytes[0:4]
     lowerval = data_bytes[4:8]
