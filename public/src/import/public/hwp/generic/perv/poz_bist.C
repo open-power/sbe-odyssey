@@ -569,9 +569,9 @@ ReturnCode poz_bist(
             i_params.stages & (i_params.bist_stages::RING_SETUP | i_params.bist_stages::RING_PATCH))
         {
             // Scan load standard RTG
-            FAPI_TRY(putRing(i_target, ring_id::chiplet_rtg));
-            FAPI_TRY(putRing(i_target, ring_id::core_rtg));
-            FAPI_TRY(putRing(i_target, ring_id::sh_rtg));
+            FAPI_TRY(putRing(l_chiplets_target, ring_id::chiplet_rtg));
+            FAPI_TRY(putRing(l_chiplets_target, ring_id::core_rtg));
+            FAPI_TRY(putRing(l_chiplets_target, ring_id::sh_rtg));
 
             // Scan load RTG optimizations for ABIST
             FAPI_TRY(putRing(l_chiplets_target, ring_id::abist_chiplet_rtg));
@@ -621,9 +621,9 @@ ReturnCode poz_bist(
                         l_rtg_scan0_types,
                         i_params.scan0_types);
 
-            FAPI_TRY(putRing(i_target, ring_id::chiplet_rtg));
-            FAPI_TRY(putRing(i_target, ring_id::core_rtg));
-            FAPI_TRY(putRing(i_target, ring_id::sh_rtg));
+            FAPI_TRY(putRing(l_chiplets_target, ring_id::chiplet_rtg));
+            FAPI_TRY(putRing(l_chiplets_target, ring_id::core_rtg));
+            FAPI_TRY(putRing(l_chiplets_target, ring_id::sh_rtg));
 
             FAPI_TRY(mod_scan0(l_chiplets_target, l_all_active_regions, l_rtg_scan0_types,
                                i_params.flags & i_params.bist_flags::SCAN0_ARY_FILL));
