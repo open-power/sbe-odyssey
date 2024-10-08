@@ -923,7 +923,7 @@ static ReturnCode tryLoadCompositeImage(ChipTarget& i_chip_target,
     {
         rc = loadEmbeddedFile(i_chip_target(), i_fname, image, image_size, flags);
 
-        if ((rc == FAPI2_RC_FILE_NOT_FOUND) || (rc == FAPI2_RC_PLAT_ERR_SEE_DATA))
+        if (rc == FAPI2_RC_FILE_NOT_FOUND)
         {
             if (trusted)
             {

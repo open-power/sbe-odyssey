@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -203,18 +203,27 @@ ARC_RET_t FileArchive::_locate(const locate_what i_what,
 
     while (true)
     {
-        if((ptr < iv_firstFile) || ((iv_archiveLimit != NULL) && (ptr >= iv_archiveLimit)))
+        o_ptr = ptr;
+
+        if ((iv_archiveLimit != NULL) && (ptr == iv_archiveLimit))
+        {
+            // There's a use case where we limit an archive reader to just behind the
+            // last "trusted" file. In that case the boundary is right on the beginning
+            // of the first "untrusted" file, and if we land _right on_ that boundary
+            // we treat this as the end of the archive instead of corruption.
+            return ARC_FILE_NOT_FOUND;
+        }
+
+        if ((ptr < iv_firstFile) || ((iv_archiveLimit != NULL) && (ptr > iv_archiveLimit)))
         {
             ARC_ERROR("Next address (%p) is outside archive limits (%p..%p)",
                       ptr, iv_firstFile, iv_archiveLimit);
-            o_ptr = ptr;
             return ARC_FILE_CORRUPTED;
         }
 
         if (uintptr_t(ptr) & 7)
         {
             ARC_ERROR("Unaligned file header: %p", ptr);
-            o_ptr = ptr;
             return ARC_FILE_CORRUPTED;
         }
 
@@ -245,15 +254,6 @@ ARC_RET_t FileArchive::_locate(const locate_what i_what,
             }
             else
             {
-                if (!(i_flags & ARCHIVE_FLAGS_NOT_FOUND_QUIET))
-                {
-#if defined(__SBE_PPE__) || defined(__PPE_QME)
-                    ARC_ERROR_BIN("File not found:", i_fname, fname_len);
-#else
-                    ARC_ERROR("File not found: %s", i_fname);
-#endif
-                }
-
                 return ARC_FILE_NOT_FOUND;
             }
         }
@@ -262,7 +262,6 @@ ARC_RET_t FileArchive::_locate(const locate_what i_what,
         {
             if (i_what == LOCATE_PAD)
             {
-                o_ptr = ptr;
                 return ARC_OPERATION_SUCCESSFUL;
             }
             else
@@ -276,7 +275,6 @@ ARC_RET_t FileArchive::_locate(const locate_what i_what,
         if (hdrc.h.iv_magic != PAK_START)
         {
             ARC_ERROR("Incorrect file header magic value: 0x%08X, expected: 0x%08X", hdrc.h.iv_magic, PAK_START);
-            o_ptr = ptr;
             return ARC_FILE_CORRUPTED;
         }
 
@@ -368,7 +366,18 @@ ARC_RET_t FileArchive::_locate(const locate_what i_what,
 ARC_RET_t FileArchive::locate_file(const char* i_fname, Entry& o_entry, uint32_t i_flags)
 {
     void* dummy;
-    return _locate(LOCATE_FILE, i_fname, &o_entry, dummy, i_flags);
+    ARC_RET_t rc = _locate(LOCATE_FILE, i_fname, &o_entry, dummy, i_flags);
+
+    if ((rc == ARC_FILE_NOT_FOUND) && !(i_flags & ARCHIVE_FLAGS_NOT_FOUND_QUIET))
+    {
+#if defined(__SBE_PPE__) || defined(__PPE_QME)
+        ARC_ERROR_BIN("File not found:", i_fname, i_fname ? strlen(i_fname) : 0);
+#else
+        ARC_ERROR("File not found: %s", i_fname);
+#endif
+    }
+
+    return rc;
 }
 
 ARC_RET_t FileArchive::locate_padding(void*& o_padStart, uint32_t& o_padSize)
