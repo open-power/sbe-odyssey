@@ -25,6 +25,24 @@
 <attributes>
 <!-- ********************************************************************** -->
     <attribute>
+        <id>ATTR_RUN_IOBIST</id>
+        <targetType>TARGET_TYPE_PROC_CHIP, TARGET_TYPE_HUB_CHIP, TARGET_TYPE_COMPUTE_CHIP</targetType>
+        <description>
+            Specifies the whether IOBIST will run during PPE Load
+        </description>
+        <valueType>uint8</valueType>
+        <enum>
+            RUN_IOBIST = 0x1,
+            DONT_RUN = 0x0
+        </enum>
+        <default>RUN_IOBIST</default>
+        <platInit/>
+        <sbeAttrSync toSBE="1" fromSBE="0" chipTypes="z">
+          <targetTypes>TARGET_TYPE_PROC_CHIP, TARGET_TYPE_HUB_CHIP, TARGET_TYPE_COMPUTE_CHIP</targetTypes>
+        </sbeAttrSync>
+    </attribute>
+<!-- ********************************************************************** -->
+    <attribute>
         <id>ATTR_POZ_BIST_TIMER</id>
         <targetType>TARGET_TYPE_PROC_CHIP,TARGET_TYPE_OCMB_CHIP</targetType>
         <description>
