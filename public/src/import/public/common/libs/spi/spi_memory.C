@@ -663,6 +663,14 @@ ReturnCode spi::FlashDevice::read_extended_status(uint32_t i_address, extended_s
                        ((dev_status & 0x20) ? ES_PROG_FAIL : 0) |
                        ((dev_status & 0x08) ? ES_ERASE_SUSP : 0) |
                        ((dev_status & 0x04) ? ES_PROG_SUSP : 0));
+
+        // Clear status when any error bits are set
+        if (o_status != ES_NONE)
+        {
+            FAPI_TRY(iv_port.transaction(MX66_CMD_RESET_EN_REG, 1, NULL, 0, NULL, 0));
+            FAPI_TRY(iv_port.transaction(MX66_CMD_RESET_MEM_REG, 1, NULL, 0, NULL, 0));
+            FAPI_TRY(write_gang_unlock());
+        }
     }
 
 fapi_try_exit:
