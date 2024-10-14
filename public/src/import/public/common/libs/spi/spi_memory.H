@@ -332,6 +332,8 @@ class FlashDevice : public SEEPROMDevice
             MT25Q_CMD_READ_FLAG_STATUS_REG = 0x70,
             MT25Q_CMD_CLR_FLAG_STATUS_REG = 0x50,
             MX66_CMD_READ_SECURITY_REG = 0x2B,
+            MX66_CMD_RESET_EN_REG = 0x66,
+            MX66_CMD_RESET_MEM_REG = 0x99,
 
             // Commands with 24-bit address
             X25_CMD_ERASE_64K = 0xD8000000,
