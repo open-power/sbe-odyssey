@@ -280,7 +280,8 @@ class _SPIPortBase : public AbstractPort
         ALWAYS_INLINE fapi2::ReturnCode restore_spi_regs(
             uint64_t i_saved_seq,
             uint64_t i_saved_ctr,
-            uint64_t i_saved_clk) const;
+            uint64_t i_saved_clk,
+            uint64_t i_saved_mmreg) const;
 
         /**
          * @brief Set up sequence and counter registers

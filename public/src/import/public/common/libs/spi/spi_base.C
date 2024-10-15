@@ -102,7 +102,7 @@ ReturnCode _SPIPortBase::transaction(const uint64_t cmd, const uint32_t cmd_len,
     // Exception: In TPM mode we send the command separately
     const uint32_t total_req_len = iv_tpm_mode ? req_len : cmd_len + req_len;
     const ecc_mode l_ecc_mode = i_use_ecc ? iv_ecc_mode : ECC_DISABLED;
-    uint64_t saved_seq = -1ULL, saved_ctr = -1ULL, saved_clk = -1ULL;
+    uint64_t saved_seq = -1ULL, saved_ctr = -1ULL, saved_clk = -1ULL, saved_mmreg = -1ULL;
     uint8_t delay_cs = 0;
 
     FAPI_DBG("SPI transaction: cmd=0x%08x%08x ecc|cmd_len=0x%04x req_len|rsp_len=0x%08x",
@@ -170,6 +170,7 @@ ReturnCode _SPIPortBase::transaction(const uint64_t cmd, const uint32_t cmd_len,
     // In TPM mode set up pattern match
     if (iv_tpm_mode)
     {
+        FAPI_TRY(getscom(SPIC_MEMORY_MAPPING_REG, saved_mmreg));
         FAPI_TRY(putscom(SPIC_MEMORY_MAPPING_REG, TPM_RDR_MATCH));
     }
 
@@ -192,7 +193,7 @@ fapi_try_exit:
     /* Save return code and restore all the registers we saved off */
     const ReturnCode rc = current_err;
     const ReturnCode restore_rc =
-        restore_spi_regs(saved_seq, saved_ctr, saved_clk);
+        restore_spi_regs(saved_seq, saved_ctr, saved_clk, saved_mmreg);
     /* A bad RC from the main code takes precedence over a bad RC from the restore */
     return (rc != FAPI2_RC_SUCCESS) ? rc : restore_rc;
 }
@@ -454,7 +455,8 @@ fapi_try_exit:
 ReturnCode _SPIPortBase::restore_spi_regs(
     uint64_t i_saved_seq,
     uint64_t i_saved_ctr,
-    uint64_t i_saved_clk) const
+    uint64_t i_saved_clk,
+    uint64_t i_saved_mmreg) const
 {
     if (i_saved_seq != -1ULL)
     {
@@ -469,6 +471,11 @@ ReturnCode _SPIPortBase::restore_spi_regs(
     if (i_saved_clk != -1ULL)
     {
         FAPI_TRY(putscom(SPIC_CLOCK_CONFIG_REG, i_saved_clk));
+    }
+
+    if (i_saved_mmreg != -1ULL)
+    {
+        FAPI_TRY(putscom(SPIC_MEMORY_MAPPING_REG, i_saved_mmreg));
     }
 
 fapi_try_exit:
