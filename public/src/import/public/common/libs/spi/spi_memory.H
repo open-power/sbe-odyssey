@@ -331,9 +331,6 @@ class FlashDevice : public SEEPROMDevice
             X25_CMD_RESET2 = 0x99,
             MT25Q_CMD_READ_FLAG_STATUS_REG = 0x70,
             MT25Q_CMD_CLR_FLAG_STATUS_REG = 0x50,
-            MX66_CMD_READ_SECURITY_REG = 0x2B,
-            MX66_CMD_RESET_EN_REG = 0x66,
-            MX66_CMD_RESET_MEM_REG = 0x99,
 
             // Commands with 24-bit address
             X25_CMD_ERASE_64K = 0xD8000000,
@@ -341,6 +338,7 @@ class FlashDevice : public SEEPROMDevice
             X25_CMD_ERASE_4K = 0x20000000,
 
             // Commands used for device Macronix
+            MX66_CMD_READ_SECURITY_REG = 0x2B,
             MX25_CMD_GANG_UNLOCK = 0x98,
         };
 
@@ -395,7 +393,7 @@ class FlashDevice : public SEEPROMDevice
          *
          * This sends the soft reset sequence to the device which will cause the device status to be cleared.
          */
-        fapi2::ReturnCode soft_reset();
+        fapi2::ReturnCode soft_reset() const;
 
     protected:
         enum extended_status

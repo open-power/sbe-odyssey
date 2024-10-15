@@ -667,8 +667,7 @@ ReturnCode spi::FlashDevice::read_extended_status(uint32_t i_address, extended_s
         // Clear status when any error bits are set
         if (o_status != ES_NONE)
         {
-            FAPI_TRY(iv_port.transaction(MX66_CMD_RESET_EN_REG, 1, NULL, 0, NULL, 0));
-            FAPI_TRY(iv_port.transaction(MX66_CMD_RESET_MEM_REG, 1, NULL, 0, NULL, 0));
+            FAPI_TRY(soft_reset());
             FAPI_TRY(write_gang_unlock());
         }
     }
@@ -769,7 +768,7 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode spi::FlashDevice::soft_reset()
+ReturnCode spi::FlashDevice::soft_reset() const
 {
     FAPI_TRY(iv_port.transaction(X25_CMD_RESET1, 1, NULL, 0, NULL, 0));
     FAPI_TRY(iv_port.transaction(X25_CMD_RESET2, 1, NULL, 0, NULL, 0));
