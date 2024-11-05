@@ -58,7 +58,6 @@ struct firTraits;
 ///
 /// @brief FIR Register Traits, with newer register setup (discrete registers for each action type)
 /// @tparam R FIR Register
-/// TODO MST-1389 Create fir::reg class for this struct
 ///
 template <uint64_t R>
 struct firTraits2;
@@ -356,7 +355,7 @@ class reg
 };
 
 ///
-/// @brief Small class to hold a Odyssey and PST style FIR register
+/// @brief Small class to hold a Odyssey and P11 style FIR register
 /// @tparam R the FIR register
 /// @tparam RT the type traits for this register (derived)
 ///

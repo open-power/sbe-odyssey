@@ -40,14 +40,13 @@
 #include <fapi2.H>
 #include <i2c_access.H>
 #include <lib/utils/pmic_consts.H>
-#include <generic/memory/lib/mss_generic_attribute_getters.H>
 
 #ifdef __PPE__
     #define TARGTIDFORMAT "0x%08X"
     #define MSSTARGID(T) T.get()
     #include "index.H"
-    #include <generic/memory/lib/utils/find.H>
 #else
+    #include <generic/memory/lib/mss_generic_attribute_getters.H>
     #include <generic/memory/lib/utils/pos.H>
     #include <generic/memory/lib/utils/c_str.H>
     #include <generic/memory/lib/utils/index.H>
@@ -105,6 +104,9 @@ fapi_try_exit:
     return fapi2::current_err;
 }
 
+/// @note This file is not be ported to ekb-src as there are system specific changes
+/// in the respective repos.
+
 ///
 /// @brief Add provided opcode if the Target is an ADC
 ///
@@ -123,10 +125,7 @@ inline void add_adc_opcode(const fapi2::Target<fapi2::TARGET_TYPE_GENERICI2CRESP
     // For DDR4:ADC's are index 0,1; GPIO0 is index 2
     // For DDR5: Going to use the same function for DDR5 since there is only 1 ADC supported in DDR5
     // and the below condition will still be satisfied
-    uint8_t l_relative_adc_id = 0;
-    FAPI_ATTR_GET(fapi2::ATTR_REL_POS, i_target, l_relative_adc_id);
-
-    if (l_relative_adc_id <= mss::generic_i2c_responder_ddr4::ADC2)
+    if (mss::index(i_target) <= mss::generic_i2c_responder_ddr4::ADC2)
     {
         // ADC devices need an extra opcode frame
         io_command.push_back(i_opcode);
@@ -154,8 +153,6 @@ inline fapi2::ReturnCode reg_write_helper(const fapi2::Target<T>& i_target,
 /// @param[in] i_data_buffer data buffer
 /// @param[in] i_length size of the data
 /// @return FAPI2_RC_SUCCESS iff okay
-/// @note This file differs in the P repo. The #ifndef required for ATTR_MEM_EFF_DRAM_GEN in P is not required
-///     in the ekb-src repo as ekb-src has this attribute
 ///
 template<>
 inline fapi2::ReturnCode reg_write_helper(const fapi2::Target<fapi2::TARGET_TYPE_PMIC>& i_target,
@@ -163,6 +160,9 @@ inline fapi2::ReturnCode reg_write_helper(const fapi2::Target<fapi2::TARGET_TYPE
         const std::vector<uint8_t>& i_data_buffer,
         const uint8_t i_length)
 {
+    // #ifndef needs to be here because P10 SBE doesn't have ATTR_MEM_EFF_DRAM_GEN, and this is ok since P10 SBE only runs ddr4 pmic code
+    // This #ifndef will be removed in ekb-src
+#ifndef __PPE__
     uint8_t l_dram_gen = 0;
     const auto& l_ocmb = mss::find_target<fapi2::TARGET_TYPE_OCMB_CHIP>(i_target);
 
@@ -193,6 +193,7 @@ inline fapi2::ReturnCode reg_write_helper(const fapi2::Target<fapi2::TARGET_TYPE
         }
     }
     else
+#endif
     {
         std::vector<uint8_t> l_command;
         l_command.push_back(i_addr);
@@ -367,8 +368,6 @@ inline fapi2::ReturnCode reg_read_helper(const fapi2::Target<T>& i_target,
 /// @param[in,out] io_data data buffer
 /// @param[in] i_length size of the data
 /// @return FAPI2_RC_SUCCESS iff okay
-/// @note This file differens in the P repo. The #ifndef required for ATTR_MEM_EFF_DRAM_GEN in P is not required
-///     in the ekb-src repo as ekb-src has this attribute
 ///
 template<>
 inline fapi2::ReturnCode reg_read_helper(const fapi2::Target<fapi2::TARGET_TYPE_PMIC>& i_target,
@@ -376,10 +375,12 @@ inline fapi2::ReturnCode reg_read_helper(const fapi2::Target<fapi2::TARGET_TYPE_
         std::vector<uint8_t>& io_data,
         const uint8_t i_length)
 {
+    // #ifndef needs to be here because P10 SBE doesn't have ATTR_MEM_EFF_DRAM_GEN, and this is ok since P10 SBE only runs ddr4 pmic code
+    // This #ifndef will be removed in ekb-src
+#ifndef __PPE__
     uint8_t l_dram_gen = 0;
     const auto& l_ocmb = mss::find_target<fapi2::TARGET_TYPE_OCMB_CHIP>(i_target);
 
-    // TODO: ZEN-MST:2632 Replace indexed DRAM gen reading with DRAM gen accessor
     // Get the dram generation
     for (const auto& l_port : mss::find_targets<fapi2::TARGET_TYPE_MEM_PORT>(l_ocmb))
     {
@@ -415,6 +416,7 @@ inline fapi2::ReturnCode reg_read_helper(const fapi2::Target<fapi2::TARGET_TYPE_
         }
     }
     else
+#endif
     {
         std::vector<uint8_t> l_command;
         //std::vector<uint8_t> l_data;

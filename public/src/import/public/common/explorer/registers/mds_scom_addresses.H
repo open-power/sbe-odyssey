@@ -27,7 +27,7 @@
 /// @file mds_scom_addresses.H
 /// @brief MDS I2C scom register definitions
 ///
-// *HWP HWP Owner: Matthew Hickman <Matthew.Hickman@ibm.com>
+// *HWP HWP Owner: Sneha Kadam <Sneha.Kadam1@ibm.com>
 // *HWP HWP Backup: Louis Stermole <stermole@us.ibm.com>
 // *HWP Team: Memory
 // *HWP Level: 3
@@ -35,7 +35,8 @@
 /// EKB-Mirror-To: hostboot
 ///
 
-#pragma once
+#ifndef __MDS_SCOM_ADDRESSES_H
+#define __MDS_SCOM_ADDRESSES_H
 
 static const uint32_t MDS_I2C_RCW_F0RC0A                     = 0x0000000Dul;
 
@@ -51,10 +52,6 @@ static const uint32_t MDS_I2C_RCW_BURST_ORDER_MODE           = 0x00040027ul;
 static const uint32_t MDS_I2C_RCW_F2RC00                     = 0x00020008ul;
 static const uint32_t MDS_I2C_RCW_F2RC02                     = 0x00020009ul;
 
-
-// TODO: Fix the below register values
-//       All below are placeholder names/values
-//       Spec/scripts have missing values/duplicates
 
 static const uint32_t MDS_RCW_LTB_SA_RDDQ18_VOLT_CODE        = 0x000A0024ul;
 static const uint32_t MDS_RCW_LTB_SA_RDDQ8_VOLT_CODE_EN      = 0x000A0027ul;
@@ -129,3 +126,5 @@ static const uint32_t MDS_NO_MATCHING_SPEC_VALUE_15          = 0x00800668ul;
 static const uint32_t MDS_NO_MATCHING_SPEC_VALUE_16          = 0x000E0077ul;
 
 static const uint32_t MDS_RCW_LTB_SABU_CAG5_TIME_CODE        = 0x00040029ul;
+
+#endif
