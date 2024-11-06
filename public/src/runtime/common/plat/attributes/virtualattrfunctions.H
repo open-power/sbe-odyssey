@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2016,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2016,2024                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -40,6 +40,43 @@ extern uint8_t ATTR_NAME;
 }
 
 /**
+  * @brief reads the targets position
+  *
+  * Return the relative position of chip unit target passed.
+  *     This function will internally
+  *     use plat_target_handle_t.getTargetInstance()
+  *
+  * @tparam K the target type on which to operate
+  * @param[in]  i_target target where position need to be found
+  *
+  * @return the relative position of the target
+  */
+template<TargetType K>
+inline
+ATTR_CHIP_UNIT_POS_Type get_ATTR_CHIP_UNIT_POS_HELPER(const Target<K>& i_target)
+{
+    return i_target.get().getTargetInstance();
+}
+
+/**
+  * @brief reads the targets position - specialization for PERV targets
+  *
+  * Return the relative position of chip unit target passed.
+  *     This function will internally
+  *     use plat_target_handle_t.getChipletNumber()
+  *
+  * @param[in]  i_target target where position need to be found
+  *
+  * @return the relative position of the target
+  */
+template<>
+inline
+ATTR_CHIP_UNIT_POS_Type get_ATTR_CHIP_UNIT_POS_HELPER(const Target<TARGET_TYPE_PERV>& i_target)
+{
+    return i_target.get().getChipletNumber();
+}
+
+/**
   * @brief read the targets positions
   *
   * Return the position of chp unit target passed. This function will internally
@@ -55,17 +92,117 @@ inline
 ReturnCode get_ATTR_CHIP_UNIT_POS(const Target<K>& i_target,
         ATTR_CHIP_UNIT_POS_Type& o_val)
 {
-    o_val = i_target.get().getTargetInstance();
+    o_val = get_ATTR_CHIP_UNIT_POS_HELPER(i_target);
     return FAPI2_RC_SUCCESS;
 }
 
+/**
+  * @brief computes the targets relative positions
+  *
+  * Return the relative position of chip unit target passed.
+  *     This function will internally
+  *     use plat_target_handle_t.getTargetInstance()
+  *
+  * @tparam K the target type on which to operate
+  * @param[in]  i_target target where position need to be found
+  *
+  * @return the relative position of the target
+  */
+template<TargetType K>
+inline
+ATTR_REL_POS_Type get_ATTR_REL_POS_HELPER(const Target<K>& i_target)
+{
+    return i_target.get().getTargetInstance();
+}
+
+/**
+  * @brief read the targets relative positions - specialization for DIMM target type
+  *
+  * Return the relative position of chip unit target passed.
+  *     This function will internally
+  *     use plat_target_handle_t.getTargetInstance()
+  *
+  * @param[in]  i_target target where position need to be found
+  *
+  * @return the relative position of the target
+  */
 template<>
 inline
-ReturnCode get_ATTR_CHIP_UNIT_POS(const Target<TARGET_TYPE_PERV>& i_target,
-                                ATTR_CHIP_UNIT_POS_Type& o_val)
+ATTR_REL_POS_Type get_ATTR_REL_POS_HELPER(const Target<fapi2::TARGET_TYPE_DIMM>& i_target)
 {
-    o_val = i_target.getChipletNumber();
-    return FAPI2_RC_SUCCESS;
+    return i_target.get().getTargetInstance() % 2;
+}
+
+/**
+  * @brief read the targets relative positions - specialization for MEM_PORT target type
+  *
+  * Return the relative position of chip unit target passed.
+  *     This function will internally
+  *     use plat_target_handle_t.getTargetInstance()
+  *
+  * @param[in]  i_target target where position need to be found
+  *
+  * @return the relative position of the target
+  */
+template<>
+inline
+ATTR_REL_POS_Type get_ATTR_REL_POS_HELPER(const Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target)
+{
+    return i_target.get().getTargetInstance() % 2;
+}
+
+/**
+  * @brief read the targets relative positions - specialization for GENERICI2CRESPONDER target type
+  *
+  * Return the relative position of chip unit target passed.
+  *     This function will internally
+  *     use plat_target_handle_t.getTargetInstance()
+  *
+  * @param[in]  i_target target where position need to be found
+  *
+  * @return the relative position of the target
+  */
+template<>
+inline
+ATTR_REL_POS_Type get_ATTR_REL_POS_HELPER(const Target<fapi2::TARGET_TYPE_GENERICI2CRESPONDER>& i_target)
+{
+    return i_target.get().getTargetInstance() % 4;
+}
+
+/**
+  * @brief read the targets relative positions - specialization for POWER_IC target type
+  *
+  * Return the relative position of chip unit target passed.
+  *     This function will internally
+  *     use plat_target_handle_t.getTargetInstance()
+  *
+  * @param[in]  i_target target where position need to be found
+  *
+  * @return the relative position of the target
+  */
+template<>
+inline
+ATTR_REL_POS_Type get_ATTR_REL_POS_HELPER(const Target<fapi2::TARGET_TYPE_POWER_IC>& i_target)
+{
+    return i_target.get().getTargetInstance() % 4;
+}
+
+/**
+  * @brief read the targets relative positions - specialization for PMIC target type
+  *
+  * Return the relative position of chip unit target passed.
+  *     This function will internally
+  *     use plat_target_handle_t.getTargetInstance()
+  *
+  * @param[in]  i_target target where position need to be found
+  *
+  * @return the relative position of the target
+  */
+template<>
+inline
+ATTR_REL_POS_Type get_ATTR_REL_POS_HELPER(const Target<fapi2::TARGET_TYPE_PMIC>& i_target)
+{
+    return i_target.get().getTargetInstance() % 4;
 }
 
 /**
@@ -86,60 +223,7 @@ inline
 ReturnCode get_ATTR_REL_POS(const Target<K>& i_target,
         ATTR_REL_POS_Type& o_val)
 {
-    o_val = i_target.get().getTargetInstance();
-    return FAPI2_RC_SUCCESS;
-}
-
-/**
-  * @brief read the targets relative positions - specialization for DIMM target type
-  *
-  * Return the relative position of chip unit target passed.
-  *     This function will internally
-  *     use plat_target_handle_t.getTargetInstance()
-  *
-  * @param[in]  i_target target where position need to be found
-  * @param[out] o_val    output parameter
-  *
-  * @return   returncode
-  */
-template<>
-inline
-ReturnCode get_ATTR_REL_POS(const Target<fapi2::TARGET_TYPE_DIMM>& i_target,
-        ATTR_REL_POS_Type& o_val)
-{
-    o_val = i_target.get().getTargetInstance() % 2;
-    return FAPI2_RC_SUCCESS;
-}
-
-inline
-ReturnCode get_ATTR_REL_POS(const Target<fapi2::TARGET_TYPE_MEM_PORT>& i_target,
-        ATTR_REL_POS_Type& o_val)
-{
-    o_val = i_target.get().getTargetInstance() % 2;
-    return FAPI2_RC_SUCCESS;
-}
-
-inline
-ReturnCode get_ATTR_REL_POS(const Target<fapi2::TARGET_TYPE_GENERICI2CRESPONDER>& i_target,
-        ATTR_REL_POS_Type& o_val)
-{
-    o_val = i_target.get().getTargetInstance() % 4;
-    return FAPI2_RC_SUCCESS;
-}
-
-inline
-ReturnCode get_ATTR_REL_POS(const Target<fapi2::TARGET_TYPE_POWER_IC>& i_target,
-        ATTR_REL_POS_Type& o_val)
-{
-    o_val = i_target.get().getTargetInstance() % 4;
-    return FAPI2_RC_SUCCESS;
-}
-
-inline
-ReturnCode get_ATTR_REL_POS(const Target<fapi2::TARGET_TYPE_PMIC>& i_target,
-	ATTR_REL_POS_Type& o_val)
-{
-    o_val = i_target.get().getTargetInstance() % 4;
+    o_val = get_ATTR_REL_POS_HELPER(i_target);
     return FAPI2_RC_SUCCESS;
 }
 
