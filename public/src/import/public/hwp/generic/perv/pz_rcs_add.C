@@ -76,7 +76,7 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHI
     // Set PPM WD Reset
     FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
     l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_PPM_RESET>();
-    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
 
     // Check Alt ref clk for FPLLs
     FAPI_TRY(l_root_ctrl3.getScom(i_target));
@@ -172,7 +172,7 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHI
     // Clear PPM WD Reset
     FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
     l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_PPM_RESET>();
-    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
 
 fapi_try_exit:
     FAPI_INF("End RCS Add");

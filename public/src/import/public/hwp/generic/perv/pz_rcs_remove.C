@@ -66,7 +66,7 @@ ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
     // Set PPM WD Reset
     FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
     l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_PPM_RESET>();
-    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
 
     FAPI_TRY(l_root_ctrl3.getScom(i_target));
 
