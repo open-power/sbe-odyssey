@@ -87,15 +87,16 @@ void ipl::sbeAutoBoot()
                     (void)SbeRegAccess::theSbeRegAccess()
                     .updateSbeStep(istepTableEntry->istepMajorNum,
                                     step);
-
-                    // Checking once we reached istepEndMajor number and successfully executed
-                    // All minor number then transition to runtime state .
-                    if ( istepTableEntry->istepMajorNum == g_pSbeIstepIplUtils->getIstepEndMajorNumber())
-                    {
-                        // Transition to runtime state on autoboot success
-                        stateTransition(SBE_EVENT_CMN_AUTO_BOOT_DONE);
-                    }
                 }
+            }
+
+            // Checking once we reached istepEndMajor number and successfully executed
+            // All minor number then transition to runtime state .
+            if (( istepTableEntry->istepMajorNum == g_pSbeIstepIplUtils->getIstepEndMajorNumber()) &&
+                ( rc == FAPI2_RC_SUCCESS))
+            {
+                // Transition to runtime state on autoboot success
+                stateTransition(SBE_EVENT_CMN_AUTO_BOOT_DONE);
             }
 
         }
