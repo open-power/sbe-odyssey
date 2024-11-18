@@ -40,6 +40,7 @@ odyssey_hwp_inc_paths = [
     '/memory/odyssey/hwp/lib',
     '/memory/odyssey/hwp/lib/fir',
     '/memory/odyssey/hwp/lib/phy',
+    '/memory/odyssey/hwp/lib/ccs',
     '/common/odyssey/registers',
     '/common/odyssey/include',
     '/common/generic/include',

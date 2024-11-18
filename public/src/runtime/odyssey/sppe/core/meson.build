@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2024
+# Contributors Listed Below - COPYRIGHT 2022,2025
 # [+] International Business Machines Corp.
 #
 #
@@ -49,7 +49,8 @@ infile_c = ['main.C',
             'sbecmdhssody.C',
             'exceptionhandler.C',
             'sbehalfdimmdqsdrifttrack.C',
-            'sbecmdcodeupdateall.C'
+            'sbecmdcodeupdateall.C',
+            'sbedynamicsppr.C'
           ]
 
 odyssey_abs_core_c_file_paths = []

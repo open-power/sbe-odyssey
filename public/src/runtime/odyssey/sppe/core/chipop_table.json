@@ -19,6 +19,15 @@
       "headerFile":"sbehalfdimmdqsdrifttrack.H"
     },
     {
+      "cmdClass":"AC",
+      "command":"0x04",
+      "function":"sbeDynamicSPPR",
+      "fences":[
+        "SBE_FENCE_AT_CONTINUOUS_IPL"
+      ],
+      "headerFile":"sbedynamicsppr.H"
+    },
+    {
       "cmdClass":"A8",
       "command":"0x04",
       "function":"sbeGetMemTrainData",
