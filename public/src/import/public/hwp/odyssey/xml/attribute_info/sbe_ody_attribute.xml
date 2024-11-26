@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022,2024                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2025                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -2765,6 +2765,9 @@
     <value>0x00</value>
   </entry>
    <entry name="ATTR_ODY_DISABLE_DRAM_WITH_BAD_DQ0">
+    <value>0</value>
+  </entry>
+  <entry name="ATTR_MAIL_MESSAGE_BITMAP">
     <value>0</value>
   </entry>
 </entries>
