@@ -25,6 +25,7 @@
 
 #Tools registration
 fusemapgen = find_program('common/otprom/build/utils/fusemapgen.py')
+otpromeccgen = find_program(meson.global_source_root() + '/public/src/build/utils/otpromEccGen.py')
 subdir('common')
 
 if platform == 'odyssey' or platform == 'odysseylab' or platform == 'all'

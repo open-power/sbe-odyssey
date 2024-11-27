@@ -41,6 +41,7 @@ tracehashwrap = find_program('tools/trace/tracehashwrap.py')
 genMeasuredHash = find_program('build/utils/genMeasuredHash.sh')
 chipoptablegen = find_program('runtime/tools/chipoptable.py')
 securityRegListGen = find_program('runtime/tools/security/securityreglistgen.py')
+eccgen = find_program(meson.global_source_root() + '/public/src/build/utils/ecc')
 
 # we are using multiple tools for generating source code and using run_command
 #   for invoking these tools. So, whenever these tools or files passed to tool is

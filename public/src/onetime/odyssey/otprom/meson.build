@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022
+# Contributors Listed Below - COPYRIGHT 2022,2024
 # [+] International Business Machines Corp.
 #
 #
@@ -42,6 +42,18 @@ odyssey_otprom_bin_gen = custom_target( 'odyssey_otprom_bin_gen',
                                  depend_files : depfiles,
                                  command : [ fusemapgen,
                                               '-i', '@INPUT@','bingenerator','-o','@OUTPUT@'],
+                                 build_by_default: true,
+                                 install : true,
+                                 install_dir : odyssey_otprom_install_path
+                             )
+
+infile = [odyssey_otprom_bin_gen, eccgen.full_path()]
+outfile = odyssey_otprom_img_name + '.bin.ecc'
+odyssey_otprom_ecc_gen = custom_target( 'odyssey_otprom_ecc_gen',
+                                 output : outfile,
+                                 input : infile,
+                                 depends : odyssey_otprom_bin_gen,
+                                 command : [ otpromeccgen, '-i', '@INPUT0@', '-o', '@OUTPUT@', '-e', '@INPUT1@'],
                                  build_by_default: true,
                                  install : true,
                                  install_dir : odyssey_otprom_install_path

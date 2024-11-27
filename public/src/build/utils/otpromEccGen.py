@@ -24,8 +24,9 @@
 #
 # IBM_PROLOG_END_TAG
 
-import sys
+import os
 import argparse
+import subprocess
 
 '''
 Rearrange ECC bytes:
@@ -84,13 +85,23 @@ def seperate_ecc_bytes(infile, outfile):
         newfile.write(bytearray(file_data_list))
 
 def main():
+    print('OTPROM Inserting ecc...')
     parser = argparse.ArgumentParser(description="Process ECC bytes.")
-    parser.add_argument( '-i', '--input', type=str, help="Input binary image file" ) 
+    parser.add_argument( '-i', '--input', type=str, help="Input binary image file" )
     parser.add_argument( '-o', '--output', type=str, help="Output binary image file" )
+    parser.add_argument( '-e', '--ecc', type=str, help="Path to ECC tool")
     args = parser.parse_args()
     in_file_name = args.input
     out_file_name = args.output
-    seperate_ecc_bytes(in_file_name, out_file_name)
+    ecc_tool_path = args.ecc
+    temp_out_file = out_file_name + '.temp'
+    try:
+        subprocess.run([ecc_tool_path, '--inject', in_file_name, '--output', temp_out_file, '--p8'], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {e}")
+        print("Error output:", e.stderr)
+    seperate_ecc_bytes(temp_out_file, out_file_name)
+    os.remove(temp_out_file)
 
 if __name__ == "__main__":
     main()
