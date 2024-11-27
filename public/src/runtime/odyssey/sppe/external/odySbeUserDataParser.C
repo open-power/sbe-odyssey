@@ -252,7 +252,7 @@ int parseOdySbeFFDC(ErrlUsrParser & i_parser, const void * i_pBuffer,
                     //command
                     std::ostringstream  l_strCmd1, l_strCmd2;
                     // ppe2fsp <trace dump file> <trace bin file> 2>&1
-                    l_strCmd1 << Ody::findSbeFile(PPE2FSP_TOOL)
+                    l_strCmd1 << Ody::findSbeFile(ODY_PPE2FSP_TOOL)
                               << " "
                               << l_strFile.str().c_str()
                               << " "
@@ -265,7 +265,7 @@ int parseOdySbeFFDC(ErrlUsrParser & i_parser, const void * i_pBuffer,
                               << " "
                               << Ody::findSbeFile(ODY_SBE_STRING_FILE)
                               << " "
-                              << SBE_TRACE_BIN
+                              << ODY_SBE_TRACE_BIN
                               << " "
                               << "2>&1";
 
