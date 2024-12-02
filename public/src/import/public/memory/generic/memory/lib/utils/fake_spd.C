@@ -548,57 +548,43 @@ fapi2::ReturnCode getSPD( const fapi2::Target<fapi2::TARGET_TYPE_DIMM>& i_target
     switch(i_type)
     {
         case spd_type::VBU_16GB_2RX4_2400_DDR4_RDIMM:
-#ifndef __PPE__
-            FAPI_INF("Selected SPD for VBU_16GB_2RX4_2400_DDR4_RDIMM");
-#endif
+            FAPI_INF_NO_SBE("Selected SPD for VBU_16GB_2RX4_2400_DDR4_RDIMM");
             spd_helper(VBU_16GB_2RX4_2400_DDR4_RDIMM_SPD, o_blob, o_size);
             return fapi2::FAPI2_RC_SUCCESS;
             break;
 
         case spd_type::MICRON_8GB_1Rx8_2400_DDR4_RDIMM:
-#ifndef __PPE__
-            FAPI_INF("Selected SPD for MICRON_8GB_1Rx8_DDR4_2400_DDR4_RDIMM");
-#endif
+            FAPI_INF_NO_SBE("Selected SPD for MICRON_8GB_1Rx8_DDR4_2400_DDR4_RDIMM");
             spd_helper(MICRON_8GB_1Rx8_2400_DDR4_RDIMM_SPD, o_blob, o_size);
             return fapi2::FAPI2_RC_SUCCESS;
             break;
 
         case spd_type::MICRON_32GB_2RX4_2400_DDR4_LRDIMM:
-#ifndef __PPE__
-            FAPI_INF("Selected SPD for MICRON_32GB_2RX4_2400_DDR4_LRDIMM");
-#endif
+            FAPI_INF_NO_SBE("Selected SPD for MICRON_32GB_2RX4_2400_DDR4_LRDIMM");
             spd_helper(MICRON_32GB_2RX4_2400_DDR4_LRDIMM_SPD, o_blob, o_size);
             return fapi2::FAPI2_RC_SUCCESS;
             break;
 
         case spd_type::SAMSUNG_64GB_2S2RX4_2400_DDR4_RDIMM_3DS:
-#ifndef __PPE__
-            FAPI_INF("Selected SPD for SAMSUNG_64GB_2S2RX4_2400_DDR4_RDIMM_3DS");
-#endif
+            FAPI_INF_NO_SBE("Selected SPD for SAMSUNG_64GB_2S2RX4_2400_DDR4_RDIMM_3DS");
             spd_helper(SAMSUNG_64GB_2S2RX4_2400_DDR4_RDIMM_3DS_SPD, o_blob, o_size);
             return fapi2::FAPI2_RC_SUCCESS;
             break;
 
         case spd_type::CUSTOM_16GB_2RX8:
-#ifndef __PPE__
-            FAPI_INF("Selected SPD for CUSTOM_16GB_2RX8");
-#endif
+            FAPI_INF_NO_SBE("Selected SPD for CUSTOM_16GB_2RX8");
             spd_helper(CUSTOM_16GB_2RX8_SPD, o_blob, o_size);
             return fapi2::FAPI2_RC_SUCCESS;
             break;
 
         case spd_type::RDIMM_NVDIMM_HYBRID_16GB_1RX4_2400_DDR4:
-#ifndef __PPE__
-            FAPI_INF("Selected SPD for RDIMM_NVDIMM_HYBRID_16GB_1RX4_2400_DDR4");
-#endif
+            FAPI_INF_NO_SBE("Selected SPD for RDIMM_NVDIMM_HYBRID_16GB_1RX4_2400_DDR4");
             spd_helper(RDIMM_NVDIMM_HYBRID_16GB_1RX4_2400_DDR4_SPD, o_blob, o_size);
             return fapi2::FAPI2_RC_SUCCESS;
             break;
 
         case spd_type::DDIMM_16G_1U_DDR4:
-#ifndef __PPE__
-            FAPI_INF("Selected SPD for DDIMM_16G_1U_DDR4");
-#endif
+            FAPI_INF_NO_SBE("Selected SPD for DDIMM_16G_1U_DDR4");
             spd_helper(DDIMM_16GB_1U_DDR4_SPD, o_blob, o_size);
             return fapi2::FAPI2_RC_SUCCESS;
             break;

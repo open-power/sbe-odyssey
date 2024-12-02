@@ -76,9 +76,7 @@ void spd_helper( const uint8_t (&i_raw_spd)[N],
         memcpy( o_blob, i_raw_spd, o_size );
     }
 
-#ifndef __PPE__
-    FAPI_INF("No issues here...");
-#endif
+    FAPI_INF_NO_SBE("No issues here...");
 }
 
 ///
