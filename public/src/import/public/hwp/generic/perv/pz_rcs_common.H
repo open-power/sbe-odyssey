@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2024                             */
+/* Contributors Listed Below - COPYRIGHT 2024,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -87,45 +87,50 @@ enum PZ_RCS_Private_Constants
 /// @param[in]   i_target           Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @param[in]   i_refclk_select    The current refclock being used
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-ReturnCode print_debug_info(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
+ReturnCode print_debug_info(const Target < TARGET_TYPE_PROC_CHIP >& i_target,
                             const fapi2::ATTR_CP_REFCLOCK_SELECT_Type& i_refclk_select);
+
+/// @brief Clear software inject errors before running HWPs
+/// @param[in]   i_target           Reference to TARGET_TYPE_PROC/HUB_CHIP
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+ReturnCode clear_rcs_injected_errs(const Target < TARGET_TYPE_PROC_CHIP >& i_target);
 
 /// @brief Clear the write protection on CFAM regs before running other RCS operations
 /// @param[in]   i_target           Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @param[in]   io_write_protect   Value to read out/write to from the write protect reg
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-ReturnCode clear_cfam_write_protect(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target);
+ReturnCode clear_cfam_write_protect(const Target < TARGET_TYPE_PROC_CHIP >& i_target);
 
 /// @brief
 /// @param[in]   i_target     Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-ReturnCode pz_rcs_pdown(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target);
+ReturnCode pz_rcs_pdown(const Target < TARGET_TYPE_PROC_CHIP >& i_target);
 
 /// @brief Switch RCS oscillators
 /// @param[in]   i_target     Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-ReturnCode rcs_sw_switch(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target);
+ReturnCode rcs_sw_switch(const Target < TARGET_TYPE_PROC_CHIP >& i_target);
 
 /// @brief Validate RCS changes
 /// @param[in]   i_target           Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @param[in]   i_refclk_select    The current refclock being used
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-ReturnCode rcs_verify_clean_state(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
+ReturnCode rcs_verify_clean_state(const Target < TARGET_TYPE_PROC_CHIP >& i_target,
                                   const fapi2::ATTR_CP_REFCLOCK_SELECT_Type& i_refclk_select);
 
 /// @brief Clear RCS errors and check them
 /// @param[in]   i_target           Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @param[in]   i_refclk_select    The current refclock being used
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-ReturnCode rcs_check_errors(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
+ReturnCode rcs_check_errors(const Target < TARGET_TYPE_PROC_CHIP >& i_target,
                             fapi2::ATTR_CP_REFCLOCK_SELECT_Type i_refclock_select);
 
 /// @brief Lock FPLL A
 /// @param[in]   i_target           Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-ReturnCode rcs_lock_fplla( const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target);
+ReturnCode rcs_lock_fplla( const Target < TARGET_TYPE_PROC_CHIP >& i_target);
 
 /// @brief Lock FPLL B
 /// @param[in]   i_target           Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
-ReturnCode rcs_lock_fpllb( const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target);
+ReturnCode rcs_lock_fpllb( const Target < TARGET_TYPE_PROC_CHIP >& i_target);

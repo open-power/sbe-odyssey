@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2024                             */
+/* Contributors Listed Below - COPYRIGHT 2024,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -49,7 +49,7 @@ SCOMT_PERV_USE_FSXCOMP_FSXLOG_SNS2LTH;
 
 // Pre-requisite: RCS Bypass / Clksel are setup for the correct clock
 //   if redundant clocks are not needed
-ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
+ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
 {
     FAPI_INF("Start RCS Add");
 
@@ -64,6 +64,8 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHI
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CP_REFCLOCK_SELECT, i_target, l_refclock_select));
 
     FAPI_TRY(print_debug_info(i_target, l_refclock_select));
+
+    FAPI_TRY(clear_rcs_injected_errs(i_target));
 
     // Sanity check
     if (!(l_refclock_select == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_BOTH_OSC0

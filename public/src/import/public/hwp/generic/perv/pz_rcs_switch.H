@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2024                             */
+/* Contributors Listed Below - COPYRIGHT 2024,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -41,7 +41,7 @@
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 // Function pointer typedef definition for HWP call support
 typedef fapi2::ReturnCode (*pz_rcs_switch_FP_t)(
-    const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP | fapi2::TARGET_TYPE_HUB_CHIP > &);
+    const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP >&);
 
 //------------------------------------------------------------------------------
 // Function prototype
@@ -53,6 +53,6 @@ extern "C" {
 /// @param[in]   i_target     Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
     fapi2::ReturnCode pz_rcs_switch(
-        const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP | fapi2::TARGET_TYPE_HUB_CHIP > & i_target);
+        const fapi2::Target < fapi2::TARGET_TYPE_PROC_CHIP >& i_target);
 
 } //extern "C"

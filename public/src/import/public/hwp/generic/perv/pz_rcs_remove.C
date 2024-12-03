@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2024                             */
+/* Contributors Listed Below - COPYRIGHT 2024,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -47,7 +47,7 @@ SCOMT_PERV_USE_FSXCOMP_FSXLOG_ROOT_CTRL5;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_SNS1LTH;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_SNS2LTH;
 
-ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
+ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
 {
     FAPI_INF("Start RCS Remove");
 
@@ -62,6 +62,8 @@ ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CP_REFCLOCK_SELECT, i_target, l_refclock_select));
 
     FAPI_TRY(print_debug_info(i_target, l_refclock_select));
+
+    FAPI_TRY(clear_rcs_injected_errs(i_target));
 
     // Set PPM WD Reset
     FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
@@ -78,6 +80,18 @@ ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
 
     l_root_ctrl3.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW1_ALTREF_SEL>();
     l_root_ctrl3.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW2_ALTREF_SEL>();
+
+    // Clear Auto block switch over
+    FAPI_INF("Clear auto block switchover");
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
+
+    FAPI_TRY(l_sns2lth.getScom(i_target));
 
     // Remove OSC0
     if (l_refclock_select == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1)

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2024                             */
+/* Contributors Listed Below - COPYRIGHT 2024,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -48,7 +48,7 @@ SCOMT_PERV_USE_FSXCOMP_FSXLOG_SNS1LTH;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_SNS2LTH;
 SCOMT_PERV_USE_FSXCOMP_FSXLOG_GPWRP;
 
-ReturnCode print_debug_info(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
+ReturnCode print_debug_info(const Target < TARGET_TYPE_PROC_CHIP >& i_target,
                             const fapi2::ATTR_CP_REFCLOCK_SELECT_Type& i_refclk_select)
 {
     FSXCOMP_FSXLOG_SNS1LTH_t l_sns1lth;
@@ -77,7 +77,25 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode clear_cfam_write_protect(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
+ReturnCode clear_rcs_injected_errs(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
+{
+    FSXCOMP_FSXLOG_RCS_CTRL1_t l_rcs_ctrl1;
+    FSXCOMP_FSXLOG_ROOT_CTRL5_t l_root_ctrl5;
+
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_FORCE_ERROR_HIGH>();
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+
+    FAPI_TRY(l_root_ctrl5.getScom(i_target));
+    l_root_ctrl5.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL5_SWO_FORCE_LOW>();
+    FAPI_TRY(l_root_ctrl5.putScom(i_target));
+
+fapi_try_exit:
+    return current_err;
+}
+
+
+ReturnCode clear_cfam_write_protect(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
 {
     constexpr uint32_t c_val_write_protect = 0x4453FFFF;
     constexpr uint8_t c_start_write_protect = 0;
@@ -93,7 +111,7 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode pz_rcs_pdown(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
+ReturnCode pz_rcs_pdown(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
 {
     FAPI_INF("RCS Power Down");
 
@@ -136,7 +154,7 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode rcs_verify_clean_state(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
+ReturnCode rcs_verify_clean_state(const Target < TARGET_TYPE_PROC_CHIP >& i_target,
                                   const fapi2::ATTR_CP_REFCLOCK_SELECT_Type& i_refclk_select)
 {
     FSXCOMP_FSXLOG_SNS1LTH_t l_sns1lth;
@@ -187,7 +205,7 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode rcs_sw_switch(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
+ReturnCode rcs_sw_switch(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
 {
     FSXCOMP_FSXLOG_RCS_CTRL1_t l_rcs_ctrl1;
     FSXCOMP_FSXLOG_ROOT_CTRL5_t l_root_ctrl5;
@@ -269,6 +287,7 @@ ReturnCode rcs_sw_switch(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_
     FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
     l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
     FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
     l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
     FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
 
@@ -277,7 +296,7 @@ fapi_try_exit:
 }
 
 
-ReturnCode rcs_check_errors(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target,
+ReturnCode rcs_check_errors(const Target < TARGET_TYPE_PROC_CHIP >& i_target,
                             fapi2::ATTR_CP_REFCLOCK_SELECT_Type i_refclock_select)
 {
     FSXCOMP_FSXLOG_ROOT_CTRL5_t l_root_ctrl5;
@@ -338,7 +357,7 @@ fapi_try_exit:
 }
 
 
-ReturnCode rcs_lock_fplla(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
+ReturnCode rcs_lock_fplla(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
 {
     FSXCOMP_FSXLOG_ROOT_CTRL3_t l_root_ctrl3;
 
@@ -368,7 +387,7 @@ fapi_try_exit:
     return current_err;
 }
 
-ReturnCode rcs_lock_fpllb(const Target < TARGET_TYPE_PROC_CHIP | TARGET_TYPE_HUB_CHIP > & i_target)
+ReturnCode rcs_lock_fpllb(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
 {
     FSXCOMP_FSXLOG_ROOT_CTRL3_t l_root_ctrl3;
 
