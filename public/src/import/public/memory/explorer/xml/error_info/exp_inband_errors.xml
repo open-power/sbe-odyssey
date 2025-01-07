@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022,2024                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2025                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -36,6 +36,7 @@
     <ffdc>FW_PARTITION_ID</ffdc>
     <ffdc>FW_VERSION_A</ffdc>
     <ffdc>FW_VERSION_B</ffdc>
+    <ffdc>OCMB_TARGET</ffdc>
     <callout>
       <target>OCMB_TARGET</target>
       <priority>HIGH</priority>
@@ -99,5 +100,37 @@
       <target>OCMB_TARGET</target>
     </deconfigure>
   </hwpError>
+  <hwpError>
+    <sbeError/>
+    <rc>RC_SBE_MMIO_INCORRECT_TRANSACTION_SIZE</rc>
+    <description>
+       incorrect transaction size
+    </description>
+    <ffdc>address</ffdc>
+    <ffdc>trans_size</ffdc>
+    <ffdc>data_size</ffdc>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
 
+  <hwpError>
+    <sbeError/>
+    <rc>RC_SBE_PARALLEL_MMIO_ATTEMPTED</rc>
+    <description>
+       attempted parallel inband i2c transaction
+    </description>
+    <ffdc>address</ffdc>
+    <callout>
+      <target>OCMB_TARGET</target>
+      <priority>HIGH</priority>
+    </callout>
+    <deconfigure>
+      <target>OCMB_TARGET</target>
+    </deconfigure>
+  </hwpError>
 </hwpErrors>
