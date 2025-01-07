@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2023,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -88,7 +88,15 @@ uint32_t sbepollTSnDQS(uint8_t &io_dqscount)
         }
 
         // Execute the DQS HWP.
-        if((l_dqscount != 0) && (io_dqscount == l_dqscount))
+        // Note:
+        // The condition (io_dqscount > l_dqscount) will be true in case of the following:
+        //  - The modified value of DQS tracking period is less than the current value and
+        //    the counter(io_dqscount) has already crossed the modified value(l_dqscount).
+        //  - If the DQS tracking period is updated from zero and the counter(io_dqscount)
+        //    has already crossed the updated value(l_dqscount)
+        // In the above cases, instead of waiting for the counter to reach 255, reset to 0,
+        // and reach l_dqscount again, we run the DQS tracking procedure now to avoid delay.
+        if((l_dqscount != 0) && (io_dqscount >= l_dqscount))
 
         {
             SBE_DEBUG(SBE_FUNC "Execute the DQS HWP");
