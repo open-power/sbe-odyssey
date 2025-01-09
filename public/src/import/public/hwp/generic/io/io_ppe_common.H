@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -217,16 +217,18 @@ class io_ppe_common
                                         const uint8_t i_num_tx_lanes);
 
         ///
-        /// @brief Start/stop all of the threads on a link
+        /// @brief Start/stop current thread on a link
         ///
-        /// @param[in] i_target         Chip target to start
-        /// @param[in] i_max_threads    Number of threads on the link
-        /// @param[in] i_stop_thread    Whether to start or stop the thread
+        /// @param[in]  i_target         Chip target to start
+        /// @param[in]  i_thread         Current thread to access
+        /// @param[in]  i_stop_thread    Whether to start or stop the thread
+        /// @param[out] o_prev_state     Previous thread state
         ///
         /// @return fapi2::ReturnCode FAPI2_RC_SUCCESS if success, else error code.
         fapi2::ReturnCode stop_thread(const fapi2::Target<K, M, V>& i_target,
-                                      const uint8_t i_max_threads,
-                                      bool i_stop_thread);
+                                      const uint8_t i_thread,
+                                      uint8_t i_stop_thread,
+                                      uint8_t& o_prev_state);
 
         ///
         /// @brief BIST Initialization per thread
@@ -769,8 +771,8 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::config_ppe(const fapi2::Target<K, M, V
     //"ppe_vio_volts": 2, >850mv && <=900mv
     FAPI_TRY(IMG_REG_PPE_VIO_VOLTS_PUT(iv_regs, i_target, l_vio_volts));
 
-    //Turn off unused threads.
-    for (uint32_t l_thread = i_num_threads + 1; l_thread < IO_PPE_MAX_THREADS; l_thread++)
+    //Turn off all threads, not including the supervisor thread at the end.
+    for (uint32_t l_thread = 0; l_thread < IO_PPE_MAX_THREADS - 1; l_thread++)
     {
         FAPI_TRY(FW_REG_FW_STOP_THREAD_PUT(iv_regs, i_target, l_thread, 1));
     }
@@ -802,8 +804,9 @@ fapi_try_exit:
 
 template <fapi2::TargetType K, fapi2::MulticastType M, typename V>
 fapi2::ReturnCode io_ppe_common<K, M, V>::stop_thread(const fapi2::Target<K, M, V>& i_target,
-        const uint8_t i_max_threads,
-        bool i_stop_thread)
+        const uint8_t i_thread,
+        uint8_t i_stop_thread,
+        uint8_t& o_prev_state)
 {
     FAPI_DBG("Start - io_ppe_common::stop_thread");
 
@@ -814,51 +817,53 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::stop_thread(const fapi2::Target<K, M, 
 
     fapi2::buffer<uint64_t> l_done = 0;
     fapi2::buffer<uint64_t> l_buffer = 0;
+    fapi2::buffer<uint64_t> l_prev_state = 0;
     uint8_t l_tries = 0;
 
-    for (uint8_t l_thread = 0; l_thread < i_max_threads; l_thread++)
+    l_done = 0;
+    l_tries = 0;
+
+    FAPI_DBG("Putting thread %d stop to %d", i_thread, i_stop_thread);
+
+    FAPI_TRY(FW_REG_FW_THREAD_STOPPED_GET(iv_regs, i_target, i_thread, l_prev_state));
+    l_prev_state.extractToRight<56, 8>(o_prev_state);
+    FAPI_TRY(FW_REG_FW_STOP_THREAD_PUT(iv_regs, i_target, i_thread, i_stop_thread));
+
+    FAPI_TRY(iv_regs->flushCache(i_target));
+
+    FAPI_TRY(fapi2::getScom(i_target, c_xidbgpro, l_buffer),
+             "Error putscom to XIDBGPRO (clear halt).");
+
+    if (i_stop_thread)
     {
-        l_done = 0;
-        l_tries = 0;
 
-        FAPI_DBG("Putting thread %d stop to %d", l_thread, i_stop_thread);
+        FAPI_DBG("Stop thread check");
 
-        FAPI_TRY(FW_REG_FW_STOP_THREAD_PUT(iv_regs, i_target, l_thread, i_stop_thread));
-
-        FAPI_TRY(iv_regs->flushCache(i_target));
-
+        FAPI_DBG("Check PPE halted state");
         FAPI_TRY(fapi2::getScom(i_target, c_xidbgpro, l_buffer),
                  "Error putscom to XIDBGPRO (clear halt).");
 
-        if (i_stop_thread)
+        if (l_buffer.getBit<c_ppe_status_bit>())
         {
-            FAPI_DBG("Stop thread check");
-
-            FAPI_DBG("Check PPE halted state");
-            FAPI_TRY(fapi2::getScom(i_target, c_xidbgpro, l_buffer),
-                     "Error putscom to XIDBGPRO (clear halt).");
-
-            if (l_buffer.getBit<c_ppe_status_bit>())
-            {
-                FAPI_INF("PPE is halted.");
-                return 0;
-            }
-
-            FAPI_TRY(FW_REG_FW_THREAD_STOPPED_GET(iv_regs, i_target, l_thread, l_done));
-
-            while (l_done && (l_tries < c_max_tries))
-            {
-                FAPI_TRY(iv_regs->flushCache(i_target));
-                FAPI_TRY(FW_REG_FW_THREAD_STOPPED_GET(iv_regs, i_target, l_thread, l_done));
-                l_tries++;
-                fapi2::delay(IO_PPE_DELAY_1MS, IO_PPE_DELAY_SIM_CYCLES);
-            }
-
-            if (l_done == 0)
-            {
-                FAPI_INF("Thread Never Stopped...");
-            }
+            FAPI_INF("PPE is halted.");
+            goto fapi_try_exit;
         }
+
+        FAPI_TRY(FW_REG_FW_THREAD_STOPPED_GET(iv_regs, i_target, i_thread, l_done));
+
+        while (!l_done && (l_tries < c_max_tries))
+        {
+            FAPI_TRY(iv_regs->flushCache(i_target));
+            FAPI_TRY(FW_REG_FW_THREAD_STOPPED_GET(iv_regs, i_target, i_thread, l_done));
+            l_tries++;
+            fapi2::delay(IO_PPE_DELAY_1MS, IO_PPE_DELAY_SIM_CYCLES);
+        }
+
+        if (l_done == 0)
+        {
+            FAPI_INF("Thread Never Stopped...");
+        }
+
     }
 
 fapi_try_exit:
