@@ -82,7 +82,7 @@ ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
     l_root_ctrl3.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL3_PLLCLKSW2_ALTREF_SEL>();
 
     // Clear Auto block switch over
-    FAPI_INF("Clear auto block switchover");
+    FAPI_INF("Prime auto block switchover");
     FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
     l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_CLEAR_AUTO_BLOCK_SWITCHOVER>();
     FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
