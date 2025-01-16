@@ -34,7 +34,7 @@
 #ifndef __SBE_CHIP_TYPE__
 #define __SBE_CHIP_TYPE__
 
-#include <cstdint>
+#include <stdint.h>
 
 namespace sbeutil
 {
