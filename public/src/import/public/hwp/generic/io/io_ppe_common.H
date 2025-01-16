@@ -772,7 +772,7 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::config_ppe(const fapi2::Target<K, M, V
     FAPI_TRY(IMG_REG_PPE_VIO_VOLTS_PUT(iv_regs, i_target, l_vio_volts));
 
     //Turn off all threads, not including the supervisor thread at the end.
-    for (uint32_t l_thread = 0; l_thread < IO_PPE_MAX_THREADS - 1; l_thread++)
+    for (uint32_t l_thread = 0; l_thread < IO_PPE_MAX_THREADS; l_thread++)
     {
         FAPI_TRY(FW_REG_FW_STOP_THREAD_PUT(iv_regs, i_target, l_thread, 1));
     }
