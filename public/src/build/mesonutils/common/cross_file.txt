@@ -117,6 +117,7 @@ ekb_cmn_inc_path = [
     '/common/generic/fapi2/include/plat',
     '/common/libs/crypto',
     '/common/pst/fapi2/include',
+    '/hwp/generic/utils/sbe_utils/include',
         ]
 
 ekb_hwp_inc_path = [

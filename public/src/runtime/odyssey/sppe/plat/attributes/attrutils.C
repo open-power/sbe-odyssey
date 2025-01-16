@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -25,12 +25,13 @@
 
 #include "attrutils.H"
 #include "attribute.H"
+#include "sbe_chip_type.H"
 
 using namespace fapi2;
 
 uint8_t platGetChipType()
 {
-    return (CHIP_TYPE_ODYSSEY_00 +
+    return (sbeutil::CHIP_TYPE_ODYSSEY_00 +
             fapi2::ATTR::TARGET_TYPE_OCMB_CHIP::ATTR_BUS_POS);
 }
 

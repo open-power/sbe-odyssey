@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -30,6 +30,7 @@
 #include "ppe42_string.h"
 #include <target_service.H>
 #include <attrutils.H>
+#include <sbe_chip_type.H>
 
 namespace fapi2
 {
@@ -106,7 +107,23 @@ void  ListResponseBuffer::setHeader()
     iv_headerPtr->iv_fmtMajor = fapi2::ATTR::ATTRLIST_MAJOR_VERSION;
     iv_headerPtr->iv_fmtMinor = fapi2::ATTR::ATTRLIST_MINOR_VERSION;
     iv_headerPtr->iv_chipType = platGetChipType();
-    iv_headerPtr->iv_fileType = ATTRLIST_RESP_FILE_TYPE;
+
+    // For the platforms that use attribute list chip-op
+    // response as a payload of attribute update chip-op,
+    // platGetChipType() must return CHIP_TYPE_ANY.
+    // Generally, it is done to save and restore attributes.
+    // In such cases, the file type will be set as
+    // ATTROVERRIDE_REQ_FILE_TYPE so that such platforms can
+    // directly use the attribute list response as a payload
+    // of attribute update chip-op.
+    if (platGetChipType() == sbeutil::CHIP_TYPE_ANY)
+    {
+        iv_headerPtr->iv_fileType = ATTROVERRIDE_REQ_FILE_TYPE;
+    }
+    else
+    {
+        iv_headerPtr->iv_fileType = ATTRLIST_RESP_FILE_TYPE;
+    }
     iv_headerPtr->iv_numTargets = 0;
 }
 
