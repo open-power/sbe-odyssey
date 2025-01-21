@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2023,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -59,12 +59,19 @@ fapi2::ReturnCode ody_omi_hss_config(const fapi2::Target<fapi2::TARGET_TYPE_OCMB
                                      PHY_ODY_NUM_THREADS,
                                      l_vio_mv));
 
-    // Odyssey only has 1 thread
+    // Odyssey only has 1 functional thread
     FAPI_TRY(l_ppe_common.config_thread(i_target,
                                         l_thread,
                                         l_gcr_id,
                                         PHY_ODY_NUM_LANES,
                                         PHY_ODY_NUM_LANES));
+
+    // Initialize supervisor thread
+    FAPI_TRY(l_ppe_common.config_thread(i_target,
+                                        1, // Supervisor Thread
+                                        0, // gcr_id (na in supervisor)
+                                        0, // rxlanes (na in supervisor)
+                                        0)); // txlanes (na in supervisor)
 
 fapi_try_exit:
     FAPI_DBG("End");
