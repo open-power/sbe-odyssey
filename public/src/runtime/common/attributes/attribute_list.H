@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023                             */
+/* Contributors Listed Below - COPYRIGHT 2023,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -26,6 +26,7 @@
 #define __ATTRIBUTE_LIST_H__
 
 #include <attribute_utils.H>
+#include "plat_hwp_data_stream.H"
 
 namespace fapi2
 {
@@ -57,73 +58,61 @@ const uint8_t ATTRLIST_MINOR_VERSION = 2;
 */
 class ListResponseBuffer
 {
+    fapi2::sbefifo_hwp_data_ostream* iv_oStream;
+
+    /**
+     * @brief Helper function to find the number of target
+     *        instances that are present
+     *
+     * @return uint32_t Number of instances
+    */
+    uint32_t getTargetInstancesCount(const uint8_t i_tgtIdx) const;
+
+    /**
+     * @brief Calculate the number of target section upfront
+     *
+     * @return uint32_t Number of targets
+    */
+    uint32_t getNumberOfTargets() const;
+
     // Attribute List Response
     public:
-        HeaderEntry_t   *iv_headerPtr;
-        uint8_t         *iv_currPtr;
 
-        ListResponseBuffer() = delete;
         ListResponseBuffer(const ListResponseBuffer& ) = delete;
         ListResponseBuffer&
             operator = (const ListResponseBuffer& ) = delete;
 
-        ListResponseBuffer(void *i_ptr)
-        {
-            iv_currPtr   = (uint8_t *)i_ptr+sizeof(HeaderEntry_t);
-            iv_headerPtr = (HeaderEntry_t *)i_ptr;//this if for start
-        }
+        explicit ListResponseBuffer(fapi2::sbefifo_hwp_data_ostream* i_outStream) :
+                                                                iv_oStream(i_outStream)
+        { };
 
         /**
          * @brief Set Header in the list response buffer
          *
-         * @return
+         * @return uint32_t SBE_SEC_OPERATION_SUCCESSFUL if it is success, otherwise error
         */
-        void  setHeader();
+        uint32_t streamHeader();
 
         /**
          * @brief Set Target in the list response buffer
          *
          * @param[in] TargetEntry_t ptr
          *
-         * @return
+         * @return uint32_t SBE_SEC_OPERATION_SUCCESSFUL if it is success, otherwise error
         */
-        void  setTarget(TargetEntry_t* i_target);
+        uint32_t streamTarget(const TargetEntry_t* i_target);
 
         /**
          * @brief Set Attribute in the list response buffer
          *
          * @param[in] uint32_t index for attribute Table (g_attrsTab)
-         * @param[in] uint8_t row for the attribute (i_row)
-         * @param[in] uint8_t col for the attribute (i_col)
-         * @param[in] uint8_t hgt for the attribute (i_hgt)
          * @param[in] uint8_t tgt_inst for which we are setting attribute
          *
-         * @return
+         * @return uint32_t SBE_SEC_OPERATION_SUCCESSFUL if it is success, otherwise error
         */
-        void setAttribute(
-                          uint32_t i_gindex,
-                          uint8_t i_row,
-                          uint8_t i_col,
-                          uint8_t i_hgt,
-                          uint8_t i_tgt_inst
-                        );
+        uint32_t streamAttribute(const uint32_t i_gindex,
+                                  const uint8_t i_tgt_inst);
 
-        /**
-         * @brief get Output packet size in the list response buffer
-         *
-         * @return uint32_t size of output response packet
-        */
-        uint32_t getOutputPackSize()
-        {
-            return iv_currPtr-reinterpret_cast<uint8_t*>(iv_headerPtr);
-        }
-
-        /**
-         * @brief get the Expected Heap Size to be allocated
-         *
-         * @return uint32_t heap expected size
-        */
-        static uint32_t getExpectedHeapSize();
 
 };
 
@@ -133,11 +122,11 @@ class ListResponseBuffer
  *        iterate through attribute table for target
  *        send response back in the buffer
  *
- * @param[in] void* o_buffer
+ * @param[out] fapi2::sbefifo_hwp_data_ostream o_outStream
  *
- * @return uint32_t heap size
+ * @return uint32_t SBE_SEC_OPERATION_SUCCESSFUL if it is success, otherwise error
 */
-uint32_t listAttribute(void *o_buffer);
+uint32_t listAttribute(fapi2::sbefifo_hwp_data_ostream* o_outStream);
 
 } //ATTR
 

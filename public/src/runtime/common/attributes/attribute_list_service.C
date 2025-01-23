@@ -28,7 +28,6 @@
 #include <attribute.H>
 #include <target_types.H>
 #include "ppe42_string.h"
-#include <target_service.H>
 #include <attrutils.H>
 #include <sbe_chip_type.H>
 
@@ -75,8 +74,14 @@ static sbeSecondaryResponse checkTargetPresent(const uint8_t i_logTargetType,
         l_rc = g_platTarget->getSbePlatTargetHandle(i_logTargetType,
                                                     i_instanceId,
                                                     l_targetHandle);
+
+        // In case of pervasive targets, the valid instances are
+        // 1 and 8. If any other instance is passed, then this
+        // function will return the RC:
+        //                   SBE_SEC_INVALID_INSTANCE_ID_PASSED.
+        // This is not an error per se. This can be ignored.
         if ( l_rc == SBE_SEC_INVALID_INSTANCE_ID_PASSED ) {
-            SBE_DEBUG(SBE_FUNC "Log target type: %d, instance ID: %d"
+            SBE_INFO(SBE_FUNC "Log target type: %d, instance ID: %d"
             " is invalid. ", i_logTargetType, i_instanceId);
             l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
             break;
@@ -95,18 +100,72 @@ static sbeSecondaryResponse checkTargetPresent(const uint8_t i_logTargetType,
             o_present = true;
             break;
         }
-    } while (false);
+    } while(false);
 
     SBE_EXIT(SBE_FUNC);
     return l_rc;
     #undef SBE_FUNC
 }
 
-void  ListResponseBuffer::setHeader()
+uint32_t ListResponseBuffer::getTargetInstancesCount(const uint8_t i_tgtIdx) const
 {
-    iv_headerPtr->iv_fmtMajor = fapi2::ATTR::ATTRLIST_MAJOR_VERSION;
-    iv_headerPtr->iv_fmtMinor = fapi2::ATTR::ATTRLIST_MINOR_VERSION;
-    iv_headerPtr->iv_chipType = platGetChipType();
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    uint32_t l_instancesCount = 0;
+
+    for(uint8_t l_inst = 0;l_inst<g_targetsTab[i_tgtIdx].iv_max_inst;l_inst++)
+    {
+        bool     l_isPresent;
+        l_rc = checkTargetPresent(g_targetsTab[i_tgtIdx].iv_log_target_type,
+                                  l_inst, l_isPresent);
+
+        if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            SBE_ERROR(SBE_FUNC "checkTargetPresent returned error. l_rc=0x%08X",
+                    l_rc);
+            l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+            continue;
+        }
+
+        if (l_isPresent == false)
+        {
+            SBE_INFO(SBE_FUNC "Log target type: %d, instance ID: %d"
+            " is not present. ", g_targetsTab[i_tgtIdx].iv_log_target_type, l_inst);
+            continue;
+        }
+
+        ++l_instancesCount;
+    }
+
+    return l_instancesCount;
+}
+
+uint32_t ListResponseBuffer::getNumberOfTargets() const
+{
+    uint32_t l_numberOfTargets = 0;
+
+    for(uint8_t l_tgtIdx=0;l_tgtIdx<g_tgts_tab_size;l_tgtIdx++)
+    {
+        // If there is no attribute for this target type, then
+        // no need to check for the presence of this target.
+        if (g_targetsTab[l_tgtIdx].iv_attr_row_size == 0)
+        {
+            SBE_INFO(SBE_FUNC "Log target type : %d has no attributes. Skipping it",
+                        g_targetsTab[l_tgtIdx].iv_log_target_type);
+            continue;
+        }
+
+        l_numberOfTargets += this->getTargetInstancesCount(l_tgtIdx);
+    }
+
+    return l_numberOfTargets;
+}
+
+uint32_t ListResponseBuffer::streamHeader()
+{
+    HeaderEntry_t l_header;
+    l_header.iv_fmtMajor    = fapi2::ATTR::ATTRLIST_MAJOR_VERSION;
+    l_header.iv_fmtMinor    = fapi2::ATTR::ATTRLIST_MINOR_VERSION;
+    l_header.iv_chipType    = platGetChipType();
 
     // For the platforms that use attribute list chip-op
     // response as a payload of attribute update chip-op,
@@ -118,140 +177,120 @@ void  ListResponseBuffer::setHeader()
     // of attribute update chip-op.
     if (platGetChipType() == sbeutil::CHIP_TYPE_ANY)
     {
-        iv_headerPtr->iv_fileType = ATTROVERRIDE_REQ_FILE_TYPE;
+        l_header.iv_fileType = ATTROVERRIDE_REQ_FILE_TYPE;
     }
     else
     {
-        iv_headerPtr->iv_fileType = ATTRLIST_RESP_FILE_TYPE;
+        l_header.iv_fileType = ATTRLIST_RESP_FILE_TYPE;
     }
-    iv_headerPtr->iv_numTargets = 0;
+
+    l_header.iv_numTargets  = this->getNumberOfTargets();
+
+    SBE_DEBUG(SBE_FUNC "Number of targets : %d", l_header.iv_numTargets);
+
+    return iv_oStream->put(sizeof(HeaderEntry_t)/4,(uint32_t *)&l_header);
 }
 
-void  ListResponseBuffer::setTarget(TargetEntry_t* i_target)
+uint32_t ListResponseBuffer::streamTarget(const TargetEntry_t* i_target)
 {
-    assert(nullptr!=i_target);
-    iv_headerPtr->iv_numTargets++;
-    memcpy((void *)iv_currPtr, (uint8_t *)i_target, sizeof(TargetEntry_t));
-    iv_currPtr += sizeof(TargetEntry_t);
+    return iv_oStream->put(sizeof(TargetEntry_t)/4, (uint32_t *)i_target);
 }
 
-void ListResponseBuffer::setAttribute(uint32_t i_gindex,
-                                      uint8_t i_row,
-                                      uint8_t i_col,
-                                      uint8_t i_hgt,
-                                      uint8_t i_tgt_inst)
+uint32_t ListResponseBuffer::streamAttribute(const uint32_t i_gindex, const uint8_t i_tgt_inst)
 {
-    uint16_t data_size = 0;
-    uint8_t index[4] = {0xff,0xff,0xff,0};
-    if (i_row == 0 && i_col == 0 && i_hgt == 0)
+    AttrEntry_t l_attrEntry;
+
+    uint16_t l_totSize = g_attrsTab[i_gindex].iv_size;
+
+    // In case of array attributes, the row size will be
+    // greater than zero. In that case, total size of the
+    // attribute will be size of an array element multiplied
+    // by the array dimension.
+    if ( g_attrsTab[i_gindex].iv_max_row > 0 )
     {
-        // for calculating data_size and index
-        i_row = 1;
-        i_col = 1;
-        i_hgt = 1;
-    }
-    else
-    {
-        // max_row, max_col and max_hgt
-        i_row = g_attrsTab[i_gindex].iv_max_row;
-        i_col = g_attrsTab[i_gindex].iv_max_col;
-        i_hgt = g_attrsTab[i_gindex].iv_max_hgt;
+        l_totSize = (l_totSize *
+                    g_attrsTab[i_gindex].iv_max_row *
+                    g_attrsTab[i_gindex].iv_max_col *
+                    g_attrsTab[i_gindex].iv_max_hgt);
     }
     // attrid
-    *((uint32_t*)iv_currPtr) = static_cast<uint32_t>(g_attrsTab[i_gindex].iv_attr_id);;
-    iv_currPtr += sizeof(uint32_t);
+    l_attrEntry.iv_attrId   = g_attrsTab[i_gindex].iv_attr_id;
+    l_attrEntry.iv_dataSize = l_totSize;
 
-    // size
-    data_size = static_cast<uint16_t>(g_attrsTab[i_gindex].iv_size)*i_row*i_col*i_hgt;
-    *((uint16_t*)iv_currPtr) = data_size;
-    iv_currPtr += sizeof(uint16_t);
+    // In case of array attribute, if the dimension of the array is specified as
+    // 0xFF x 0xFF x 0xFF, then it indicates that the data contains all the
+    // elements of the array.
+    // In case of normal attribute, the dimension will be ignored.
+    l_attrEntry.iv_row      = 0xFF;
+    l_attrEntry.iv_col      = 0xFF;
+    l_attrEntry.iv_hgt      = 0xFF;
+    l_attrEntry.iv_res      = 0x0;
 
-    // index
-    memcpy(iv_currPtr, index, 4*sizeof(uint8_t));
-    iv_currPtr += 4*sizeof(uint8_t);
+    // Including data, AttrEntry_t is in multiple of 8-bytes;
+    uint16_t l_paddedLength =
+      uint16_t((sizeof(AttrEntry_t) + l_attrEntry.iv_dataSize) + 7) & uint16_t(~7);
 
-    // data
-    memcpy(iv_currPtr,
-    (uint8_t*)g_attrsTab[i_gindex].iv_ptr+(i_tgt_inst)*data_size,
-    data_size);
-    iv_currPtr += data_size;
+    uint8_t l_data[l_paddedLength];
 
-    // padding needed due to alignment
-    if(getOutputPackSize()%8!=0)
-    {
-        uint8_t padding = 8-(getOutputPackSize()%8);
-        iv_currPtr += padding;
-    }
+    memset(l_data,0,l_paddedLength);
+
+    memcpy(l_data,&l_attrEntry,sizeof(l_attrEntry));
+    memcpy(l_data+sizeof(l_attrEntry), (uint8_t*)g_attrsTab[i_gindex].iv_ptr+(i_tgt_inst)*l_attrEntry.iv_dataSize,
+                    l_attrEntry.iv_dataSize);
+
+    return iv_oStream->put(l_paddedLength/4, (uint32_t *)l_data);
 }
 
-uint32_t ListResponseBuffer::getExpectedHeapSize()
-{
-    uint32_t expectedHeapSize = 0;
-    expectedHeapSize += sizeof(HeaderEntry_t);
-    for(uint8_t l_tgtIdx=0;l_tgtIdx<g_tgts_tab_size;l_tgtIdx++)
-    {
-        for(uint8_t l_inst = 0;l_inst<g_targetsTab[l_tgtIdx].iv_max_inst;l_inst++)
-        {
-            expectedHeapSize += sizeof(TargetEntry_t);
-            for(uint32_t i = 0;i<g_targetsTab[l_tgtIdx].iv_attr_row_size; i++)
-            {
-
-                uint32_t g_index = g_targetsTab[l_tgtIdx].iv_attr_row_start + i;
-                // attr id
-                expectedHeapSize += 4;
-                // size field
-                expectedHeapSize += sizeof(uint16_t);
-                // index
-                expectedHeapSize += 4*sizeof(uint8_t);
-                uint8_t row = g_attrsTab[g_index].iv_max_row;
-                uint8_t col = g_attrsTab[g_index].iv_max_col;
-                uint8_t hgt = g_attrsTab[g_index].iv_max_hgt;
-                if ( row == 0 && col == 0 && hgt == 0)
-                {
-                    // for calculating data_size and index
-                    row = 1;
-                    col = 1;
-                    hgt = 1;
-                }
-                expectedHeapSize += g_attrsTab[g_index].iv_size*row*col*hgt;
-                if(expectedHeapSize%8!=0)
-                {
-                    expectedHeapSize += 8-expectedHeapSize%8;
-                }
-            }
-        }
-    }
-    return expectedHeapSize;
-
-}
 
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
-uint32_t listAttribute(void *o_buffer)
+uint32_t listAttribute(fapi2::sbefifo_hwp_data_ostream* o_outStream)
 {
     #define SBE_FUNC " listAttribute "
     SBE_ENTER(SBE_FUNC);
-    uint32_t l_rc = 0;
-    ListResponseBuffer   l_respBuffer(o_buffer);
+
+    uint32_t l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+    ListResponseBuffer   l_respBuffer(o_outStream);
     do
     {
-        SBE_INFO(SBE_FUNC " resp buffer after set header = 0x%08x", l_respBuffer.iv_currPtr);
-        l_respBuffer.setHeader();
-
         bool l_isPresent = false;
+
+        l_rc = l_respBuffer.streamHeader();
+        if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+        {
+            SBE_ERROR(SBE_FUNC "streamHeader returned error. l_rc=0x%08X", l_rc);
+            break;
+        }
+
         // read target
         for(uint8_t l_tgtIdx=0;l_tgtIdx<g_tgts_tab_size;l_tgtIdx++)
         {
+            // If there is no attribute for this target type, then
+            // no need to check for the presence of this target.
+            if (g_targetsTab[l_tgtIdx].iv_attr_row_size == 0)
+            {
+                SBE_INFO(SBE_FUNC "Log target type : %d has no attributes. Skipping it",
+                            g_targetsTab[l_tgtIdx].iv_log_target_type);
+                continue;
+            }
             for(uint8_t l_inst = 0;l_inst<g_targetsTab[l_tgtIdx].iv_max_inst;l_inst++)
             {
                 l_rc = checkTargetPresent(g_targetsTab[l_tgtIdx].iv_log_target_type,
                                           l_inst, l_isPresent);
 
+                // For attribute generation, the supported target types are picked up
+                // from the targetlist.json. For targetting, the supported target types
+                // are listed in the target map. If there is a discrepancy between the
+                // two, then it results in error. At this time, it is clear that
+                // TARGET_TYPE_TEMP_SENSOR is supported only for the attribute generation
+                // on certain platforms.So, the chip-op failed. That is correct. As an
+                // exception, this error is being skipped.
                 if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
                 {
                     SBE_ERROR(SBE_FUNC "checkTargetPresent returned error. l_rc=0x%08X",
                             l_rc);
-                    assert(false);
+                    l_rc = SBE_SEC_OPERATION_SUCCESSFUL;
+                    continue;
                 }
 
                 if (l_isPresent == false)
@@ -262,21 +301,50 @@ uint32_t listAttribute(void *o_buffer)
                 }
 
                 // read TargetEntry_t
-                TargetEntry_t target = {
+                TargetEntry_t l_target = {
                     .iv_logTgtType = g_targetsTab[l_tgtIdx].iv_log_target_type,
                     .iv_instance = l_inst,
                     .iv_numAttrs = g_targetsTab[l_tgtIdx].iv_attr_row_size,
                     .iv_magicWord = ATTR_FILE_TARGET_MAGIC_WORD
                 };
-                l_respBuffer.setTarget(& target);
+
+                SBE_DEBUG(SBE_FUNC "Log target type: %d, instance ID: %d", l_target.iv_logTgtType,
+                            l_target.iv_instance);
+
+                l_rc = l_respBuffer.streamTarget(&l_target);
+                if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+                {
+                    SBE_ERROR(SBE_FUNC "streamTarget returned error. l_rc=0x%08X", l_rc);
+                    break;
+                }
+
                 for(uint32_t i = 0;i<g_targetsTab[l_tgtIdx].iv_attr_row_size; i++)
                 {
                     uint32_t g_index = g_targetsTab[l_tgtIdx].iv_attr_row_start + i;
-                    uint8_t row = g_attrsTab[g_index].iv_max_row;
-                    uint8_t col = g_attrsTab[g_index].iv_max_col;
-                    uint8_t hgt = g_attrsTab[g_index].iv_max_hgt;
-                    l_respBuffer.setAttribute( g_index, row, col, hgt, l_inst);
+
+                    l_rc = l_respBuffer.streamAttribute(g_index, l_inst);
+                    if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+                    {
+                        SBE_ERROR(SBE_FUNC "streamAttribute returned error. l_rc=0x%08X", l_rc);
+                        break;
+                    }
                 }
+
+                // If SBE FIFO fails, then streamAttribute() will return RC. In that case,
+                // we don't want to proceed with the next target instance as SBE FIFO errors
+                // are not recoverable.
+                if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+                {
+                    break;
+                }
+            }
+
+            // If SBE FIFO fails, streamTarget() or streamAttribute() will return RC.
+            // In that case, we don't want to proceed with the next target as SBE FIFO
+            // errors are not recoverable.
+            if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
+            {
+                break;
             }
         }
     }while(false);
