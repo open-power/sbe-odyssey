@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -34,254 +34,239 @@
 
 #include <attribute_utils.H>
 #include <fapi2.H>
+#include <plat_hwp_data_stream.H>
 
 namespace fapi2
 {
 namespace ATTR
 {
 
-// Forward declaration
-class ResponseBuffer;
-
 /**
- *  @brief  Utility class for handling incoming attribute update buffer
+ *  @brief  Class for handling incoming attribute update data
  *
  */
-class AttributeUpdateBuffer
+class AttrUpdateDataStream
 {
-    private:
-        HeaderEntry_t   *iv_headerPtr;
-        uint8_t         *iv_bufEnd;
-        uint8_t         *iv_currPtr;
-        ResponseBuffer *iv_response;
+    friend class AttrUpdateHelper;
+
+    sbefifo_hwp_data_istream* iv_stream;
+
+    /**
+     * @brief  Internal method to discard the given number of bytes
+     *         from the SBE FIFO
+     *
+     * @param[in]  i_bytesToDiscard The number of bytes to discard
+     *
+     * @return  SBE_SEC_OPERATION_SUCCESSFUL if successful,
+     *          non-zero in caes of SBE FIFO operation failure
+     */
+    uint32_t readAndDiscard(const uint16_t i_bytesToDiscard);
 
     public:
-        AttributeUpdateBuffer() = delete;
-        AttributeUpdateBuffer(const AttributeUpdateBuffer& ) = delete;
-        AttributeUpdateBuffer&
-            operator = (const AttributeUpdateBuffer& ) = delete;
-
         /**
          * @brief  Constructor
          *
-         * @param[in]   i_buf       Buffer containing attribute update data
+         * @param[in]   i_stream    SBE FIFO stream providing the attribute update
+         *                          data
          *
-         * @param[in]   i_bufSize   The size of the buffer
          */
-        AttributeUpdateBuffer(const void *i_buf, const uint32_t i_bufSize)
-        {
-            iv_headerPtr = (HeaderEntry_t *)i_buf;
-            iv_bufEnd    = (uint8_t *)i_buf + i_bufSize;
-            iv_currPtr   = (uint8_t *)i_buf + sizeof(HeaderEntry_t);
-            iv_response  = nullptr;
-        }
+        explicit AttrUpdateDataStream(sbefifo_hwp_data_istream *i_stream) : iv_stream(i_stream)
+        { }
 
         /**
          * @brief  Method to read the header of the attribute update data
          *
-         * @return Returns a pointer to the header row
-         */
-        HeaderEntry_t* getHeader()
-        {
-            return iv_headerPtr;
-        }
-
-        /**
-         * @brief  Checks if the major version is supported
+         * @param[out] o_header      A pointer to the buffer to store the
+         *                           header
          *
-         * @return true if the major version is supported
+         * @return SBE_SEC_OPERATION_SUCCESSFUL if successful,
+         *        non-zero in caes of SBE FIFO operation failure
          */
-        bool majorVerSupported() const
-        {
-            return (iv_headerPtr->iv_fmtMajor == ATTROVERRIDE_MAJOR_VERSION);
-        }
-
-        /**
-         * @brief  Method to get the major version
-         */
-        uint8_t majorVersion() const
-        {
-            return iv_headerPtr->iv_fmtMajor;
-        }
-
-        /**
-         * @brief  Checks if the minor version is supported
-         *
-         * @return true if the minor version is supported
-         */
-        bool minorVerSupported() const
-        {
-            return (iv_headerPtr->iv_fmtMinor == ATTROVERRIDE_MINOR_VERSION);
-        }
-
-        /**
-         * @brief  Method to get the minor version
-         */
-        uint8_t minorVersion() const
-        {
-            return iv_headerPtr->iv_fmtMinor;
-        }
-
-        /**
-         * @brief  Checks if the file type is valid
-         *
-         * @return true if the file type is valid
-         */
-        bool validFileType() const
-        {
-            return (iv_headerPtr->iv_fileType == ATTROVERRIDE_REQ_FILE_TYPE);
-        }
-
-        /**
-         * @brief  Method to get the file type
-         */
-        uint8_t fileType() const
-        {
-            return iv_headerPtr->iv_fileType;
-        }
-
-        /**
-         * @brief  Method to get the number of target sections in the
-         *         attribute updata data
-         *
-         * @return Returns number of target sections
-         */
-        uint32_t getNumTargets() const
-        {
-            return iv_headerPtr->iv_numTargets;
-        }
+        uint32_t readHeader(HeaderEntry_t *o_header);
 
         /**
          * @brief  Method to read the next target section
          *
-         * @param[out]  o_targetEntry   A pointer to the target section
+         * @param[out]  o_targetEntry   A pointer to the buffer to store the target
          *
-         * @return  ATTROVERRIDE_RC_SUCCESS if successful
-         *          non-zero in case of error
+         * @return SBE_SEC_OPERATION_SUCCESSFUL if successful,
+         *        non-zero in caes of SBE FIFO operation failure
          */
-        uint32_t getNextTarget(TargetEntry_t *&o_targetEntry);
+        uint32_t getNextTarget(TargetEntry_t *o_targetEntry);
 
         /**
-         * @brief  Method to read the next attribute entry
+         * @brief  Method to read the next attribute's details
          *
-         * @param[out]  &o_attrEntry    A pointer to an attribute entry
+         * @param[out]  o_attrSize    A pointer to the buffer to store the attribute's
+         *                            details, which provides attribute-id,
+         *                            attribute size, and the first two dimension.
          *
-         * @return  ATTROVERRIDE_RC_SUCCESS if successful
-         *          non-zero in case of error
+         * @return SBE_SEC_OPERATION_SUCCESSFUL if successful,
+         *        non-zero in caes of SBE FIFO operation failure
+         *
          */
-        uint32_t getNextAttr(AttrEntry_t *&o_attrEntry);
+        uint32_t getNextAttrInfo(AttrInfo_t *o_attrInfo);
 
         /**
-         * @brief  Method to read the current position of the buffer pointer
+         * @brief  Method to read the next attribute's data portion
          *
-         * @return  Returns the current position of the buffer pointer
-         */
-        const uint8_t* getCurrentPtr() const
-        {
-            return iv_currPtr;
-        }
-
-        /**
-         * @brief  Method to set the response buffer object
-         */
-        void setResponseBuf(ResponseBuffer *i_response)
-        {
-            iv_response = i_response;
-        }
-
-        /**
-         * @brief  Method to get the response buffer object
+         * @param[io]  o_buffer         A pointer to the buffer to store the
+         *                              attribute data
          *
-         * @return  Returns the response buffer object
-         */
-        ResponseBuffer & getResponseBuf()
-        {
-            return *iv_response;
-        }
-
-        /**
-         * @brief  Method to know the last position of the buffer
+         * @param[out]  i_bufferSize    The size of the buffer
          *
-         * @return  Returns the last position of the buffer
+         * @return  SBE_SEC_OPERATION_SUCCESSFUL if successful,
+         *        non-zero in caes of SBE FIFO operation failure
          */
-        const uint8_t* getBufferEnd() const
-        {
-            return iv_bufEnd;
-        }
+        uint32_t getNextAttrData(uint8_t *o_buffer, const uint32_t i_bufferSize);
 };
 
 /**
- *  @brief  Utility class for handling attribute update response buffer
+ *  @brief  Class for handling attribute update response
  *
  */
-class ResponseBuffer
+class AttrUpdateResBuffer
 {
-    private:
-        uint8_t                 *iv_currPtr;
-        TargetEntry_t           *iv_lastTargetPtr;
-        uint32_t                 iv_numTargets;
-        AttributeUpdateBuffer&   iv_inputBuffer;
+
+    friend class AttrUpdateHelper;
+
+    uint8_t         *iv_bufPtr;
+    uint32_t         iv_bufSize;
+    uint8_t         *iv_currPtr;
+    TargetEntry_t   *iv_lastTargetPtr;
+    uint8_t          iv_numTargets;
+
+    /**
+     * @brief  Internal method to add an attribute in the response
+     *
+     * @param[in]  i_attrRespEntry      Attribute-id and the override RC
+     *                                  indicating the reason for the
+     *                                  update failure
+     *
+     * @return  SBE_SEC_OPERATION_SUCCESSFUL if successful,
+     *          non-zero in case of error
+     */
+    uint32_t addAttribute(const AttrRespEntry_t &i_attrRespEntry);
 
     public:
-        ResponseBuffer() = delete;
-        ResponseBuffer(const ResponseBuffer& ) = delete;
-        ResponseBuffer&
-            operator = (const ResponseBuffer& ) = delete;
-
-        ResponseBuffer(AttributeUpdateBuffer& i_inputBuffer);
 
         /**
-         * @brief  Method to add a target section
+         * @brief  Constructor
          *
-         * @param[in]  i_target    A pointer to the target section
+         * @param[in]   i_chipType    SBE chip type to identify the chip
+         *                            requesting attribute update chip-op
+         *
+         * @param[in]   i_butPtr      Pointer to the buffer to store the
+         *                            response
+         *
+         * @param[in]   i_butPtr      The size of the buffer
+         *
          */
-        void addTarget(const TargetEntry_t* i_target);
+        AttrUpdateResBuffer(const uint8_t i_chipType, uint8_t *i_bufPtr, const uint32_t i_bufSize);
 
         /**
          * @brief  Method to add a target section in the response
          *
-         * @param[in]  i_target    A pointer to the target section
+         * @param[in]  i_targetEntry    A pointer to the target section,
+         *                              providing the target type and the
+         *                              instance
          *
-         * @param[in]  i_rc        RC to be set
-         *
-         * @return  ATTROVERRIDE_RC_SUCCESS if successful
+         * @return  SBE_SEC_OPERATION_SUCCESSFUL if successful,
          *          non-zero in case of error
          */
-        uint32_t addTarget(const TargetEntry_t* i_target,
-                           const AttributeOverrideRc i_rc);
+        uint32_t addTarget(const TargetEntry_t* i_target);
 
         /**
-         * @brief  Method to add an attribute row in the response
+         * @brief  Method to add an attribute in the response
          *
-         * @param[in]  i_target    A pointer to the target section
+         * @param[in]  i_targetEntry        A pointer to the target section,
+         *                                  providing the target type and the
+         *                                  instance
          *
-         * @param[in]  i_attrEntry A pointer to the attribute row
+         * @param[in]  i_attrEntry          A pointer to the attribute row,
+         *                                  providing the attribute-id
          *
-         * @param[in]  i_rc        RC to be set
+         * @param[in]  AttributeOverrideRc  RC indicating the the reason
+         *                                  for the update failure
+         *
+         * @return  SBE_SEC_OPERATION_SUCCESSFUL if successful,
+         *          non-zero in case of error
          */
-        void addAttr(const TargetEntry_t* i_target,
-                         const AttrEntry_t*  i_attrEntry,
-                         const AttributeOverrideRc i_rc);
+        uint32_t addAttribute(const TargetEntry_t* i_target,
+                              const AttrEntry_t*  i_attrEntry,
+                              const AttributeOverrideRc i_rc);
 
-        // Both input and output buffer point to the same header.
-        // So, the number of target sections in the output buffer
-        // will be updated just before sending the response.
-        // Otherwise, the number of target sections in the input
-        // buffer will be overwritten.
+        /**
+         * @brief  Update the number of targets in the response header
+         */
         void updateHeader()
         {
-            iv_inputBuffer.getHeader()->iv_fileType = ATTROVERRIDE_RESP_FILE_TYPE;
-            iv_inputBuffer.getHeader()->iv_numTargets = iv_numTargets;
+            HeaderEntry_t  *l_header = (HeaderEntry_t *)(iv_bufPtr);
+            l_header->iv_numTargets = iv_numTargets;
         }
 
         /**
          * @brief  Method to get the output packet size in bytes
          *
-         * @return  Number of bytes of the response buffer
+         * @return  Size of the response buffer in bytes
          */
         uint32_t getOutputPackSize() const
         {
-            return (iv_currPtr - (uint8_t *)iv_inputBuffer.getHeader());
+            return (iv_currPtr - iv_bufPtr);
+        }
+};
+
+/**
+ *  @brief  Helper class providing methods that require access to
+ *          input stream and response buffer
+ *
+ */
+class AttrUpdateHelper
+{
+    AttrUpdateDataStream&   iv_inStream;
+    AttrUpdateResBuffer&    iv_outBuffer;
+
+    public:
+        AttrUpdateHelper(AttrUpdateDataStream & i_inStream, AttrUpdateResBuffer & i_outBuffer) :
+                                                                            iv_inStream(i_inStream),
+                                                                            iv_outBuffer(i_outBuffer)
+        { }
+
+        /**
+         * @brief  Method to handle invalid target type or target instance
+         *         in the attribute update data
+         *
+         * @param[in]  i_targetEntry    A pointer to the target section, which
+         *                              provides the target type and the target
+         *                              instance
+         *
+         * @param[in]  i_overrideRc     AttributeOverrideRc indicating the error
+         *
+         *
+         * @param[out] o_rc             Software error,if any
+         *
+         * @return  SBE_SEC_OPERATION_SUCCESSFUL if the SBE FIFO operation is successful,
+         *          Otherwise, the error RC
+         */
+        uint32_t handleTargetError(const TargetEntry_t & i_targetEntry,
+                                   const AttributeOverrideRc i_overrideRc,
+                                   uint32_t & o_rc);
+
+        uint32_t getNextAttrInfo(AttrInfo_t *o_attrInfo)
+        {
+            return iv_inStream.getNextAttrInfo(o_attrInfo);
+        }
+
+        uint32_t getNextAttrData(uint8_t *o_buffer, const uint32_t i_bufSize)
+        {
+            return iv_inStream.getNextAttrData(o_buffer,i_bufSize);
+        }
+
+        uint32_t addAttribute(const TargetEntry_t *i_targetEntry,
+                              const AttrEntry_t  *i_attrEntry,
+                              const AttributeOverrideRc i_overrideRc)
+        {
+            return iv_outBuffer.addAttribute(i_targetEntry, i_attrEntry, i_overrideRc);
         }
 };
 

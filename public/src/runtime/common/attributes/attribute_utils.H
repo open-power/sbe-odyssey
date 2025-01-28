@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2023,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -22,8 +22,7 @@
 /* permissions and limitations under the License.                         */
 /*                                                                        */
 /* IBM_PROLOG_END_TAG                                                     */
-#ifndef __ATTRIBUTE_UTILS_H__
-#define __ATTRIBUTE_UTILS_H__
+#pragma once
 
 #include <stdint.h>
 
@@ -66,6 +65,25 @@ struct HeaderEntry_t
     uint8_t    iv_chipType;     //chip type
     uint8_t    iv_fileType;     //file type
     uint32_t   iv_numTargets;   //number of target sections
+
+    bool isValidUpdateVersion() const
+    {
+        return ((iv_fmtMajor == ATTROVERRIDE_MAJOR_VERSION) &&
+                (iv_fmtMinor == ATTROVERRIDE_MINOR_VERSION));
+    }
+
+    bool isUpdateRequest() const
+    {
+        return (iv_fileType == ATTROVERRIDE_REQ_FILE_TYPE);
+    }
+
+    /**
+     * @brief  Method to validate the attribute update header
+     *
+     * @return SBE_SEC_OPERATION_SUCCESSFUL if successful,
+     *        non-zero in case of failure
+     */
+    uint32_t verifyForUpdateRequest() const;
 };
 
 struct TargetEntry_t
@@ -74,6 +92,24 @@ struct TargetEntry_t
     uint8_t    iv_instance;     //instance number; 0xFF - applicable for all instance
     uint16_t   iv_numAttrs;     //number of attributes for this target type
     uint32_t   iv_magicWord;    //ASCII characters 'T' 'A' 'R' 'G'
+
+    bool isValid() const
+    {
+        return (iv_magicWord == ATTR_FILE_TARGET_MAGIC_WORD);
+    }
+
+    /**
+     * @brief  Method to find the index of this target in the
+     *         target table. That will help to find the starting
+     *         row and the ending row of its attributes in the
+     *         attribute table
+     *
+     * @param[out] o_tgtIdx     Index of this target in the target table
+     *
+     * @return ATTROVERRIDE_RC_SUCCESS if successful,
+     *        non-zero if it is not present in the target table
+     */
+    AttributeOverrideRc getIndex(uint16_t &o_tgtIdx) const;
 };
 
 struct __attribute__((packed)) AttrEntry_t
@@ -87,22 +123,77 @@ struct __attribute__((packed)) AttrEntry_t
     //data is a variable size
 };
 
+struct __attribute__((packed)) AttrInfo_t
+{
+    uint32_t   iv_attrId;       //attribute ID
+    uint16_t   iv_dataSize;     //data size
+    uint8_t    iv_row;          //row number
+    uint8_t    iv_col;          //col number
+
+    /**
+     * @brief  Method to calculate the size of this attribute in bytes,
+     *         including the padding. The attribute section is varying
+     *         in size and aligned to 8-byte boundary.
+     *
+     * @return Size of this attribute, including padding, in bytes
+     */
+    uint32_t paddedLength() const
+    {
+        return ( uint16_t((sizeof(AttrEntry_t) + iv_dataSize) + 7) & uint16_t(~7) );
+    }
+
+    /**
+     * @brief  Method to find the index of this attribute, in the given
+     *         range, in the attribute table. An attribute can exist for
+     *         more than one target type. For each target type, its attributes
+     *         are stored in one range to speed up the search.
+     *
+     * @param[out] o_tgtIdx     Index of this target in the target table
+     *
+     * @return ATTROVERRIDE_RC_SUCCESS if successful,
+     *        non-zero if it is not present in the attribute table
+     */
+    AttributeOverrideRc getIndex(const uint16_t i_startRow,
+                                 const uint16_t i_noOfRow,
+                                 uint32_t & o_attrIdx) const;
+};
+
 struct AttrRespEntry_t
 {
     uint32_t            iv_attrId; //attribute ID
     AttributeOverrideRc iv_rc;     //RC code for the failure
 };
 
-enum ENTRY_TYPE
-{
-    HEADER_ENTRY,
-    TARGET_ENTRY,
-    ATTRIBUTE_ENTRY,
-    END_ENTRY
-};
+/**
+* @brief  Method to calculate the maximum buffer size required for
+*         storing the attribute update chip-op response. This
+*         will be the buffer size required if the attribute update
+*         fails for all the attributes in the attribute tank.
+*
+* @return Maximum buffer size required in bytes
+*/
+uint32_t getMaxResBuffSize();
+
+/**
+ * @brief  Method to allocate scratch space for storing attribute update
+ *         chip-op response. This method requests for scratch space of
+ *         MIN_RES_BUF_SIZE bytes. If this much scratch space is not
+ *         available, then this method requests for scratch space to
+ *         store at least the response header (sizeof(HeaderEntry_t).
+ *         If this much space is not available, then this method returns
+ *         error.
+ *         Note: It is the responsibility of the caller to free the
+ *         memory allocated by this method.
+ *
+ * @param[out] o_buffer     Buffer pointer
+ *
+ * @param[out] o_bufSize    The allocated buffer size in bytes
+ *
+ * @return SBE_SEC_OPERATION_SUCCESSFUL, if successful,
+ *         SBE_SEC_HEAP_SPACE_FULL_FAILURE if scratch allocation failed
+ */
+uint32_t getResponseBuffer(void *&o_buffer, uint32_t &o_bufSize);
 
 } //ATTR
 
 } //fapi2
-
-#endif // __ATTRIBUTE_UTILS_H__

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2023,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -27,6 +27,7 @@
 #include <attribute_ids.H>
 #include <attribute_utils.H>
 #include <target_types.H>
+#include <plat_hwp_data_stream.H>
 
 namespace fapi2
 {
@@ -45,13 +46,24 @@ struct AttributesTable
     uint8_t                 iv_size;
     void                   *iv_ptr;
 
+    /**
+     * @brief  Method to update the attribute of the given target instance
+     *
+     * @param[in]  i_tgt_inst       Target instance to be updated
+     *
+     * @param[in]  i_attrEntry      The attribute section providing the
+     *                              new value of the attribute
+     *
+     * @return  ATTROVERRIDE_RC_SUCCESS if the attribute has been sucessfully
+     *          updated; non-zero in case of error
+     */
     AttributeOverrideRc applyOverride(const uint8_t       i_tgt_inst,
                                       const AttrEntry_t*  i_attrEntry);
 
 };
 
 // Forward declaration
-class AttributeUpdateBuffer;
+class AttrUpdateHelper;
 
 struct TargetsTable
 {
@@ -61,14 +73,51 @@ struct TargetsTable
     uint16_t                iv_attr_row_size;
     uint8_t                 iv_gen_override;
 
-    uint32_t applyOverride(const TargetEntry_t *i_targetEntry,
-                           AttributeUpdateBuffer&  i_buffer);
-
+    /**
+     * @brief  Method to iterate through the attributes of the given target
+     *         section and update them
+     *
+     * @param[in]  i_targetEntry    A pointer to the target section, which
+     *                              provide the instance of the target type
+     *                              to be updated and the number of attributes
+     *                              to be updated
+     *
+     * @param[in]  i_attrUpdHelper  Object to read the attribute sections from
+     *                              the update data and store the response
+     *
+     * @param[out] o_rc             Software error,if any
+     *
+     * @return  SBE_SEC_OPERATION_SUCCESSFUL if the SBE FIFO operation is successful,
+     *          Otherwise, the error RC
+     */
+    uint32_t applyOverride(const TargetEntry_t*  i_targetEntry,
+                           AttrUpdateHelper &    i_attrUpdHelper,
+                           uint32_t & o_rc);
 };
 
-uint32_t    applyOverride(const void *io_buffer, const uint32_t i_bufSize,
-                          uint32_t & o_resPackSize);
-
+/**
+ * @brief  Method to update attribute tank. The update data is read
+ *         from the SBE FIFO stream.
+ *
+ * @param[in]  i_stream         SBE FIFO stream providing the attribute
+ *                              update data
+ *
+ * @param[in]  i_buffer         Buffer to store the response
+ *
+ * @param[out] i_bufSize        The size of the response buffer
+ *
+ * @param[out] o_resPackSize    The response packet size
+ *
+ * @param[out] o_rc             Software error,if any
+ *
+ * @return  SBE_SEC_OPERATION_SUCCESSFUL if the SBE FIFO operation is successful,
+ *          Otherwise, the error RC
+ */
+uint32_t applyOverride(sbefifo_hwp_data_istream &i_stream,
+                       void *i_buffer,
+                       const uint32_t i_bufSize,
+                       uint32_t & o_resPackSize,
+                       uint32_t & o_rc);
 
 
 extern AttributesTable g_attrsTab[];

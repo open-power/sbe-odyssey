@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2015,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2015,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -249,6 +249,7 @@ enum sbeSecondaryResponse
     SBE_SEC_FILE_HASH_VALIDATION_FAILED       = 0x9A,
     SBE_SEC_GIT_TAG_FAILURE                   = 0x9B,
     SBE_SEC_ATTR_UPD_FAILED                   = 0x9C,
+    SBE_SEC_ATTR_UPD_OUT_BUFF_OVERFLOW        = 0X9D,
 };
 
 /**

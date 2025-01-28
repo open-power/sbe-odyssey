@@ -5,7 +5,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2022,2024
+# Contributors Listed Below - COPYRIGHT 2022,2025
 # [+] International Business Machines Corp.
 #
 #
@@ -28,6 +28,7 @@ CMN_ATTRIBUTES_CHIPOPS_JSON = files('chipop_table.json')
 abs_runtime_cmn_attributes_c_path = files('attribute_list_service.C',
                                           'attribute_override_service.C',
                                           'sbecmdlistattr.C',
-                                          'sbecmdupdateattr.C')
+                                          'sbecmdupdateattr.C',
+                                          'attribute_utils.C')
 
 abs_runtime_cmn_attr_ovrd_c_path  = files('attribute_override_service.C')
