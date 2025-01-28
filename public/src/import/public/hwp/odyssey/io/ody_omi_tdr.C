@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2023,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -246,14 +246,12 @@ fapi2::ReturnCode ody_omi_tdr(const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>&
             FAPI_DBG("Lane %d is up & trained.", l_lane);
         }
 
-        l_data = l_data | (static_cast<uint64_t>(l_lane) << LANE_POS);
+        l_data = (static_cast<uint64_t>(l_group) << GROUP_POS);
+        l_data |= (static_cast<uint64_t>(l_lane) << LANE_POS);
         l_data |= (static_cast<uint64_t>(l_status) << STATUS_POS);
         l_data |= l_length_ps;
 
         o_ostream.put64(l_data);
-        // Clear the lane & other data without touching the group
-        // Not necessary here, as group will always be 0 for Ody
-        l_data &= 0xFF00000000000000;
     }
 
     FAPI_TRY(o_ostream.flush());
