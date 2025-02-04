@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2023,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -309,7 +309,7 @@ fapi2::ReturnCode common_io_tdr(
             case TdrResult::ShortToGnd:
             case TdrResult::ShortToVdd:
                 {
-                    FAPI_DBG("TDR Short found, starting at base_point_y1(%d)", base_point_y1);
+                    FAPI_INF("TDR Short found, starting at base_point_y1(%d)", base_point_y1);
                     int32_t l_base = (base_point_y1 + base_point_y2) / 2;
                     int32_t x1_crossing = 0;
                     int32_t x2_crossing = 0;
@@ -337,6 +337,7 @@ fapi2::ReturnCode common_io_tdr(
                     if ((l_base - l_middac) < 2 || (l_base - l_middac) > -2)
                     {
                         l_length_ui[l_phase] = 0;
+                        FAPI_INF("TDR Short breaking base(%d), middac(%d)", l_base, l_middac);
                         break;
                     }
 
@@ -353,7 +354,7 @@ fapi2::ReturnCode common_io_tdr(
                                  true,
                                  x1_crossing));
 
-                    FAPI_DBG("x1 crossing: %d", x1_crossing);
+                    FAPI_INF("x1 crossing: %d", x1_crossing);
 
                     if (x1_crossing == -1)
                     {
@@ -375,7 +376,7 @@ fapi2::ReturnCode common_io_tdr(
                                  false,
                                  x2_crossing));
 
-                    FAPI_DBG("x2 crossing: %d", x2_crossing);
+                    FAPI_INF("x2 crossing: %d", x2_crossing);
 
                     if (x2_crossing == -1)
                     {
@@ -405,16 +406,28 @@ fapi2::ReturnCode common_io_tdr(
         }
     }
 
-    FAPI_INF("N-leg status(0x%04X) length(%d) :: P-leg status(0x%04X) length(%d) :: 0x0010(GOOD), 0x0020(OPEN), 0x0030(SHORT), 0x0040(DID_NOT_RUN), 0x0050(NOT SUPPORTED), 0x0060(UNABLE)",
+    FAPI_INF("N-leg status(0x%04X) length(%d) :: P-leg status(0x%04X) length(%d)",
              l_status[0],
              l_length_ui[0], l_status[1], l_length_ui[1]);
 
     // Set length and status based on both phases
-    if ((l_status[0] == TdrResult::NoIssues) && (l_status[1] == TdrResult::NoIssues))
+
+    // Handle the corner case where each leg is showing different problems
+    // - We can get poor TDR results due to the differential connection if
+    //   one net is shorted
+    if (((l_status[0] == TdrResult::Short) && (l_status[1] == TdrResult::Open )) ||
+        ((l_status[0] == TdrResult::Open ) && (l_status[1] == TdrResult::Short)))
+    {
+        o_status = TdrResult::UnableToDetermine;
+        o_length_ui = 0;
+    }
+    // If Good, continue on
+    else if ((l_status[0] == TdrResult::NoIssues) && (l_status[1] == TdrResult::NoIssues))
     {
         o_status = TdrResult::NoIssues;
         o_length_ui = 0;
     }
+    // Typical Open Case
     else if (l_status[0] == TdrResult::Open)
     {
         o_status = TdrResult::Open;
