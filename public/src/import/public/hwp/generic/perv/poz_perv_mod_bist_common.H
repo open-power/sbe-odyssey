@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2023                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -106,7 +106,14 @@ const struct OPCGCaptureSettings ccNS8 =
     .OPCG_CAPT3 = 0xE000000000000000ULL
 };
 
-const struct OPCGCaptureSettings opcgCaptureSettings[] =  { ccN0F, ccN1F, ccN2F, ccN3F, ccN5F, ccN9F, ccNS1, ccNS2, ccNS4, ccNS5, ccNS8 };
+const struct OPCGCaptureSettings ccN16F =
+{
+    .OPCG_CAPT1 = 0xE0739CE739CE739CULL,
+    .OPCG_CAPT2 = 0xE0739CE700000000ULL,
+    .OPCG_CAPT3 = 0xE000000000000000ULL
+};
+
+const struct OPCGCaptureSettings opcgCaptureSettings[] =  { ccN0F, ccN1F, ccN2F, ccN3F, ccN5F, ccN9F, ccNS1, ccNS2, ccNS4, ccNS5, ccNS8, ccN16F };
 
 struct STUMPSWeightSettings
 {
