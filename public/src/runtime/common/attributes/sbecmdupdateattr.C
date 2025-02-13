@@ -64,16 +64,17 @@ uint32_t sbeUpdateAttr(uint8_t *i_pArg)
                                             l_bufSize,l_respPackSize,l_rc);
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_fifoRc);
 
-        bool l_flush = false;
-        if (l_rc != SBE_SEC_OPERATION_SUCCESSFUL)
-        {
-            //If there is a secondary SRC, then it indicates that the stream has
-            //not been successfully processed. So, flush the remaining data in the
-            //SBE FIFO.
-            l_flush = true;
-        }
+        //Case 1:
+        //  If there is a secondary SRC(l_rc), then it indicates that the stream
+        //  has not been successfully processed. So, flush the remaining data in
+        //  the SBE FIFO.
+        //Case 2:
+        //  If the size of the buffer passed to the HWP to generate attribute update
+        //  blob is greater than the actual size of the blob, then we may get more
+        //  bytes than what is required. Those extra bytes will also be flushed to
+        //  maintain backward compatibility.
 
-        l_fifoRc = iStream.get(0, NULL, true, l_flush);
+        l_fifoRc = iStream.get(0, NULL, true, true);
         CHECK_SBE_RC_AND_BREAK_IF_NOT_SUCCESS(l_fifoRc);
 
 
