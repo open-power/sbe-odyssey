@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2023,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -112,12 +112,6 @@ uint32_t sbeCmdCheckMemoryDevice(uint8_t *i_pArg)
             l_rc = SBE_SEC_HEAP_BUFFER_ALLOC_FAILED;
             l_hdr.setStatus( SBE_PRI_GENERIC_EXECUTION_FAILURE, l_rc );
             break;
-        }
-
-        // Perform pre-scrub check for full scope side if any
-        if (l_memCheckCmdMsg.scope == SCOPE_FULL_SIDE)
-        {
-            preScrubCheck();
         }
 
         // Get memory scrubbed data
