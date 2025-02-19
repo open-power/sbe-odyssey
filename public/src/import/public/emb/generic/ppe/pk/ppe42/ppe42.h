@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -524,6 +524,29 @@ pk_interrupt_disable(PkMachineContext* context)
 *context = mfmsr();
 
 wrteei(0);
+
+return PK_OK;
+}
+
+/// Enable interrupts and return the current context.
+///
+/// \param context A pointer to an PkMachineContext, this is the context that
+///                existed before interrupts were enabled. Typically this
+///                context is restored at the end of a critical section.
+///
+/// Return values other then PK_OK (0) are errors; see \ref pk_errors
+///
+/// \retval 0 Successful completion
+///
+/// \retval -PK_INVALID_ARGUMENT_INTERRUPT An illegal priority was specified.
+
+UNLESS__PPE42_CORE_C__(extern)
+inline int
+pk_interrupt_enable(PkMachineContext* context)
+{
+*context = mfmsr();
+
+wrteei(1);
 
 return PK_OK;
 }

@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2021,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2021,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -572,9 +572,7 @@ process_bottom_halves:
         mtsprg0 %r3                 //set bottom half context
 
         ## branch to a C function that processes bottom halves
-        wrteei  1
         bl      _pk_process_bh
-        wrteei  0
 
         ## restore the previous kernel context (with discard bit set)
         mtsprg0 %r31
