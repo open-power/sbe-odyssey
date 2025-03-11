@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2023,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -39,7 +39,6 @@
 #pragma once
 
 #include <fapi2.H>
-// #include <ody_io_ppe_common.H>
 
 enum IOPPE_FIR_BITS
 {
@@ -78,6 +77,8 @@ enum IOPPE_FIR_BITS
 enum ERROR_MASK_FIR_BITS
 {
     MASK_INSUFFICIENT_WORKING_LANES = 51,
+    MASK_ECC_CE_READING_FLIT_FROM_BUFFER = 49,
+    MASK_ECC_CE_ON_DWORD_RUN_LENGTH_INFO = 48,
     MASK_NACK_RECEIVED = 46,
     MASK_TX_DEGRADE_MODE = 45,
     MASK_LOST_BLOCK_LOCK = 30,
@@ -108,6 +109,7 @@ enum MC_OMI_FIR_BITS
     LFIR_PAR_ERR = 0,
     DL0_FATAL_ERROR = 1,
     DL0_DATA_UE = 2,
+    DL0_FLIT_CE = 3,
     DL0_CRC_ERROR = 4,
     DL0_NACK = 5,
     DL0_X4_MODE = 6,
@@ -191,7 +193,6 @@ fapi2::ReturnCode io_ppe_firs<K, M, V>::ioppe_fir_set_pre_start(const fapi2::Tar
     // Unmask other PHY PPE FIRs
     FAPI_DBG("Unmask PHY PPE FIRs.");
     l_buffer.setBit<IO0_RX_INVALID_STATE_OR_PARITY_ERROR>();
-    l_buffer.setBit<IO0_TX_INVALID_STATE_OR_PARITY_ERROR>();
     l_buffer.setBit<PPE_INT_HWERROR>();
     l_buffer.setBit<PPE_EXT_HWERROR>();
     l_buffer.setBit<PPE_HALT_WATCHDOG_OR_INTERRUPT>();
@@ -207,8 +208,8 @@ fapi2::ReturnCode io_ppe_firs<K, M, V>::ioppe_fir_set_pre_start(const fapi2::Tar
     FAPI_TRY(fapi2::putScom(i_target, l_lfir_rw_wclear_mask, l_buffer));
     l_buffer.flush<0>();
 
+    // Mask PHY PPE FIRs recoverable
     l_buffer.setBit<IO0_RX_INVALID_STATE_OR_PARITY_ERROR>();
-    l_buffer.setBit<IO0_TX_INVALID_STATE_OR_PARITY_ERROR>();
     l_buffer.setBit<PPE_INT_HWERROR>();
     l_buffer.setBit<PPE_EXT_HWERROR>();
     l_buffer.setBit<PPE_HALT_WATCHDOG_OR_INTERRUPT>();
@@ -271,6 +272,8 @@ fapi2::ReturnCode io_ppe_firs<K, M, V>::mc_omi_fir_set(const fapi2::Target<K, M,
     // dl0 error masks pre-reqs for FIRs
     FAPI_TRY(fapi2::getScom(i_target, iv_dl0_error_mask, l_buffer));
     l_buffer.setBit<MASK_INSUFFICIENT_WORKING_LANES>();
+    l_buffer.clearBit<MASK_ECC_CE_READING_FLIT_FROM_BUFFER>();
+    l_buffer.clearBit<MASK_ECC_CE_ON_DWORD_RUN_LENGTH_INFO>();
     l_buffer.setBit<MASK_TX_DEGRADE_MODE>();
     l_buffer.clearBit<MASK_LOST_BLOCK_LOCK>();
     l_buffer.setBit<MASK_TX_PERFORMANCE_THRESH_BREACH>();
@@ -293,6 +296,7 @@ fapi2::ReturnCode io_ppe_firs<K, M, V>::mc_omi_fir_set(const fapi2::Target<K, M,
     // Unmask FIRs
     l_buffer.setBit<DL0_FATAL_ERROR>();
     l_buffer.setBit<DL0_DATA_UE>();
+    l_buffer.setBit<DL0_FLIT_CE>();
     l_buffer.setBit<DL0_CRC_ERROR>();
     l_buffer.setBit<DL0_NACK>();
     l_buffer.setBit<DL0_X4_MODE>();
@@ -305,6 +309,8 @@ fapi2::ReturnCode io_ppe_firs<K, M, V>::mc_omi_fir_set(const fapi2::Target<K, M,
     l_buffer.flush<0>();
 
     // Mask FIRs
+    l_buffer.setBit<DL0_CRC_ERROR>();
+    l_buffer.setBit<DL0_NACK>();
     l_buffer.setBit<DL0_EDPL>();
     FAPI_TRY(fapi2::putScom(i_target, l_mc_omi_w0x_or_mask, l_buffer));
     l_buffer.flush<0>();
