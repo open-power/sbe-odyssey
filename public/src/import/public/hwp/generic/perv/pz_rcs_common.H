@@ -91,6 +91,45 @@ enum PZ_RCS_Private_Constants
 ReturnCode print_debug_info(const Target < TARGET_TYPE_PROC_CHIP >& i_target,
                             const fapi2::ATTR_CP_REFCLOCK_SELECT_Type& i_refclk_select);
 
+/// @brief Set/Clear the RCS FIRs to mitigate risk of Millicode seeing a fake error due to async polling
+/// @param[in]   i_target           Reference to TARGET_TYPE_PROC/HUB_CHIP
+/// @param[in]   i_set_mask         Bool for whether or not to set the FIRs or clear them
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+inline ReturnCode update_fir_mask(const Target < TARGET_TYPE_PROC_CHIP >& i_target,
+                                  bool i_set_mask)
+{
+    FAPI_INF("Update RCS FIRs | Setting Mask %d", i_set_mask);
+
+    // TPTOP.TPCHIP.TPC.LFIR
+    constexpr uint64_t c_lfir_rw_clear_addr = 0x01040100;
+    constexpr uint64_t c_lfir_mask_rw_clear_addr = 0x01040102;
+    constexpr uint64_t c_lfir_mask_wo_or_addr = 0x01040103;
+    constexpr uint8_t c_in57 = 57; // RCS - OSC0 Error (async) TYPE: RECOV CLEAR: only LFIR
+    constexpr uint8_t c_in58 = 58; // RCS - OSC1 Error (async) TYPE: RECOV CLEAR: only LFIR
+
+    fapi2::buffer<uint64_t> l_buffer = 0x0;
+
+    l_buffer.setBit<c_in57>();
+    l_buffer.setBit<c_in58>();
+
+    if (i_set_mask)
+    {
+        // Set FIR Mask
+        FAPI_TRY(putScom(i_target, c_lfir_mask_wo_or_addr, l_buffer)); // Mask WO WOR
+    }
+    else
+    {
+        // Clear the FIRs
+        FAPI_TRY(putScom(i_target, c_lfir_rw_clear_addr, l_buffer));
+
+        // Clear FIR Mask
+        FAPI_TRY(putScom(i_target, c_lfir_mask_rw_clear_addr, l_buffer)); // Mask RW WClear
+    }
+
+fapi_try_exit:
+    return current_err;
+}
+
 /// @brief Clear software inject errors before running HWPs
 /// @param[in]   i_target           Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @return  FAPI2_RC_SUCCESS if success, else error code.

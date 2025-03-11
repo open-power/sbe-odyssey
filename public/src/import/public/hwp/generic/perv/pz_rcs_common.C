@@ -38,6 +38,7 @@
 #include <poz_perv_utils.H>
 
 
+
 using namespace fapi2;
 using namespace scomt::poz;
 
@@ -76,6 +77,7 @@ ReturnCode print_debug_info(const Target < TARGET_TYPE_PROC_CHIP >& i_target,
 fapi_try_exit:
     return current_err;
 }
+
 
 ReturnCode clear_rcs_injected_errs(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
 {

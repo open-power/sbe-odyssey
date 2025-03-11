@@ -67,6 +67,7 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
 
     FAPI_TRY(print_debug_info(i_target, l_refclock_select));
 
+    FAPI_TRY(update_fir_mask(i_target, true));
     FAPI_TRY(clear_rcs_injected_errs(i_target));
 
     // Sanity check
@@ -183,6 +184,8 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
     FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
     l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_PPM_RESET>();
     FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+
+    FAPI_TRY(update_fir_mask(i_target, false));
 
 fapi_try_exit:
     FAPI_INF("End RCS Add");

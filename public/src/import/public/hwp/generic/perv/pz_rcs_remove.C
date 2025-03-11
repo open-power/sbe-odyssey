@@ -62,6 +62,7 @@ ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CP_REFCLOCK_SELECT, i_target, l_refclock_select));
 
     FAPI_TRY(print_debug_info(i_target, l_refclock_select));
+    FAPI_TRY(update_fir_mask(i_target, true));
 
     FAPI_TRY(clear_rcs_injected_errs(i_target));
 
@@ -157,6 +158,7 @@ ReturnCode pz_rcs_remove(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
     FAPI_TRY(rcs_check_errors(i_target, l_refclock_select));
     FAPI_TRY(rcs_verify_clean_state(i_target, l_refclock_select));
 
+    FAPI_TRY(update_fir_mask(i_target, false));
     FAPI_TRY(print_debug_info(i_target, l_refclock_select));
 
 fapi_try_exit:
