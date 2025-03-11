@@ -1146,9 +1146,6 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::bist_cleanup(const fapi2::Target<K, M,
     FAPI_TRY(MEM_REG_PPE_SERVO_STATUS0_PUT(iv_regs, i_target, i_thread, 0));
     FAPI_TRY(MEM_REG_PPE_SERVO_STATUS1_PUT(iv_regs, i_target, i_thread, 0));
 
-    FAPI_DBG("Clearing per-image registers");
-    FAPI_TRY(IMG_REG_PPE_DEBUG_LOG_NUM_PUT(iv_regs, i_target, 0));
-
     FAPI_TRY(iv_regs->flushCache(i_target));
 
     FAPI_DBG("Starting BIST cleanup ext_cmd");
