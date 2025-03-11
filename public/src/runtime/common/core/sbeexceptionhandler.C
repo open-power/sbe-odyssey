@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2023,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -154,7 +154,25 @@ extern "C" void __sbe_machine_check_handler()
         "mflr %r0\n"
         "stw  %r0, 60(%r1)\n"
 
-        "# need to check whether the machine check caused by a scom error or not\n"
+        "# Check the MCS bits (29:31) in the ISR to determine the cause for the machine check\n"
+        "# If its data machine check \n"
+        "#          (0b001 = Data machine check: load\n"
+        "#           0b010 = Data machine check: precise store\n"
+        "#           0b011 = Data machine check: imprecise store)\n"
+        "#   this means the exception happened after it tried to access it. This will happen when\n"
+        "#   engined tried to read some pib/scom access and it failed. Hence we have to check whether\n"
+        "#   failed address is in scom error not, and if yes we can return.\n"
+        "# For all other exception, we can halt.\n"
+        "mfisr %r4\n"
+        "andi. %r4, %r4, 0x0007\n"
+
+        "# branch to Instr_MC if MCS is zero\n"
+        "bwz %r4, __other_error_machine_check\n"
+
+        "# branch to Other_MC if MCS is greater than 3\n"
+        "cmpwibgt %r4, 0x0003, __other_error_machine_check\n"
+
+        "# confirm its a scom error\n"
         "# if it is scom error, we have to continue the sbe firmware, other wise halt\n"
         "# This is the Data_MC path, EDR contains the Data Addr causing the MC\n"
         "mfedr %r4\n"
@@ -163,13 +181,13 @@ extern "C" void __sbe_machine_check_handler()
         "# failed scom and jump to __scom_error\n"
         "cmplwi %r4, 0x8000\n"
         "blt __scom_error\n"
-        "# Else, save-off and halt the SBE\n"
-        "# Save-off Register FFDC and Halt\n"
 
+        "# Else, save-off and halt the SBE\n"
+    "__other_error_machine_check:"
         "# Save-off Register FFDC and Halt\n"
         "b __sbe_register_saveoff\n"
 
-        "__scom_error:\n"
+    "__scom_error:\n"
         "# The srr0 contains the address of the instruction that caused the machine\n"
         "# check (since the the interrupt is raised *before* the instruction\n"
         "# completed execution). Since we want the code to continue with the next\n"
