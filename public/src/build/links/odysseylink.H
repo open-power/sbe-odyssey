@@ -173,7 +173,7 @@ ASSERT((SROM_BLDR_CMN_SH_FILE_SCRATCH_END < BOOTLOADER_ORIGIN), \
 // 2K of stack to thermal sensor polling
 #define SBE_THREAD_ASYNC_CMD_PROC_STACK_SIZE    2048
 
-#define SBE_THREAD_CMD_RECV_STACK_SIZE          512
+#define SBE_THREAD_CMD_RECV_STACK_SIZE          768
 
 // 8K of Stack for processor thread
 #define SBE_THREAD_SYNC_CMD_PROC_STACK_SIZE     8192
