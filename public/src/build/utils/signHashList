@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2016,2024
+# Contributors Listed Below - COPYRIGHT 2016,2025
 # [+] International Business Machines Corp.
 #
 #
@@ -165,8 +165,12 @@ PATH=$SIGNING_DIR:$PATH
 
 
 #TODO: Change to pst env variable once op-build is enabled
+# Check for signing mode passed in by environment (p11)
+if [ ! -z "${BR2_OPENPOWER_P11_SECUREBOOT_SIGN_MODE+x}" ]; then
+    SIGNING_MODE=$BR2_OPENPOWER_P11_SECUREBOOT_SIGN_MODE
+
 # Check for signing mode passed in by environment (p10)
-if [ ! -z "${BR2_OPENPOWER_P10_SECUREBOOT_SIGN_MODE+x}" ]; then
+elif [ ! -z "${BR2_OPENPOWER_P10_SECUREBOOT_SIGN_MODE+x}" ]; then
     SIGNING_MODE=$BR2_OPENPOWER_P10_SECUREBOOT_SIGN_MODE
 
 # To allow for prod signing boot loader with dev runtime can set the following env
