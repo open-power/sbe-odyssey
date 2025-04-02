@@ -59,6 +59,8 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
     FSXCOMP_FSXLOG_SNS1LTH_t l_sns1lth;
     FSXCOMP_FSXLOG_SNS2LTH_t l_sns2lth;
 
+    uint8_t l_osc_side_a = 1;
+
     // Check ATTR for which OSC
     fapi2::ATTR_CP_REFCLOCK_SELECT_Type l_refclock_select = 0;
     FAPI_TRY(FAPI_ATTR_GET(fapi2::ATTR_CP_REFCLOCK_SELECT, i_target, l_refclock_select));
@@ -134,16 +136,13 @@ ReturnCode pz_rcs_add(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
 
     FAPI_TRY(l_root_ctrl3.putScom(i_target));
 
-    // Deskew Calibration
-    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
-    l_rcs_ctrl1.clearBit<FSXCOMP_FSXLOG_RCS_CTRL1_DESKEW_AUTO_LOCK>();
-    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
-    fapi2::delay(RCS_CONSTS::WAIT_1MS, RCS_CONSTS::WAIT_100KCYC);
-    l_rcs_ctrl1.setBit<FSXCOMP_FSXLOG_RCS_CTRL1_DESKEW_AUTO_LOCK>();
-    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
-    FAPI_TRY(l_sns1lth.getScom(i_target));
-    FAPI_INF("RCS Auto Deskew A %d.", l_sns1lth.get_DESKEW_QOUT_A());
-    FAPI_INF("RCS Auto Deskew B %d.", l_sns1lth.get_DESKEW_QOUT_B());
+    // Sweep and set deskew value
+    if ((l_refclock_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1) == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC0)
+    {
+        l_osc_side_a = 0;
+    }
+
+    FAPI_TRY(rcs_deskew_manual_cal(i_target, l_osc_side_a));
 
     // Set the clear clock errors to 0
     FAPI_TRY(l_root_ctrl5.getScom(i_target));

@@ -72,12 +72,13 @@ enum PZ_RCS_Private_Constants
 
     WAIT_20NS =       20,
     WAIT_1US  =     1000,
+    WAIT_5US  =     5000,
     WAIT_10US =    10000,
     WAIT_1MS  =  1000000,
     WAIT_5MS  =  5000000,
     WAIT_20MS = 20000000,
-    WAIT_1500CYC = 1500,
 
+    WAIT_1500CYC = 1500,
     WAIT_100KCYC =  100000,
     WAIT_5MCYC   = 5000000,
 };
@@ -105,6 +106,13 @@ ReturnCode clear_cfam_write_protect(const Target < TARGET_TYPE_PROC_CHIP >& i_ta
 /// @param[in]   i_target     Reference to TARGET_TYPE_PROC/HUB_CHIP
 /// @return  FAPI2_RC_SUCCESS if success, else error code.
 ReturnCode pz_rcs_pdown(const Target < TARGET_TYPE_PROC_CHIP >& i_target);
+
+/// @brief Sweep through deskew values to set best value for both clocks
+/// @param[in]   i_target     Reference to TARGET_TYPE_PROC/HUB_CHIP
+/// @param[in]   i_refclk_select    The current refclock being used
+/// @return  FAPI2_RC_SUCCESS if success, else error code.
+ReturnCode rcs_deskew_manual_cal(const Target < TARGET_TYPE_PROC_CHIP >& i_target,
+                                 uint32_t i_osc_side_a);
 
 /// @brief Switch RCS oscillators
 /// @param[in]   i_target     Reference to TARGET_TYPE_PROC/HUB_CHIP

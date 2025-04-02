@@ -154,6 +154,191 @@ fapi_try_exit:
     return current_err;
 }
 
+ReturnCode rcs_deskew_manual_cal(const Target < TARGET_TYPE_PROC_CHIP >& i_target,
+                                 uint32_t i_osc_side_a)
+{
+    FAPI_INF("RCS Manual Deskew Calibration on side %d", i_osc_side_a);
+
+    constexpr uint32_t c_ERROR4DESKEW_A = 16;
+    constexpr uint32_t c_ERROR4DESKEW_B = 24;
+    constexpr uint32_t c_deskew_sel_a_bit = 0;
+    constexpr uint32_t c_deskew_sel_b_bit = 5;
+    constexpr uint32_t c_deskew_sel_len = 5;
+
+    constexpr int32_t deskew2gray[] =
+    {
+        0b00000,
+        0b10000,
+        0b11000,
+        0b01000,
+        0b01100,
+        0b11100,
+        0b10100,
+        0b00100,
+        0b00110,
+        0b10110,
+        0b11110,
+        0b01110,
+        0b01010,
+        0b11010,
+        0b10010,
+        0b00010,
+        0b00011,
+        0b10011,
+        0b11011,
+        0b01011,
+        0b01111,
+        0b11111,
+        0b10111,
+        0b00111,
+        0b00101,
+        0b10101,
+        0b11101,
+        0b01101,
+        0b01001,
+        0b11001,
+        0b10001,
+        0b00001
+    };
+
+    FSXCOMP_FSXLOG_ROOT_CTRL5_t l_root_ctrl5;
+    FSXCOMP_FSXLOG_RCS_CTRL1_t l_rcs_ctrl1;
+    FSXCOMP_FSXLOG_SNS1LTH_t l_sns1lth;
+
+    uint32_t l_deskew_err_bit = 0;
+    int32_t l_deskew_gray = 0;
+    int32_t l_current_val = -1;
+    int32_t l_prev_val = -1;
+    int32_t l_falling_edge = -1;
+    int32_t l_rising_edge = -1;
+    int32_t l_center = -1;
+
+    // TOOD: remove, should alreayd be in this space
+    // clear deskew en & lock
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    l_rcs_ctrl1.clearBit<12>(); // Deskew Auto En
+    l_rcs_ctrl1.clearBit<13>(); // Deskew Auto Lock
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+
+    // Side A
+    if (i_osc_side_a == 1)
+    {
+        l_deskew_err_bit = c_ERROR4DESKEW_A;
+    }
+    // Side B
+    else
+    {
+        l_deskew_err_bit = c_ERROR4DESKEW_B;
+    }
+
+    for (int32_t l_deskew_val = 0; l_deskew_val < 32; ++l_deskew_val)
+    {
+        // Toggle clk error clears (both A/B)
+        FAPI_TRY(l_root_ctrl5.getScom(i_target));
+        l_root_ctrl5.setBit<6>();
+        l_root_ctrl5.setBit<7>();
+        FAPI_TRY(l_root_ctrl5.putScom(i_target));
+        fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
+        l_root_ctrl5.clearBit<6>();
+        l_root_ctrl5.clearBit<7>();
+        FAPI_TRY(l_root_ctrl5.putScom(i_target));
+        fapi2::delay(RCS_CONSTS::WAIT_5US, RCS_CONSTS::WAIT_100KCYC);
+
+        // write gray coded deskew value
+        FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+
+        l_deskew_gray = deskew2gray[l_deskew_val];
+
+        if (i_osc_side_a == 1)
+        {
+            l_rcs_ctrl1.insertFromRight<c_deskew_sel_a_bit, c_deskew_sel_len>(l_deskew_gray);
+        }
+        else
+        {
+            l_rcs_ctrl1.insertFromRight<c_deskew_sel_b_bit, c_deskew_sel_len>(l_deskew_gray);
+        }
+
+        FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+
+        // read deskew error
+        FAPI_TRY(l_sns1lth.getScom(i_target));
+        l_current_val = l_sns1lth.getBit(l_deskew_err_bit);
+
+        // Check for falling edge
+        if ((l_prev_val == 1) && (l_current_val == 0))
+        {
+            l_falling_edge = l_deskew_val;
+        }
+        // Check for rising edge
+        else if ((l_falling_edge > -1) && (l_prev_val == 0) && (l_current_val == 1))
+        {
+            l_rising_edge = l_deskew_val;
+        }
+
+        // TODO: Min window size check
+        // TODO: Find all windows/centers & analyze best later
+        // Calc the center value
+        if ((l_falling_edge > -1) && (l_rising_edge > -1))
+        {
+            l_center = (l_falling_edge + l_rising_edge) / 2;
+            break;
+        }
+
+        // Set prev val
+        l_prev_val = l_current_val;
+    }
+
+    // corner cases
+    if (l_center == -1)
+    {
+        // no edges found
+        if ((l_falling_edge == -1) && (l_rising_edge == -1))
+        {
+            FAPI_ERR("No edges found");
+            l_center = 15;
+        }
+        // rising edge found, but not falling edge
+        else if ((l_falling_edge == -1) && (l_rising_edge > -1))
+        {
+            FAPI_ERR("No falling edge found");
+            l_center = l_rising_edge / 2;
+        }
+        // falling edge found, but not rising edge
+        else if ((l_falling_edge > -1) && (l_rising_edge == -1))
+        {
+            FAPI_ERR("No rising edge found");
+            l_center = (l_falling_edge + 31) / 2;
+        }
+    }
+
+    // Bound checking
+    if ((l_center > 31) || (l_center < 0))
+    {
+        FAPI_ERR("Center value (%d) out of bounds");
+        l_center = 15;
+    }
+
+    // write gray coded center deskew value
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+
+    FAPI_INF("Center value (%d)", l_center);
+    l_deskew_gray = deskew2gray[l_center];
+
+    if (i_osc_side_a)
+    {
+        l_rcs_ctrl1.insertFromRight<c_deskew_sel_a_bit, c_deskew_sel_len>(l_deskew_gray);
+    }
+    else
+    {
+        l_rcs_ctrl1.insertFromRight<c_deskew_sel_b_bit, c_deskew_sel_len>(l_deskew_gray);
+    }
+
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+
+fapi_try_exit:
+    return current_err;
+}
+
 ReturnCode rcs_verify_clean_state(const Target < TARGET_TYPE_PROC_CHIP >& i_target,
                                   const fapi2::ATTR_CP_REFCLOCK_SELECT_Type& i_refclk_select)
 {

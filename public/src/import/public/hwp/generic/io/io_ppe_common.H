@@ -1807,8 +1807,10 @@ fapi2::ReturnCode io_ppe_common<K, M, V>::auto_recal_sync(const fapi2::Target<K,
             FAPI_TRY(MEM_REG_PPE_ERROR_THREAD_PUT(iv_regs, i_target, i_thread, 0));
             FAPI_TRY(MEM_REG_PPE_ERROR_LANE_PUT(iv_regs, i_target, i_thread, 0));
             FAPI_TRY(MEM_REG_PPE_ERROR_VALID_PUT(iv_regs, i_target, i_thread, 0));
-            FAPI_TRY(iv_regs->flushCache(i_target));
         }
+
+        FAPI_TRY(MEM_REG_RX_ENABLE_AUTO_RECAL_0_31_PUT(iv_regs, i_target, i_thread, i_auto_recal_mask));
+        FAPI_TRY(iv_regs->flushCache(i_target));
 
         FAPI_DBG("Clearing RECAL_NOT_RUN & RECAL_ABORT FIR (& Mask)")
         l_data.setBit<RECAL_ABORT_BIT>();

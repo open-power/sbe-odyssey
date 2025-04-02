@@ -212,9 +212,8 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
     l_rcs_ctrl1 = 0;
     l_rcs_ctrl1.set_DESKEW_SEL_A(0);
     l_rcs_ctrl1.set_DESKEW_SEL_B(0);
-    l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_ENABLE_19P5_DLL>();
     l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_LOCK_19P5_DLL_CODE>();
-    l_rcs_ctrl1.set_DESKEW_AUTO_EN(1);
+    l_rcs_ctrl1.set_DESKEW_AUTO_EN(0);
     l_rcs_ctrl1.set_DESKEW_AUTO_LOCK(0);
     l_rcs_ctrl1.set_DESKEW_AUTO_FILT(0);
     l_rcs_ctrl1.set_TESTOUT_SEL(0);
@@ -251,16 +250,30 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
 
     fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
 
-    // Deskew Calibration
-    l_rcs_ctrl1.set_DESKEW_AUTO_LOCK(1);
-    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
-    FAPI_TRY(l_sns1lth.getScom(i_target));
-    FAPI_INF("RCS Auto Deskew A %d.", l_sns1lth.get_DESKEW_QOUT_A());
-    FAPI_INF("RCS Auto Deskew B %d.", l_sns1lth.get_DESKEW_QOUT_B());
+    // Sweep and set deskew value
+    FAPI_INF("RCS Manual Deskew calibration.");
 
-    fapi2::delay(RCS_CONSTS::WAIT_1MS, RCS_CONSTS::WAIT_100KCYC); // Need at least 1ms of stability for the DLL to lock
+    if ((l_refclock_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_BOTH_OSC0) ||
+        ((l_refclock_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1) == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC0))
+    {
+        FAPI_TRY(rcs_deskew_manual_cal(i_target, 1),
+                 "RCS manual deskew failed on side A");
+    }
+
+    if ((l_refclock_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_BOTH_OSC0) ||
+        ((l_refclock_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1) == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1))
+    {
+        FAPI_TRY(rcs_deskew_manual_cal(i_target, 0),
+                 "RCS manual deskew failed on side B");
+    }
 
     // Lock the 19.5ps DLL
+    FAPI_INF("RCS Enable 19.5ps DLL.");
+    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_ENABLE_19P5_DLL>();
+    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1MS, RCS_CONSTS::WAIT_100KCYC);
+
     FAPI_INF("RCS Locking 19.5ps DLL.");
     l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_LOCK_19P5_DLL_CODE>();
     FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
@@ -300,24 +313,6 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
 
     FAPI_INF("RCS Verifying Correct Side.");
     FAPI_TRY(l_sns2lth.getScom(i_target));
-
-    if ((l_refclock_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1) == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC0)
-    {
-        if (l_sns2lth.get_MUXSEL_CLK_B() == 1)
-        {
-            FAPI_INF("RCS Needs to be on OSC0 but on Side B. Forcing Switchover.");
-            FAPI_TRY(rcs_sw_switch(i_target));
-        }
-    }
-
-    if ((l_refclock_select & fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1) == fapi2::ENUM_ATTR_CP_REFCLOCK_SELECT_OSC1)
-    {
-        if (l_sns2lth.get_MUXSEL_CLK_A() == 1)
-        {
-            FAPI_INF("RCS Needs to be on OSC1 but on Side A. Forcing Switchover.");
-            FAPI_TRY(rcs_sw_switch(i_target));
-        }
-    }
 
     // Release RCS Bypass
     fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
