@@ -294,19 +294,19 @@ ReturnCode rcs_deskew_manual_cal(const Target < TARGET_TYPE_PROC_CHIP >& i_targe
         // no edges found
         if ((l_falling_edge == -1) && (l_rising_edge == -1))
         {
-            FAPI_ERR("No edges found");
+            FAPI_ERR("RCS No edges found");
             l_center = 15;
         }
         // rising edge found, but not falling edge
         else if ((l_falling_edge == -1) && (l_rising_edge > -1))
         {
-            FAPI_ERR("No falling edge found");
+            FAPI_ERR("RCS No falling edge found");
             l_center = l_rising_edge / 2;
         }
         // falling edge found, but not rising edge
         else if ((l_falling_edge > -1) && (l_rising_edge == -1))
         {
-            FAPI_ERR("No rising edge found");
+            FAPI_ERR("RCS No rising edge found");
             l_center = (l_falling_edge + 31) / 2;
         }
     }
@@ -314,14 +314,14 @@ ReturnCode rcs_deskew_manual_cal(const Target < TARGET_TYPE_PROC_CHIP >& i_targe
     // Bound checking
     if ((l_center > 31) || (l_center < 0))
     {
-        FAPI_ERR("Center value (%d) out of bounds");
+        FAPI_ERR("RCS Center value (%d) out of bounds");
         l_center = 15;
     }
 
     // write gray coded center deskew value
     FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
 
-    FAPI_INF("Center value (%d)", l_center);
+    FAPI_INF("RCS Left(%d) Right(%d) Center value (%d)", l_falling_edge, l_rising_edge, l_center);
     l_deskew_gray = deskew2gray[l_center];
 
     if (i_osc_side_a)
@@ -375,13 +375,13 @@ ReturnCode rcs_verify_clean_state(const Target < TARGET_TYPE_PROC_CHIP >& i_targ
                 fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
                 "RCS Clk B Error.");
 
-    FAPI_ASSERT(l_sns1lth.getBit(RCS_CONSTS::SNS1LTH_19P5_ERROR_A) == 0,
-                fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                "RCS 19.5ps Error A.");
+    // FAPI_ASSERT(l_sns1lth.getBit(RCS_CONSTS::SNS1LTH_19P5_ERROR_A) == 0,
+    //             fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
+    //             "RCS 19.5ps Error A.");
 
-    FAPI_ASSERT(l_sns1lth.getBit(RCS_CONSTS::SNS1LTH_19P5_ERROR_B) == 0,
-                fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
-                "RCS 19.5ps Error B.");
+    // FAPI_ASSERT(l_sns1lth.getBit(RCS_CONSTS::SNS1LTH_19P5_ERROR_B) == 0,
+    //             fapi2::POZ_RCS_ERROR().set_PROC_TARGET(i_target),
+    //             "RCS 19.5ps Error B.");
 
     // Do not need to check these, but would like to monitor them for debug
     FAPI_INF("RCS Unlock Detect A %d | B %d", l_sns1lth.get_UNLOCKDET_A(), l_sns1lth.get_UNLOCKDET_B());
@@ -463,9 +463,11 @@ ReturnCode rcs_sw_switch(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
     l_root_ctrl5.setBit<FSXCOMP_FSXLOG_ROOT_CTRL5_CLEAR_CLK_ERROR_A>();
     l_root_ctrl5.setBit<FSXCOMP_FSXLOG_ROOT_CTRL5_CLEAR_CLK_ERROR_B>();
     FAPI_TRY(l_root_ctrl5.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
     l_root_ctrl5.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL5_CLEAR_CLK_ERROR_A>();
     l_root_ctrl5.clearBit<FSXCOMP_FSXLOG_ROOT_CTRL5_CLEAR_CLK_ERROR_B>();
     FAPI_TRY(l_root_ctrl5.putScom(i_target));
+    fapi2::delay(RCS_CONSTS::WAIT_1US, RCS_CONSTS::WAIT_100KCYC);
 
 
     // Clear the Auto Block Switchover Signal

@@ -199,7 +199,7 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
     l_root_ctrl5.set_CLEAR_CLK_ERROR_B(0);
     l_root_ctrl5.set_MUXCTL_CLK_CHKSW(1); // Must be high for typical operation
     l_root_ctrl5.set_FILT(0);
-    l_root_ctrl5.set_JUMP_SEL(3); // 19.5ps mode
+    l_root_ctrl5.set_JUMP_SEL(2); // 39ps mode
     l_root_ctrl5.set_SEL_RES(2);
     l_root_ctrl5.set_EN_RISE_EARLY_DETECT(1);
     l_root_ctrl5.set_EN_RISE_LATE_DETECT(1);
@@ -212,6 +212,7 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
     l_rcs_ctrl1 = 0;
     l_rcs_ctrl1.set_DESKEW_SEL_A(0);
     l_rcs_ctrl1.set_DESKEW_SEL_B(0);
+    l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_ENABLE_19P5_DLL>();
     l_rcs_ctrl1.clearBit<RCS_CONSTS::CTRL1_LOCK_19P5_DLL_CODE>();
     l_rcs_ctrl1.set_DESKEW_AUTO_EN(0);
     l_rcs_ctrl1.set_DESKEW_AUTO_LOCK(0);
@@ -267,16 +268,16 @@ ReturnCode pz_rcs_setup(const Target < TARGET_TYPE_PROC_CHIP >& i_target)
                  "RCS manual deskew failed on side B");
     }
 
-    // Lock the 19.5ps DLL
-    FAPI_INF("RCS Enable 19.5ps DLL.");
-    FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
-    l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_ENABLE_19P5_DLL>();
-    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
-    fapi2::delay(RCS_CONSTS::WAIT_1MS, RCS_CONSTS::WAIT_100KCYC);
+    // // Lock the 19.5ps DLL
+    // FAPI_INF("RCS Enable 19.5ps DLL.");
+    // FAPI_TRY(l_rcs_ctrl1.getScom(i_target));
+    // l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_ENABLE_19P5_DLL>();
+    // FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+    // fapi2::delay(RCS_CONSTS::WAIT_1MS, RCS_CONSTS::WAIT_100KCYC);
 
-    FAPI_INF("RCS Locking 19.5ps DLL.");
-    l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_LOCK_19P5_DLL_CODE>();
-    FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
+    // FAPI_INF("RCS Locking 19.5ps DLL.");
+    // l_rcs_ctrl1.setBit<RCS_CONSTS::CTRL1_LOCK_19P5_DLL_CODE>();
+    // FAPI_TRY(l_rcs_ctrl1.putScom(i_target));
 
     // Clear Errors -- Wait for Errors to propagate
     FAPI_INF("RCS Clearing Errors.");
