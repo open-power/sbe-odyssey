@@ -309,7 +309,7 @@ class utilsTools:
         return 1
 
     def parseSbeTrace(self, toolPath, traceBinPath, traceStringFilePath, outFilePath, printTrace = True):
-        pp2fspFile   = self.getFile (toolPath, 'ppe2fsp')
+        pp2fspFile   = self.getFile (toolPath, 'ppe2fsp.py')
         fsptraceFile = self.getFile (toolPath, 'fsp-trace' )
 
         outfile = str(outFilePath / 'trace.txt')
