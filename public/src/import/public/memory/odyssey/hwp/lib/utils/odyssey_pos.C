@@ -39,6 +39,7 @@
 #include <generic/memory/lib/utils/find.H>
 #include <generic/memory/lib/utils/mss_generic_check.H>
 #include <generic/memory/proc_specific/mss_target_abstractions.H>
+#include "plat_trace.H"
 
 namespace mss
 {

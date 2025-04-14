@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2024                             */
+/* Contributors Listed Below - COPYRIGHT 2024,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -33,6 +33,7 @@
 // *HWP Consumed by: Cronus
 
 #include <ody_chipop_tsns_dqs_period.H>
+#include "plat_trace.H"
 
 fapi2::ReturnCode ody_chipop_tsns_dqs_period (
     const fapi2::Target<fapi2::TARGET_TYPE_OCMB_CHIP>& i_target,

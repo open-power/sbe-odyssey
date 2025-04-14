@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -38,6 +38,7 @@
 #ifndef DOXYGEN
 
 #include <lib/utils/fake_spd.H>
+#include "plat_trace.H"
 
 /// DIMM data was taken from /afs/awd.austin.ibm.com/projects/eclipz/lab/p8/gsiexe/
 /// 78P0AAM_DDR4_8G1RX8_mu/MICRON_SPD_8G_1Rx8_DDR4_2400_RDIMM.hex on 7/31/2015.

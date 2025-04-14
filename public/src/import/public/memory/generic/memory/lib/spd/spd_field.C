@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022                             */
+/* Contributors Listed Below - COPYRIGHT 2022,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -35,7 +35,7 @@
 // *HWP Consumed by: HB:FSP
 
 #include <generic/memory/lib/spd/spd_field.H>
-
+#include  "fapi2_error_scope.H"
 namespace mss
 {
 namespace spd
