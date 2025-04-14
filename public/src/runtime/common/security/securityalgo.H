@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2019,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2019,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -226,7 +226,15 @@
 
     typedef struct GenSecurityListTables
     {
-        GenSecurityListTables(){}
+        // Initialize all struct members
+        GenSecurityListTables()
+        : al_t1{0, 0, nullptr},
+          al_t2{0, 0, nullptr},
+          al_t3{0, 0, nullptr},
+          dl_t1{0, 0, nullptr},
+          dl_t2{0, 0, nullptr},
+          dl_t3{0, 0, nullptr},
+          pl_t1{0, 0, nullptr} {}
         _t1_table_t  al_t1;
         _t2_table_t  al_t2;
         _t3_table_t  al_t3;
