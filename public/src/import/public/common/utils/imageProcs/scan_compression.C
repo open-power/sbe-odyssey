@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2022,2024                        */
+/* Contributors Listed Below - COPYRIGHT 2022,2025                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -2209,6 +2209,12 @@ rs4::rs4_overlay( rs4::CompressedScanData* o_rs4Final,    // Holds rs4Final + ra
 {
     int rc = SCAN_COMPRESSION_OK;
 
+    if (o_rs4Final == NULL)
+    {
+        return BUGX(SCAN_COMPRESSION_NO_MEMORY,
+                    "ERROR: rs4_overlay: No memory allocated for final overlaid RS4 ring\n");
+    }
+
     // Split up the input buffer, o_rs4Final, into four smaller equally sized buffers (starting
     // with o_rs4Final where it already is).
     // Then clear the three Raw4 buffers but wait to clear io_rs4Final until later to allow
@@ -2219,13 +2225,6 @@ rs4::rs4_overlay( rs4::CompressedScanData* o_rs4Final,    // Holds rs4Final + ra
     memset(raw4Final, 0, i_workBufSize / 4);
     memset(raw4Tgt,   0, i_workBufSize / 4);
     memset(raw4Ovly,  0, i_workBufSize / 4);
-
-
-    if (o_rs4Final == NULL)
-    {
-        return BUGX(SCAN_COMPRESSION_NO_MEMORY,
-                    "ERROR: rs4_overlay: No memory allocated for final overlaid RS4 ring\n");
-    }
 
     if (i_workBufSize < 4 * RS4_RING_BUF_SIZE)
     {
