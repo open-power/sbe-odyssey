@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2022,2024                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2022,2025                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -497,6 +497,18 @@
   </attribute>
 
   <attribute>
+    <id>ATTR_MEM_OVERRIDE_FREQ_LIMITATION</id>
+    <targetType>TARGET_TYPE_SYSTEM</targetType>
+    <description>
+      Set to YES if you want to override processor-driven memory frequency limitations.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <enum>NO = 0, YES = 1</enum>
+  </attribute>
+
+  <attribute>
     <id>ATTR_MEM_IGNORE_PLUG_RULES</id>
     <targetType>TARGET_TYPE_SYSTEM</targetType>
     <description>
@@ -566,6 +578,20 @@
     <description>
       This attribute is used to avoid duplicate SPD revision
       plug rule testing. Set internally by HWP code.
+    </description>
+    <initToZero></initToZero>
+    <valueType>uint8</valueType>
+    <writeable/>
+    <enum>NO = 0, YES = 1</enum>
+  </attribute>
+
+  <attribute>
+    <id>ATTR_SKIP_PLUG_RULES_IN_EFF_CONFIG_THERMAL</id>
+    <targetType>TARGET_TYPE_SYSTEM</targetType>
+    <description>
+      This attribute is used to avoid running duplicate
+      plug rule testing in the eff_config_thermal istep.
+      Set internally by HWP code.
     </description>
     <initToZero></initToZero>
     <valueType>uint8</valueType>
