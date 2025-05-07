@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2023,2024                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2023,2025                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -57,6 +57,19 @@
     38400 = 38400
   </enum>
   <default>28800</default>
+  <platInit/>
+  <writeable/>
+</attribute>
+<!-- ********************************************************************** -->
+<attribute>
+  <id>ATTR_XBUS_DL_FIR_MASK</id>
+  <targetType>TARGET_TYPE_PROC_CHIP</targetType>
+  <description>
+    The DL FIR Mask expected to be set and get during XBUS Sync operations
+  </description>
+  <valueType>uint64</valueType>
+  <array>6</array>
+  <initToZero/>
   <platInit/>
   <writeable/>
 </attribute>
