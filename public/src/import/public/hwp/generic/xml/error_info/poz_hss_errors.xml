@@ -5,7 +5,7 @@
 <!--                                                                        -->
 <!-- OpenPOWER sbe Project                                                  -->
 <!--                                                                        -->
-<!-- Contributors Listed Below - COPYRIGHT 2023,2024                        -->
+<!-- Contributors Listed Below - COPYRIGHT 2023,2025                        -->
 <!-- [+] International Business Machines Corp.                              -->
 <!--                                                                        -->
 <!--                                                                        -->
@@ -116,6 +116,21 @@
       <deconfigure>
         <target>TARGET_CHIP</target>
       </deconfigure>
+    </hwpError>
+  <!-- ******************************************************************** -->
+  <hwpError>
+      <sbeError/>
+      <rc>RC_POZ_IO_TDR_HORIZ_XING</rc>
+      <description>Tx TDR Sample points</description>
+      <ffdc>TARGET_CHIP</ffdc>
+      <ffdc>PHASE</ffdc>
+      <ffdc>ONE_EIGHTH</ffdc>
+      <ffdc>TWO_EIGHTHS</ffdc>
+      <ffdc>THREE_EIGHTHS</ffdc>
+      <ffdc>FOUR_EIGHTHS</ffdc>
+      <ffdc>FIVE_EIGHTHS</ffdc>
+      <ffdc>SIX_EIGHTHS</ffdc>
+      <ffdc>SEVEN_EIGHTHS</ffdc>
     </hwpError>
   <!-- ******************************************************************** -->
   <hwpError>

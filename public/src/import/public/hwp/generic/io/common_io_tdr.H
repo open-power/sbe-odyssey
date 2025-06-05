@@ -268,32 +268,64 @@ fapi2::ReturnCode common_io_tdr(
                     uint32_t x2_crossing = 0;
                     uint32_t max = (base_point_y1 > base_point_y2) ? base_point_y1 : base_point_y2;
                     uint32_t min = (base_point_y1 > base_point_y2) ? base_point_y2 : base_point_y1;
-                    uint32_t l_y1 = min + (((max - min) + 2) / 4);
-                    uint32_t l_y2 = min + ((((max - min) * 3) + 2) / 4);
-                    FAPI_DBG("TDR Y1(%d) Y2(%d)", l_y1, l_y2);
+                    // from 1/8 -> 7/8
+                    uint32_t horiz_xing[7] = {0, 0, 0, 0, 0, 0, 0};
+                    uint32_t l_horiz_diff = 0;
+                    uint32_t l_threshold = 5;
 
-                    FAPI_TRY(common_io_tdr_find_horizontal_crossing(
-                                 i_target,
-                                 i_baseAddr,
-                                 i_group,
-                                 l_phase,
-                                 l_y1 >> 1,
-                                 i_lane,
-                                 min_offset,
-                                 max_offset,
-                                 x1_crossing));
+                    for (uint8_t l_iter = 0; l_iter < 7; l_iter++)
+                    {
+                        uint32_t l_xing = min + ((((max - min) * (l_iter + 1)) + 2) / 8);
+                        FAPI_DBG("TDR Y1(%d) Y2(%d)", l_xing);
+
+                        FAPI_TRY(common_io_tdr_find_horizontal_crossing(
+                                     i_target,
+                                     i_baseAddr,
+                                     i_group,
+                                     l_phase,
+                                     l_xing >> 1,
+                                     i_lane,
+                                     min_offset,
+                                     max_offset,
+                                     horiz_xing[l_iter]));
+                        FAPI_INF("TDR H-Cross Eval: DAC/Vert(%d), Resulting X Pos: %d", l_xing, horiz_xing[l_iter]);
+                    }
+
+                    // If upper base points is within a margin, use 5
+                    l_horiz_diff = (horiz_xing[6] > horiz_xing[5]) ? horiz_xing[6] - horiz_xing[5] : horiz_xing[5] - horiz_xing[6];
+
+                    if ( l_horiz_diff < l_threshold )
+                    {
+                        // Use the 3/4s value
+                        x1_crossing = horiz_xing[5];
+                        FAPI_INF("Using 3/4s");
+                    }
+                    // Otherwise use 6
+                    else
+                    {
+                        // Use the max (7/8) value
+                        x1_crossing = horiz_xing[6];
+                        FAPI_INF("Using 7/8s");
+                    }
+
+                    // If lower base points is within a margin, use 1
+                    l_horiz_diff = (horiz_xing[1] > horiz_xing[0]) ? horiz_xing[1] - horiz_xing[0] : horiz_xing[0] - horiz_xing[1];
+
+                    if (l_horiz_diff < l_threshold)
+                    {
+                        // Use the 1/4 value
+                        x2_crossing = horiz_xing[1];
+                        FAPI_INF("Using 1/4s");
+                    }
+                    // Otherwise use 1
+                    else
+                    {
+                        // Use the min (1/8) value
+                        x2_crossing = horiz_xing[0];
+                        FAPI_INF("Using 1/8s");
+                    }
+
                     x1_crossing = (x1_crossing << 1) + 1;
-
-                    FAPI_TRY(common_io_tdr_find_horizontal_crossing(
-                                 i_target,
-                                 i_baseAddr,
-                                 i_group,
-                                 l_phase,
-                                 l_y2 >> 1,
-                                 i_lane,
-                                 min_offset,
-                                 max_offset,
-                                 x2_crossing));
                     x2_crossing = (x2_crossing << 1) + 1;
 
                     l_length_ui[l_phase] = (x1_crossing > x2_crossing)
