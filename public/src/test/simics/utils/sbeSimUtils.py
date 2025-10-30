@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2024
+# Contributors Listed Below - COPYRIGHT 2024,2025
 # [+] International Business Machines Corp.
 #
 #
@@ -210,10 +210,18 @@ def startCbs(procNr=0, nodeNr=0):
             # ROOT CTRL 0 - Setting the bit 28-29 to perform Odyssey CFAM reset
             simTargets.spinal[0].lbus_map.iface.memory_space.write(None, 0x2c80, (0x00, 0x00, 0x00, 0x0c), 0x0)
             runCycles(10000000)
-
+        if(simenv.machine_name == "pst_standalone"):
+            conf.dimm0.odyssey.c4_reset.iface.signal.signal_raise()
+        else:
+            conf.ddimm_ody0.odyssey.c4_reset.iface.signal.signal_raise()
         # Enabling Spinal CFAM voltage domain
         chip.fsi2host_mbox.port.vdn_pgood.iface.signal.signal_raise()
         runCycles(1000000)
+
+        # now run sbe-config-update, since cfam reset will clear the cfam registers.
+        import simics_initialisation
+        simics_initialisation.sbeConfigUpdate()
+
         # command to read 8 bytes from 0x00002804
         fsxcomp_cbs = chip.lbus_map.iface.memory_space.read(None, (0x00002804), 4, 0x0)
         # updating bit 0 to 1 in the read register
@@ -225,7 +233,6 @@ def startCbs(procNr=0, nodeNr=0):
         else:
             data[0] = data[0]|0x80
         chip.lbus_map.iface.memory_space.write(None, (0x00002804), (*data,), 4)
-
         if (simenv.sbe_image_type == 'sppe' ):
             waitAndExecuteRamming(chip)
 
