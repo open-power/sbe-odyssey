@@ -6,7 +6,8 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2023,2024
+# Contributors Listed Below - COPYRIGHT 2023,2025
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -61,6 +62,10 @@ targetsObjs = SIM_get_all_objects()
 # framework
 odysseys = []
 dimms = []
+if(simenv.machine_name == "pst_standalone"):
+    tap = []
+    spinal = []
+
 for targetsObj in targetsObjs:
     # Currently, we are looking for only odyssey dimm model so using
     # the "odyssey_cmp" class to get odyssey dimm objects.
@@ -69,6 +74,12 @@ for targetsObj in targetsObjs:
     if ((targetsObj.classname == "ddimm_cmp") or
         (targetsObj.classname == "ddimm_ody")):
         dimms.append(targetsObj)
+    # pst_standalone supports TAP and spinal image
+    if(simenv.machine_name == "pst_standalone"):
+        if targetsObj.classname == "tap_cmp":
+            tap.append(targetsObj)
+        elif targetsObj.classname == "spinal_cmp":
+            spinal.append(targetsObj)
 
 # Sort always the retrieved objects to use the object by using the instance
 # number.

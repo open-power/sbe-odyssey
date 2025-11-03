@@ -6,7 +6,8 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2015,2024
+# Contributors Listed Below - COPYRIGHT 2015,2025
+# [+] International Business Machines Corp.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -113,10 +114,26 @@ def startCbs(procNr=0, nodeNr=0 ):
         raise CliError("This command supported only when simics is not running")
 
     chip = simTargets.odysseys[procNr]
-
+    if(simenv.machine_name == "pst_standalone") and (simenv.sbe_project_type == "odyssey" or simenv.sbe_project_type == "odysseylab"):
+        # PST Standalone reset OCMB CFAM via spinal CFAM ROOT CTRL REG 0
+        # ROOT CTRL 0 - Clearing the bits 28-29 to perform Odyssey CFAM reset
+        simTargets.spinal[0].lbus_map.iface.memory_space.write(None, 0x2cc0, (0x00, 0x00, 0x00, 0x0c), 0x0)
+        runCycles(10000000)
+        # ROOT CTRL 0 - Setting the bit 28-29 to perform Odyssey CFAM reset
+        simTargets.spinal[0].lbus_map.iface.memory_space.write(None, 0x2c80, (0x00, 0x00, 0x00, 0x0c), 0x0)
+        runCycles(10000000)
+    if(simenv.machine_name == "pst_standalone"):
+        conf.dimm0.odyssey.c4_reset.iface.signal.signal_raise()
+    else:
+        conf.ddimm_ody0.odyssey.c4_reset.iface.signal.signal_raise()
     # Set PG-Good
     chip.fsi2host_mbox.port.vdn_pgood.iface.signal.signal_raise()
     SIM_run_command( "run-cycles 1000")
+
+    import simics_initialisation
+    simics_initialisation.sbeConfigUpdate()
+
+    # now run sbe-config-update, since cfam reset will clear the cfam registers.
     # command to read 8 bytes from 0x00002804
     fsxcomp_cbs = chip.lbus_map.iface.memory_space.read(None, (0x00002804), 4, 0x0)
     # updating bit 0 to 1 in the read register
