@@ -5,7 +5,7 @@
 /*                                                                        */
 /* OpenPOWER sbe Project                                                  */
 /*                                                                        */
-/* Contributors Listed Below - COPYRIGHT 2023,2025                        */
+/* Contributors Listed Below - COPYRIGHT 2023,2026                        */
 /* [+] International Business Machines Corp.                              */
 /*                                                                        */
 /*                                                                        */
@@ -444,11 +444,24 @@ fapi2::ReturnCode common_io_tdr(
 
     // Set length and status based on both phases
 
+    // Check short to ground first
+    // Typically when we get a short, we will likely also get an open on the
+    // other leg as the differential termination is all messed up
+    if ((l_status[0] & TdrResult::ShortToGnd) == TdrResult::ShortToGnd)
+    {
+        o_status = static_cast<TdrResult>(l_status[0]);
+        o_length_ui = l_length_ui[0];
+    }
+    else if ((l_status[1] & TdrResult::ShortToGnd) == TdrResult::ShortToGnd)
+    {
+        o_status = static_cast<TdrResult>(l_status[1]);
+        o_length_ui = l_length_ui[1];
+    }
     // Handle the corner case where each leg is showing different problems
     // - We can get poor TDR results due to the differential connection if
-    //   one net is shorted
-    if (((l_status[0] == TdrResult::Short) && (l_status[1] == TdrResult::Open )) ||
-        ((l_status[0] == TdrResult::Open ) && (l_status[1] == TdrResult::Short)))
+    //   one net is shorted (not shorted to ground)
+    else if (((l_status[0] & TdrResult::Short) && (l_status[1] == TdrResult::Open )) ||
+             ((l_status[0] == TdrResult::Open ) && (l_status[1] & TdrResult::Short)))
     {
         o_status = TdrResult::UnableToDetermine;
         o_length_ui = 0;
@@ -458,6 +471,16 @@ fapi2::ReturnCode common_io_tdr(
     {
         o_status = TdrResult::NoIssues;
         o_length_ui = 0;
+    }
+    else if (l_status[0] & TdrResult::Short)
+    {
+        o_status = static_cast<TdrResult>(l_status[0]);
+        o_length_ui = l_length_ui[0];
+    }
+    else if (l_status[1] & TdrResult::Short)
+    {
+        o_status = static_cast<TdrResult>(l_status[1]);
+        o_length_ui = l_length_ui[1];
     }
     // Typical Open Case
     else if (l_status[0] == TdrResult::Open)
@@ -484,16 +507,6 @@ fapi2::ReturnCode common_io_tdr(
     else if (l_status[1] == TdrResult::Open)
     {
         o_status = TdrResult::Open;
-        o_length_ui = l_length_ui[1];
-    }
-    else if (l_status[0] & TdrResult::Short)
-    {
-        o_status = static_cast<TdrResult>(l_status[0]);
-        o_length_ui = l_length_ui[0];
-    }
-    else if (l_status[1] & TdrResult::Short)
-    {
-        o_status = static_cast<TdrResult>(l_status[1]);
         o_length_ui = l_length_ui[1];
     }
     else
