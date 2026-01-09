@@ -62,6 +62,7 @@ enum TdrRegisters
     tx_ctl_cntl6_pg = 0x18D8,
     tx_stat1_pl = 0x0A48,
     tx_ctl_mode1_pg = 0x1818,
+    tx_mode1_pl = 0x0838
 };
 
 enum TdrConsts
@@ -202,11 +203,6 @@ fapi2::ReturnCode common_io_tdr(
         l_length_ui.push_back(0ul);
     }
 
-    bool loopExit = false;
-
-    // char l_tgt_str[fapi2::MAX_ECMD_STRING_LEN];
-
-    // fapi2::toString(i_target, l_tgt_str, sizeof(l_tgt_str));
 
     FAPI_TRY(common_io_tdr_get_tdr_offsets(i_target, c_pulse_width, tdr_offset_width));
 
@@ -341,35 +337,52 @@ fapi2::ReturnCode common_io_tdr(
             case TdrResult::ShortToGnd:
             case TdrResult::ShortToVdd:
                 {
-                    FAPI_INF("TDR Short found, starting at base_point_y1(%d)", base_point_y1);
-                    int32_t l_base = (base_point_y1 + base_point_y2) / 2;
+                    FAPI_INF("TDR Short found(0x%X), starting at base_point_y1/y2(%d, %d)", l_status[l_phase], base_point_y1,
+                             base_point_y2);
                     int32_t x1_crossing = 0;
                     int32_t x2_crossing = 0;
-                    int32_t l_dacmin = 255;
-                    int32_t l_dacmax = 0;
-                    int32_t l_middac = 0;
+                    int32_t l_dacmin = (base_point_y1 < base_point_y2) ? base_point_y1 : base_point_y2;
+                    int32_t l_dacmax = (base_point_y1 > base_point_y2) ? base_point_y1 : base_point_y2;
+                    int32_t l_middac_y1 = 0;
+                    int32_t l_middac_y2 = 0;
+
+                    // Remove the extra precision and now are in the 0-255 dac range
+                    l_dacmin = l_dacmin >> 1;
+                    l_dacmax = l_dacmax >> 1;
 
                     if (l_status[l_phase] == TdrResult::ShortToGnd)
                     {
                         FAPI_TRY(common_io_tdr_find_limit(i_target, i_baseAddr, i_group, min_offset, max_offset, i_lane, true, l_dacmax));
-                        l_middac = (l_base + l_dacmax) / 2;
+                        l_dacmax = (l_dacmax << 1) + 1;
+                        l_middac_y1 = (base_point_y1 + l_dacmax) / 2;
+                        l_middac_y2 = (base_point_y2 + l_dacmax) / 2;
                     }
                     else if (l_status[l_phase] == TdrResult::ShortToVdd)
                     {
                         FAPI_TRY(common_io_tdr_find_limit(i_target, i_baseAddr, i_group, min_offset, max_offset, i_lane, false, l_dacmin));
-                        l_middac = (l_base + l_dacmin) / 2;
+                        l_dacmin = (l_dacmin << 1) + 1;
+                        l_middac_y1 = (base_point_y1 + l_dacmin) / 2;
+                        l_middac_y2 = (base_point_y2 + l_dacmin) / 2;
                     }
                     else
                     {
                         FAPI_TRY(common_io_tdr_find_limit(i_target, i_baseAddr, i_group, min_offset, max_offset, i_lane, true, l_dacmax));
                         FAPI_TRY(common_io_tdr_find_limit(i_target, i_baseAddr, i_group, min_offset, max_offset, i_lane, false, l_dacmin));
-                        l_middac = (l_dacmax + l_dacmin) / 2;
+                        l_dacmax = (l_dacmax << 1) + 1;
+                        l_dacmin = (l_dacmin << 1) + 1;
+                        l_middac_y1 = (l_dacmax + l_dacmin) / 2;
+                        l_middac_y2 = l_middac_y1;
                     }
 
-                    if ((l_base - l_middac) < 2 || (l_base - l_middac) > -2)
+                    FAPI_INF("TDR Short dacmin: %d dacmax: %d", l_dacmin, l_dacmax);
+                    FAPI_INF("TDR Short base_y1(%d), base_y2(%d), middac_y1(%d) middac_y2(%d)", base_point_y1, base_point_y2, l_middac_y1,
+                             l_middac_y2);
+
+                    if ((((base_point_y1 - l_middac_y1) < 2) && ((base_point_y1 - l_middac_y1) > -2)) ||
+                        (((base_point_y2 - l_middac_y2) < 2) && ((base_point_y2 - l_middac_y2) > -2)))
                     {
                         l_length_ui[l_phase] = 0;
-                        FAPI_INF("TDR Short breaking base(%d), middac(%d)", l_base, l_middac);
+                        FAPI_INF("TDR Short breaking, near tx short");
                         break;
                     }
 
@@ -379,19 +392,19 @@ fapi2::ReturnCode common_io_tdr(
                                  i_baseAddr,
                                  i_group,
                                  l_phase,
-                                 l_middac,
+                                 l_middac_y1 >> 1,
                                  i_lane,
                                  min_offset,
                                  tdr_offset_width,
                                  true,
                                  x1_crossing));
 
-                    FAPI_INF("x1 crossing: %d", x1_crossing);
+                    FAPI_INF("TDR Short Crossing (%d): x1 crossing: %d", l_middac_y1, x1_crossing);
 
                     if (x1_crossing == -1)
                     {
                         l_length_ui[l_phase] = 0;
-                        l_status[l_phase] |= TdrResult::UnableToDetermine;
+                        l_status[l_phase] = TdrResult::UnableToDetermine;
                         break;
                     }
 
@@ -401,27 +414,29 @@ fapi2::ReturnCode common_io_tdr(
                                  i_baseAddr,
                                  i_group,
                                  l_phase,
-                                 l_middac,
+                                 l_middac_y2 >> 1,
                                  i_lane,
                                  max_offset,
                                  tdr_offset_width,
                                  false,
                                  x2_crossing));
 
-                    FAPI_INF("x2 crossing: %d", x2_crossing);
+                    FAPI_INF("TDR Short Crossing (%d): x2 crossing: %d", l_middac_y2, x2_crossing);
 
                     if (x2_crossing == -1)
                     {
                         l_length_ui[l_phase] = 0;
-                        l_status[l_phase] |= TdrResult::UnableToDetermine;
+                        l_status[l_phase] = TdrResult::UnableToDetermine;
                         break;
                     }
 
+                    x1_crossing = (x1_crossing << 1) + 1;
+                    x2_crossing = (x2_crossing << 1) + 1;
                     l_length_ui[l_phase] = (x1_crossing > x2_crossing) ? ((x1_crossing - x2_crossing) / 2) : ((
                                                x2_crossing - x1_crossing) / 2);
 
-                    FAPI_INF("TDR Result:: Short Fault: %d UI from Driver.", l_length_ui[l_phase]);
-                    loopExit = true; // if we find an short, no need to run the next phase
+                    FAPI_INF("TDR Result:: Short Fault: %d UI / 2 from Driver x1(%d) x2(%d).",
+                             l_length_ui[l_phase], x1_crossing, x2_crossing);
                     break;
                 }
 
@@ -430,11 +445,6 @@ fapi2::ReturnCode common_io_tdr(
                     //FAPI_INF("TDR Found a good net for Lane(%d) and Phase(%d)", i_lane, l_phase);
                     break;
                 }
-        }
-
-        if (loopExit)
-        {
-            break;
         }
     }
 
@@ -460,8 +470,8 @@ fapi2::ReturnCode common_io_tdr(
     // Handle the corner case where each leg is showing different problems
     // - We can get poor TDR results due to the differential connection if
     //   one net is shorted (not shorted to ground)
-    else if (((l_status[0] & TdrResult::Short) && (l_status[1] == TdrResult::Open )) ||
-             ((l_status[0] == TdrResult::Open ) && (l_status[1] & TdrResult::Short)))
+    else if ((((l_status[0] & TdrResult::Short) == TdrResult::Short) && (l_status[1] == TdrResult::Open )) ||
+             ((l_status[0] == TdrResult::Open ) && ((l_status[1] & TdrResult::Short) == TdrResult::Short)))
     {
         o_status = TdrResult::UnableToDetermine;
         o_length_ui = 0;
@@ -472,12 +482,12 @@ fapi2::ReturnCode common_io_tdr(
         o_status = TdrResult::NoIssues;
         o_length_ui = 0;
     }
-    else if (l_status[0] & TdrResult::Short)
+    else if ((l_status[0] & TdrResult::Short) == TdrResult::Short)
     {
         o_status = static_cast<TdrResult>(l_status[0]);
         o_length_ui = l_length_ui[0];
     }
-    else if (l_status[1] & TdrResult::Short)
+    else if ((l_status[1] & TdrResult::Short) == TdrResult::Short)
     {
         o_status = static_cast<TdrResult>(l_status[1]);
         o_length_ui = l_length_ui[1];
@@ -546,6 +556,7 @@ fapi2::ReturnCode common_io_tdr_cleanup(const fapi2::Target<K, M, V>& i_target,
     const uint8_t c_phaseSelBit = 57;
     const uint32_t c_pulseWidthBit = 48;
     const uint32_t c_pulseWidthLen = 9;
+    const uint32_t c_laneInvert = 1;
     fapi2::buffer<uint64_t> l_data_buf = 0;
     uint64_t l_addr = 0;
 
@@ -560,6 +571,10 @@ fapi2::ReturnCode common_io_tdr_cleanup(const fapi2::Target<K, M, V>& i_target,
     // TDR Enable
     l_addr = buildAddr(i_baseAddr, i_group, i_lane, TdrRegisters::tx_cntl3_pl);
     FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, 0, c_tdrEnBit, 1));
+
+    // TDR Lane Invert = 0
+    l_addr = buildAddr(i_baseAddr, i_group, i_lane, TdrRegisters::tx_mode1_pl);
+    FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, 0, c_laneInvert, 1));
 
 fapi_try_exit:
     FAPI_DBG("End TDR Cleanup");
@@ -588,9 +603,11 @@ fapi2::ReturnCode common_io_tdr_initialize(const fapi2::Target<K, M, V>& i_targe
     const uint8_t c_hsBistEnBit = 56;
     const uint32_t c_pulseWidthBit = 48;
     const uint32_t c_pulseWidthLen = 9;
+    const uint32_t c_laneInvert = 48;
     fapi2::buffer<uint64_t> l_data_buf = 0;
     uint64_t l_addr = 0;
     uint32_t l_tdr_enable = 1;
+    uint32_t l_invert = (i_phase == 1) ? 0 : 1;
 
     FAPI_DBG("Begin TDR Initialization");
     // Set tx_bist_hs_en to 0
@@ -612,6 +629,10 @@ fapi2::ReturnCode common_io_tdr_initialize(const fapi2::Target<K, M, V>& i_targe
     l_addr = buildAddr(i_baseAddr, i_group, i_lane, TdrRegisters::tx_cntl3_pl);
     FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, l_tdr_enable, c_tdrEnBit, 1),
              "Error on RMW to set TDR Enable to %d at address %d", l_tdr_enable, l_addr);
+
+    // TDR Lane Invert
+    l_addr = buildAddr(i_baseAddr, i_group, i_lane, TdrRegisters::tx_mode1_pl);
+    FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, l_invert, c_laneInvert, 1));
 
 fapi_try_exit:
     FAPI_DBG("End TDR Initialization");
@@ -769,7 +790,6 @@ fapi2::ReturnCode common_io_tdr_find_limit(const fapi2::Target<K, M, V>& i_targe
     uint64_t l_addr = 0;
     uint32_t l_loop = 0;
     uint32_t l_capture = 0;
-    int32_t l_prev_limit = 0;
 
     // set TDR dac value
     // FAPI_INF("Setting TDR Dac: %d", o_limit);
@@ -777,21 +797,20 @@ fapi2::ReturnCode common_io_tdr_find_limit(const fapi2::Target<K, M, V>& i_targe
     FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, o_limit, TdrConsts::tdrDacStart, TdrConsts::tdrDacLength),
              "Error on RMW to set DAC value to %d at address %d", o_limit, l_addr);
 
+    // Move the x offset horizontally to test each valid position
     for (uint32_t l_offset = i_offset_start; l_offset < i_offset_end; l_offset++)
     {
         FAPI_TRY(common_io_tdr_set_pulse_offset(i_target, i_baseAddr, i_group, i_lane, l_offset));
 
+        // Move the y offset vertically to find the vertical limit
+        l_loop = 0;
+
         while (l_loop < LOOP_MAX)
         {
             // set TDR dac value
-            if (l_prev_limit != o_limit)
-            {
-                // FAPI_INF("Setting TDR Dac: %d", o_limit);
-                l_addr = buildAddr(i_baseAddr, i_group, i_lane, TdrRegisters::tx_cntl15_pl);
-                FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, o_limit, TdrConsts::tdrDacStart, TdrConsts::tdrDacLength),
-                         "Error on RMW to set DAC value to %d at address %d", o_limit, l_addr);
-                l_prev_limit = o_limit;
-            }
+            l_addr = buildAddr(i_baseAddr, i_group, i_lane, TdrRegisters::tx_cntl15_pl);
+            FAPI_TRY(rmwIoHardwareReg(i_target, l_addr, o_limit, TdrConsts::tdrDacStart, TdrConsts::tdrDacLength),
+                     "Error on RMW to set DAC value to %d at address %d", o_limit, l_addr);
 
             // read the TDR capture value for the selected lane
             FAPI_TRY(common_io_tdr_get_capt_val(i_target, i_baseAddr, i_group, i_lane, l_capture));
@@ -816,7 +835,6 @@ fapi2::ReturnCode common_io_tdr_find_limit(const fapi2::Target<K, M, V>& i_targe
                 else
                 {
                     o_limit--;
-                    break;
                 }
             }
 
@@ -935,17 +953,13 @@ fapi2::ReturnCode common_io_tdr_find_horizontal_crossing(const fapi2::Target<K, 
 
     // Check xMin horizontal crossing
     // set TDR pulse offset
-    FAPI_INF("Horizontal Crossing - Setting TDR Pulse Offset: %d", x_vals[0]);
     FAPI_TRY(common_io_tdr_set_pulse_offset(i_target, i_baseAddr, i_group, i_lane, x_vals[0]));
     FAPI_TRY(common_io_tdr_get_capt_val(i_target, i_baseAddr, i_group, i_lane, y_vals[0]));
 
     // Check xMax horizontal crossing
     // set TDR pulse offset
-    FAPI_INF("Horizontal Crossing - Setting TDR Pulse Offset: %d", x_vals[1]);
     FAPI_TRY(common_io_tdr_set_pulse_offset(i_target, i_baseAddr, i_group, i_lane, x_vals[1]));
     FAPI_TRY(common_io_tdr_get_capt_val(i_target, i_baseAddr, i_group, i_lane, y_vals[1]));
-
-    FAPI_INF("y_vals[0]: %d   y_vals[1]: %d", y_vals[0], y_vals[1]);
 
     // If the two y_vals are the same, assert error
     FAPI_ASSERT(y_vals[0] != y_vals[1],
@@ -961,7 +975,7 @@ fapi2::ReturnCode common_io_tdr_find_horizontal_crossing(const fapi2::Target<K, 
 
         // FAPI_INF("(%03d,%03d) < ",
         //          x_vals[0], y_vals[0]);
-        FAPI_INF("TDR H-Crossing Binary Search dac(%3d) xoffset(%3d) sample(%1d)", i_dac, current_x, current_y);
+        // FAPI_INF("TDR H-Crossing Binary Search dac(%3d) xoffset(%3d) sample(%1d)", i_dac, current_x, current_y);
         // FAPI_INF("(%03d,%03d)",
         //          x_vals[1], y_vals[1]);
 
@@ -1039,9 +1053,6 @@ fapi2::ReturnCode common_io_tdr_find_short_crossing(const fapi2::Target<K, M, V>
         current_x = current_x + step;
         FAPI_TRY(common_io_tdr_set_pulse_offset(i_target, i_baseAddr, i_group, i_lane, current_x));
         FAPI_TRY(common_io_tdr_get_capt_val(i_target, i_baseAddr, i_group, i_lane, current_y));
-
-        FAPI_INF("(%05d,%d (%d))",
-                 current_x, current_y, prev_y);
 
         if (current_x <= 0 || current_x >= i_pulse_width)
         {
