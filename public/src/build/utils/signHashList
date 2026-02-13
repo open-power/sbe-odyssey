@@ -6,7 +6,7 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2016,2024
+# Contributors Listed Below - COPYRIGHT 2016,2026
 # [+] International Business Machines Corp.
 #
 #
@@ -130,11 +130,11 @@ DEV_KEY_DIR=
 SIGNTOOL_ARGS=
 
 # Determine if our path setup has been provided by the environment
-if [ ! -z "${SIGNING_BASE_DIR+x}" ]; then
+if [ -n "${SIGNING_BASE_DIR:-}" ]; then
     echo "***INFO | SBE | signHashList : Fetching signing tools from provided environment"
     RH_DIR=`sed "s/^.*release \([0-9]*\).*$/rh\1/" /etc/redhat-release`
     SIGNING_DIR=$SIGNING_BASE_DIR/$RH_DIR/$SIGNING_UTILS_DIR
-    DEV_KEY_DIR=${SIGNING_BASE_DIR}/sb-signing-keys
+    DEV_KEY_DIR=${SIGNING_BASE_DIR}/sb-signing-keys/test/v2_keys/
 
 elif [ -z "${OPBUILD_HOST_DIR+x}" ]; then
     echo "***INFO | SBE | signHashList : Not OP_build. Fetching keys and signing scripts from /gsa/..."
