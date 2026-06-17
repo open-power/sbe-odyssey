@@ -6,7 +6,9 @@
 #
 # OpenPOWER sbe Project
 #
-# Contributors Listed Below - COPYRIGHT 2023,2024
+# Contributors Listed Below - COPYRIGHT 2023,2026
+# [+] International Business Machines Corp.
+# [+] sandeep.kumar.yadav@ibm.com
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,7 +57,7 @@ def getTargetInstanceNum(target):
     return instanceNum
 
 # Get all targets objects that loaded by the simics
-targetsObjs = SIM_get_all_objects()
+targetsObjs = list(SIM_object_iterator(None))
 
 # Collect all below objects from the targetsObjs list to use in the test case
 # framework

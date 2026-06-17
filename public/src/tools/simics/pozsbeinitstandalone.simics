@@ -17,12 +17,12 @@
 #
 # IBM_PROLOG_END_TAG
 
-run-command-file (lookup-file "sbestandaloneenv.simics")
+run-script (lookup-file "sbestandaloneenv.simics")
 
 # Load POZ-SBE debug tools.
 echo "Attempting to register POZ-SBE Tools"
 try {
-    run-python-file (lookup-file "poz-simics-debug-framework.py")
+    run-script (lookup-file "poz-simics-debug-framework.py")
 } except {
     echo "ERROR: Failed to load SBE debug tools."
     local $error_msg = (get-error-message)
@@ -45,7 +45,7 @@ if $sbe_ci == FALSE {
     if $sbe_run_till_boot == TRUE {
         echo "Running simics till sbe reaching runtime"
         try {
-            run-python-file (lookup-file "testruntillsbebooted.py")
+            run-script (lookup-file "testruntillsbebooted.py")
         } except {
             echo "ERROR: Failed to boot the SBE"
             local $error_msg = (get-error-message)
@@ -74,7 +74,7 @@ if $sbe_ci == TRUE {
         stop
         wait-for-simulation-stopped
         try {
-            run-command-file $sbe_ci_script
+            run-script $sbe_ci_script
         } except{
             echo " Debug ::SBE CI Script error"
             local $error_msg = (get-error-message)
